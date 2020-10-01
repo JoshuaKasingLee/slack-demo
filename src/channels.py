@@ -1,24 +1,3 @@
-def channels_list(token):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
-
-def channels_listall(token):
-    return {
-        'channels': [
-        	{
-        		'channel_id': 1,
-        		'name': 'My Channel',
-        	}
-        ],
-    }
-
-def channels_create(token, name, is_public):
-    return {
-        'channel_id': 1,
-    }
+import channels_list
+import channels_listall
+import channels_create
