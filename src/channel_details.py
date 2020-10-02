@@ -1,20 +1,33 @@
-from channel_details import channel_details
-from channel_invite import channel_invite
-from channel_addowner import channel_addowner
-import pytest
-import database
-import auth
-import channels
+import database_edited as db
+from error import InputError
+from error import AccessError
 
 
 def channel_details(token, channel_id):
     
+    u_id = token
+    db.channels_and_members
+    if_in = 0
+    try:
+        for member in db.channels_and_members[channel_id][1]:
+            if member['u_id'] == u_id:
+                if_in = 1
+    except:
+        raise InputError
+        
+            
+    if if_in != 1: 
+        raise AccessError
     
+    global channels
+    for channel in db.channels:
+        if channel['channel_id'] == channel_id:
+            name = channel['name']
+        
+        
+    return {'name': name, 'owner_members': db.channels_and_members[channel_id][0], 'all_members' : db.channels_and_members[channel_id][1] }
     
-    
-    
-    
-    
+    """"
     return {
         'name': 'Hayden',
         'owner_members': [
@@ -32,3 +45,12 @@ def channel_details(token, channel_id):
             }
         ],
     }
+    """
+
+"""
+Assumptions:
+    
+    token is same as u_id
+    
+"""
+#print(channel_details(1, 1)) #testing

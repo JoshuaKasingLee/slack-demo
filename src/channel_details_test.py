@@ -21,6 +21,8 @@ def test_no_owner():
             }
         ],
     }
+
+database.clear()
         
 def test_one_owner():   
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Hayden", "Jacobs")
