@@ -1,6 +1,7 @@
 import pytest
 from auth_login import auth_login
 from auth_register import auth_register
+from database import clear
 from error import InputError
 
 # Testing an undefined user
@@ -24,15 +25,14 @@ def test_invalid_password():
     with pytest.raises(InputError):
         auth_login("example@gmail.com", "wrongpassword")
 
-# Testing successful login attempt
+# Testing successful login attempt !!
 def test_login_success():
-    auth_register("testmail@gmail.com", "12345", "John", "Smith")
-    with pytest.raises(InputError):
-        auth_login("testmail@gmail.com", "12345")
+    auth_register("testmail@gmail.com", "123456", "John", "Smith")
+    auth_login("testmail@gmail.com", "123456")
 
-# Testing double login
-def test_login_twice():
-    auth_register("example@gmail.com", "password", "John", "Smith")
-    auth_login("example@gmail.com", "password")
-    with pytest.raises(InputError):
-        auth_login("example@gmail.com", "password")
+# # Testing double login !! (Not in the assignment spec)
+# def test_login_twice():
+#     auth_register("example@gmail.com", "password", "John", "Smith")
+#     auth_login("example@gmail.com", "password")
+#     with pytest.raises(InputError):
+#         auth_login("example@gmail.com", "password")

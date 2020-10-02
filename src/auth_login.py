@@ -1,5 +1,6 @@
 import re
 from error import InputError
+from auth_register import auth_register
 from database import master_users
 
 def auth_login(email, password):
@@ -11,14 +12,43 @@ def auth_login(email, password):
         raise InputError(f"Error, {email} is invalid")
 
     # check if a user is already logged on
+    # for id in master_users:
+    #     if id["log"] == True:
+    #         # Loggin in when another user is logged in should raise an input error as follows
+    #         raise InputError(f"Error, a user is already logged in")
 
-    # 
+    # check whether email address is in the database and check if the password is correct
+    if len(master_users) == 0:
+        raise InputError(f"Error, {email} has not been registered")
+    exists = False
+    for user in master_users:
+        if email == user["email"]:
+            exists = True
+    if exists == False:
+        raise InputError(f"Error, {email} has not been registered")
 
-
-
-
+    # check if password is wrong and raise error
+    for user in master_users:
+        if email == user["email"]:
+            if password != user["password"]:
+                raise InputError(f"Error, the password is incorrect")
+            else:
+                id = user["u_id"]
+                tok = user["token"]
+                user["log"] = True
+                print("Kelly is bad at cantonese")
 
     return {
-        'u_id': 1,
-        'token': '12345',
+        'u_id': id,
+        'token': tok,
     }
+
+# Assumptions
+"""
+You cannot log-in if another user or the current user is logged in
+"""
+
+# auth_register("kellyczhou@gmail.com", "password", "name", "last")
+
+# auth_login("kellyczhou", "password")
+# print(master_users)
