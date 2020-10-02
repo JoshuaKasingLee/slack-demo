@@ -52,6 +52,11 @@ member = {}
 # Members
 members = []
 
+# channel with members
+# channels_and_members = { channel: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
+channels_and_members = {}
+
+
 # add functions below if needed
 def clear():
     global user
@@ -70,3 +75,5 @@ def clear():
     member.clear()
     global members
     members.clear()
+    global channels_and_members
+    channels_and_members. clear()
