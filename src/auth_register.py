@@ -65,6 +65,7 @@ def auth_register(email, password, name_first, name_last):
     master_user['password'] = password
     master_user['token'] = token
     master_user['handle'] = handle
+    master_user['log'] = True # assume that user is logged in after registering
     
     # add new user to the master_users database
     master_users.append(master_user)

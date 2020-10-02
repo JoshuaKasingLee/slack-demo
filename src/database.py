@@ -12,6 +12,7 @@ master_users = []
 #       'handle_str': 'herecomesjohnny'
 #       'password': ilikecats
 #       'token': 100
+#       'log': True
 #   },
 #   {
 #       'u_id': 300,
@@ -21,6 +22,7 @@ master_users = []
 #       'handle_str': 'byeerecomesjohnny'
 #       'password': ilikedogs
 #       'token': 300
+#       'log': False
 #   }
 
 # User
