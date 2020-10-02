@@ -5,7 +5,11 @@ from error import AccessError
 
 def channel_details(token, channel_id):
     
-    u_id = token
+    try:
+        u_id = int(token)
+    except:
+        raise AccessError #invalid token
+        
     db.channels_and_members
     if_in = 0
     try:

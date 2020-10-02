@@ -6,7 +6,18 @@ def channel_invite(token, channel_id, u_id):
     # can only invite if member of channel
     #instantly join once invited - wouldnt be owner because not the first in
     #print(db.channels_and_members)
-    u_id_invitee = token
+    try:
+        u_id_invitee = int(token)
+    except:
+        raise AccessError #invalid token
+     
+    if_in = 0
+    for user in db.users:
+        if user['u_id'] == u_id_invitee:
+            if_in = 1
+    if if_in != 1:
+        raise AccessError #u_id_invitee doesnt exist
+    
     db.channels_and_members
     if_in = 0
     try:

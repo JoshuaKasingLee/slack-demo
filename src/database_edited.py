@@ -14,7 +14,7 @@ user = {}
 # the auth register file in auth aims to pass in a user to append to users
 
 # Users
-users = [{'u_id':1, 'email': 'gmail', 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':3,'email': 'gmail2', 'name_first': 'anvdreea', 'name_last': 'hii'}]
+users = [{'u_id':1, 'email': 'gmail', 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':2,'email': 'gmail2', 'name_first': 'anvdreea', 'name_last': 'hii'}]
 # Users contain a list of user
 # An example is as below:
 # [
@@ -45,7 +45,10 @@ channel = {}
 
 # Channels
 # List of dictionaries, where each dictionary contains types { channel_id, name }
-channels = [{'channel_id': 1, 'name': 'channel1'}]
+channels = [{'channel_id': 1, 'name': 'channel1'}, {'channel_id': 2, 'name': 'channel2'} ]
+
+private_channels= [{'channel_id': 1, 'name': 'channel1'}, ]
+public_channels= [{'channel_id': 2, 'name': 'channel2'}, ]
 
 # Member
 member = {}
@@ -56,8 +59,9 @@ members = []
 
 # channel with members
 # channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
-channels_and_members = {1:[[{}], [{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':2, 'name_first': 'anvdreea', 'name_last': 'hii'}]]}
-
+#channels_and_members = {1:[[{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}],[]], 2:[[]{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}]]}
+#{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':2, 'name_first': 'anvdreea', 'name_last': 'hii'}
+channels_and_members = { 1: [[{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}], [{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}]], 2: [[{'u_id':2, 'name_first': 'andreeeeea', 'name_last': 'hiiiii'}], [{'u_id':2, 'name_first': 'andreeeeeaa', 'name_last': 'hiiiii'}]]}
 # the first user to sign up
 flockr_owner = users[0]
 
