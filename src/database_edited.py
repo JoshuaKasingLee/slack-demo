@@ -14,7 +14,7 @@ user = {}
 # the auth register file in auth aims to pass in a user to append to users
 
 # Users
-users = []
+users = [{'u_id':1, 'email': 'gmail', 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':3,'email': 'gmail2', 'name_first': 'anvdreea', 'name_last': 'hii'}]
 # Users contain a list of user
 # An example is as below:
 # [
@@ -58,6 +58,9 @@ members = []
 # channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
 channels_and_members = {1:[[{}], [{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':2, 'name_first': 'anvdreea', 'name_last': 'hii'}]]}
 
+# the first user to sign up
+flockr_owner = users[0]
+
 
 # add functions below if needed
 def clear():
@@ -79,3 +82,5 @@ def clear():
     members.clear()
     global channels_and_members
     channels_and_members. clear()
+    global flockr_owner
+    flockr_owner.clear()

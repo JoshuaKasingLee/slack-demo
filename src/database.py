@@ -53,8 +53,12 @@ member = {}
 members = []
 
 # channel with members
-# channels_and_members = { channel: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
+# channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
 channels_and_members = {}
+
+
+# the first user to sign up
+flockr_owner = users[0]
 
 
 # add functions below if needed
@@ -77,3 +81,5 @@ def clear():
     members.clear()
     global channels_and_members
     channels_and_members. clear()
+    global flockr_owner
+    flockr_owner.clear()
