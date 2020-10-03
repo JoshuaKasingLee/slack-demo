@@ -3,6 +3,7 @@ import database
 import other
 from channel_addowner import channel_addowner
 from channel_join import channel_join
+from channel_details import channel_details
 import channels
 import auth
 from error import InputError

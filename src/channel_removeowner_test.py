@@ -3,6 +3,7 @@ import database
 import other
 from channel_addowner import channel_addowner
 from channel_removeowner import channel_removeowner
+from channel_details import channel_details
 from channel_join import channel_join
 import channels
 import auth
