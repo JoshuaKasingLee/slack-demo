@@ -5,6 +5,8 @@ import channels
 import auth
 from error import AccessError
 
+import database_edited_for_channels as db # only for clearing
+
 def test_one():
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
     channel_id = channels.channels_create(token, "Channel1", True)
@@ -16,6 +18,8 @@ def test_one():
         	}
         ],
     }
+
+db.clear()
 
 def test_two_owner():
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
@@ -33,6 +37,8 @@ def test_two_owner():
         	}
         ],
     }
+        
+db.clear()
 
 def test_two_not_owner():
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
@@ -52,21 +58,28 @@ def test_two_not_owner():
         ],
     }
     
-    
+
+db.clear()
+  
 def test_empty():
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
     assert channels_listall(token) == {
         'channels': [],
     }
+    
+db.clear()
 
 def test_invalid_token_name():
     token  = "blahblah"
     with pytest.raises(AccessError): 
         channels_listall(token)
+        
+db.clear()
 
 def test_invalid_user():
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
     token  = token + "1"
     with pytest.raises(AccessError): 
         channels_listall(token)
-    
+        
+db.clear()    
