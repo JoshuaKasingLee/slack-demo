@@ -28,8 +28,11 @@ def channel_addowner(token, channel_id, u_id):
                 raise InputError
     except:
         raise InputError #channel_id doesnt exist / invited person is already owner
-                   
-    if if_in != 1 and db.users[0]['u_id'] != u_id_invitee: 
+     
+    if u_id_invitee == db.users[0]['u_id']: # invitee is flockr owner
+        if_in = 1
+            
+    if if_in != 1: 
         #print(if_in)
         raise AccessError
     
@@ -62,5 +65,11 @@ Assumptions:
     
     Assuming someone not a member of a channel can become owner if called add_owner upon,
     subsequently getting added to all_members as well.
+    
+    Assuming that the flockr owner can make another u_id an owner of a channel the flockr owner 
+    has'nt joined yet. This assumptions comes from the fact that the global permissions of
+    flockr owner is that they can edit other owners permissions, and global permissions come
+    before channel permissions which implies flockr owner has power over all owners, not just
+    the ones of channels theyve joined.
 """
 #channel_addowner('1', 2, 3)

@@ -18,7 +18,6 @@ def channel_invite(token, channel_id, u_id):
     if if_in != 1:
         raise AccessError #u_id_invitee doesnt exist
     
-    db.channels_and_members
     if_in = 0
     try:
         for member in db.channels_and_members[channel_id][1]:

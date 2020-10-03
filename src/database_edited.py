@@ -47,8 +47,8 @@ channel = {}
 # List of dictionaries, where each dictionary contains types { channel_id, name }
 channels = [{'channel_id': 1, 'name': 'channel1'}, {'channel_id': 2, 'name': 'channel2'} ]
 
-private_channels= [{'channel_id': 1, 'name': 'channel1'}, ]
-public_channels= [{'channel_id': 2, 'name': 'channel2'}, ]
+private_channels= [{'channel_id': 2, 'name': 'channel1'}, ]
+public_channels= [{'channel_id': 1, 'name': 'channel2'}, ]
 
 # Member
 member = {}
@@ -63,7 +63,7 @@ members = []
 #{'u_id':1, 'name_first': 'andreea', 'name_last': 'hi'}, {'u_id':2, 'name_first': 'anvdreea', 'name_last': 'hii'}
 channels_and_members = { 1: [[{'u_id':1, 'name_first': '1', 'name_last': '1'}], [{'u_id':1, 'name_first': '1', 'name_last': '1'}]], 2: [[{'u_id':2, 'name_first': '2', 'name_last': '2'}], [{'u_id':2, 'name_first': '2', 'name_last': '2'}, {'u_id':3, 'name_first': 3, 'name_last': '3'}]], 3: [[{'u_id': 3, 'name_first': '3', 'name_last': '3'}], [{'u_id':3, 'name_first': 3, 'name_last': '3'}]]}
 # the first user to sign up
-flockr_owner = users[0]
+
 
 
 # add functions below if needed
