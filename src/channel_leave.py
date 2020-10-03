@@ -1,4 +1,4 @@
-import database_edited as db
+import database as db
 from error import InputError
 from error import AccessError
 
@@ -20,11 +20,11 @@ def channel_leave(token, channel_id):
             if db.users[0]['u_id'] == u_id:
                 #removal from owners 
                 for user in db.channels_and_members[channel_id][0]:
-                    if user['u_id'] == u_id:
+                    if master_users['u_id'] == u_id:
                         db.channels_and_members[channel_id][0].remove(user)
             #removal from all members 
             for user in db.channels_and_members[channel_id][1]:
-                if user['u_id'] == u_id:
+                if master_users['u_id'] == u_id:
                     db.channels_and_members[channel_id][1].remove(user)
                     user_found = 1
     
@@ -39,13 +39,13 @@ def channel_leave(token, channel_id):
                 #removal from owners 
                 
                 for user in db.channels_and_members[channel_id][0]:
-                    if user['u_id'] == u_id:
+                    if master_users['u_id'] == u_id:
                         db.channels_and_members[channel_id][0].remove(user)
                         
             #removal from all members 
             for user in db.channels_and_members[channel_id][1]:
                 #print("yay")
-                if user['u_id'] == u_id:
+                if master_users['u_id'] == u_id:
                     db.channels_and_members[channel_id][1].remove(user)
                     user_found = 1
                     
