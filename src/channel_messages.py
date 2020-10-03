@@ -27,7 +27,7 @@ def channel_messages(token, channel_id, start):
             if member['u_id'] == u_id:
                 access = 1
     except:
-        raise AccessError # channel doesn't exist
+        raise InputError # channel doesn't exist
     if access == 0:
         raise AccessError # user is not a member
 

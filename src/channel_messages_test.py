@@ -165,17 +165,17 @@ def test_large_index(): # index too large, raise InputError
 
 def test_invalid_token(): # invalid token - AccessError
     channel_id = channels.channels_create(token, "channel1", True)
-    db.channels_and_messages[channel_id] = [
+    db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages('heyheyhey', channel_id, 0)
 
-def test_missing_channel(): # invalid channel_id - AccessError
+def test_missing_channel(): # invalid channel_id - InputError (bc of channel_details spec)
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         channel_messages(token, channel_id, 0)
 
 def test_missing_user(): # user doesn't exist - AccessError
     channel_id = channels.channels_create(token, "channel1", True)
-    db.channels_and_messages[channel_id] = [
+    db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages(22, channel_id, 0)
