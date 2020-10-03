@@ -3,50 +3,57 @@ import pytest
 import auth
 from auth_register import auth_register
 from auth_login import auth_login
-#from auth import auth_register, auth_login
+from auth_logout import auth_logout
 from error import InputError
-
-# An email is a string (a subset of ASCII characters) separated into
-# two parts by @ symbol, a “personal_info” and a domain, that is
-# personal_info@domain.
-
-# TEST INPUT ERRORS
-
-# TEST WHETHER EMAIL IS VALID
+from other import clear
 
 
-#valid normal email
-#valid wacky email
+# 1. TEST INPUT ERRORS
 
 # test whether input error is raised when email is invalid
-
-def test_email_invalid():
+# assume regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+def test_email_invalid_1():
     with pytest.raises(InputError):
         auth_register("email", "password", "first", "last") # no ampersand or dot
+def test_email_invalid_2():
+    with pytest.raises(InputError):
         auth_register("email.com", "password", "first", "last") # no ampersand
+def test_email_invalid_3():
+    with pytest.raises(InputError):
         auth_register("email@gmail.organisation", "password", "first", "last") # ending too long
-#do these even check all the statements, or returns true after the first statement raises the exception?
+def test_email_invalid_4():
+    with pytest.raises(InputError):
+        auth_register("email@gmail@organisation.com", "password", "first", "last") # two ampersands
+def test_email_invalid_5():
+    with pytest.raises(InputError):
+        auth_register("email@gmail.com.org", "password", "first", "last") # two dots after ampersand
+def test_email_invalid_6():
+    with pytest.raises(InputError):
+        auth_register("EMAIL@GMAIL.COM", "password", "first", "last") # capitals
 
-# other possible tests
-#invalid email: dot before the ampersand?
-#invalid email: two dots after the ampersand (not sure what is the domain)
-#invalid email: ends with a dot?
-
-# TEST WHETHER EMAIL IS TAKEN
-#new email
-#already taken email
-#new email (but very similar to a taken email)
-
+# test whether input error is thrown when registering with an already registered email
+def test_email_taken_1():
+    auth_register("icecreamisyummy@gmail.com", "frozen", "Ice", "Cream")
+    with pytest.raises(InputError):
+        auth_register("icecreamisyummy@gmail.com", "milkduds", "Icy", "Poles")
+    clear()
+def test_email_taken_2():
+    result = auth_register("ilikesummer@gmail.com", "bestseason", "Summer", "Days")
+    assert(auth_logout(result["token"]) == {"is_success": True})
+    with pytest.raises(InputError):
+        auth_register("ilikesummer@gmail.com", "bestseason", "Summer", "Days")
+    clear()
 
 # test whether input error is raised when password is < 6 characters
-
-def test_password_short():
+def test_password_short_1():
     with pytest.raises(InputError):
         auth_register("email@gmail.com", "cat", "first", "last")
-        auth_register("email@gmail.com", "dog", "first", "last")
+def test_password_short_2():
+    with pytest.raises(InputError):
         auth_register("email@gmail.com", "short", "first", "last")
+def test_password_short_3():
+    with pytest.raises(InputError):
         auth_register("email@gmail.com", "a", "first", "last")
-# ASSUMES NAMES CAN'T HAVE SYMBOLS AS CHARACTERS
 
 # test whether input error is raised when first name is < 1 character
 def test_first_name_short():
@@ -59,66 +66,66 @@ def test_last_name_short():
         auth_register("email@gmail.com", "password", "first", "")
 
 # test whether input error is raised when first name is > 50 characters
-def test_first_name_long():
+def test_first_name_long_1(): # very long name
     with pytest.raises(InputError):
         auth_register("email@gmail.com", "password", "extremelylongfirstnamebecauseiamsuperdupertroopercool", "last")
-        #auth_register(email@gmail.com, password, ...................................................., last)
-        #auth_register(email@gmail.com, password, Adolph Blaine Charles David Earl Frederick Gerald Hubert, last)
+def test_first_name_long_2(): # only characters
+    with pytest.raises(InputError):
+        auth_register("email@gmail.com", "password", ".....................................................", "last")
+def test_first_name_long_3(): # name with spaces
+    with pytest.raises(InputError):
+        auth_register("email@gmail.com", "password", "Adolph Blaine Charles David Earl Frederick Gerald Hubert", "last")
 
 # test whether input error is raised when last name is > 50 characters
 def test_last_name_long():
     with pytest.raises(InputError):
         auth_register("email@gmail.com", "password", "first", "extremelylonglastnamebecauseiamsuperdupertroopercool")
-        auth_register("email@gmail.com", "password", "first", "Wolfeschlegelsteinhausenbergerdorfflongestlastnameever")
-        #auth_register(email@gmail.com, password, first, ....................................................)
 
 
-# TEST OUTPUT ERRORS
+# 2. TEST OUTPUT
 
-# test user handles
-# can we even test handles without the user.py file?
-# TEST IN ITERATION 2
+# test valid registrations are successful
+def test_valid_rego():
+    auth_register("cyruschow@gmail.com", "ilikecookies", "Cyrus", "Chow")
+    auth_register("kellyzhou@gmail.com", "pink=bestcolour", "Kelly", "Zhou")
+    auth_register("andreeavissarion@hotmail.com", "coolestshoes!!", "Andreea", "Vissarion")
+    auth_register("joshualee@icloud.org", "randypopping", "Josh", "Lee")
+    auth_register("nickdodd@gmail.com", "doddthegod", "Nick", "Dodd")
+    clear()
 
-# test handles of names that are 20 characters or less
-#def test_short():
-    #assert(auth_register(abc@domain.com, password, John, Smith) == {'u_id': 1, 'token': 'johnsmith',})
-    #assert(auth_register(abc@domain.com, password, JANE, DOE) == {'u_id': 2, 'token': 'janedoe',})
-    #assert(auth_register(abc@domain.com, password, !@%^&*, name) == {'u_id': 3, 'token': '!@%^&*name',})
-
-# test handles of names that are over 20 characters
-#def test_long():
-    #assert(auth_register(abc@domain.com, password, LongFirstName, LongLastName) == {'u_id': 4, 'token': 'longfirstnamelonglast',})
-    #assert(auth_register(abc@domain.com, password, JANE, DOE) == {'u_id': 5, 'token': 'janedoe',})
-    #assert(auth_register(abc@domain.com, password, !@%^&*, name) == {'u_id': 6, 'token': '!@%^&*name',})
-
-# test modified handles of short names
-#def test_mod_short():
-
-
-#correct concatenation (< 20 characters)
-#correct concatenation (> 20 characters)
-#correct wacky concatentation
-#correct concatenation (produces modified name, as original concatenation has already been taken)
-#correct concatenationn (modified name, if several original concatenations have been taken)
-#incorrect: concatenation is too long
-#incorrect: concatenation already exists
-#incorrect: concatenates incorrectly (wrong mix/cut-off)
-
-# do we need to test whether our variable inputs are the right variables (e.g. strings, ints, etc.)
-
-# check whether unique ids are generated
+# test whether unique ids are generated
 def test_unique_u_id():
     u_id1 = auth_register("sallysmith@gmail.com", "ilikecats", "Sally", "Smith")["u_id"]
     u_id2 = auth_register("bobbybrown@gmail.com", "ilikedogs", "Bobby", "Brown")["u_id"]
+    u_id3 = auth_register("janedoe@gmail.com", "plainjane", "Jane", "Doe")["u_id"]
     assert(u_id1 != u_id2)
+    assert(u_id1 != u_id3)
+    assert(u_id2 != u_id3)
+    clear()
 
-# test whether u_id can log in (check whether the token can log in)
+# test whether registered user can log in and logout
 def test_registered_login():
     auth_register("email@gmail.com", "password", "first", "last")
-    auth_login("email@gmail.com", "password")
+    result = auth_login("email@gmail.com", "password")
+    assert(auth_logout(result["token"]) == {"is_success": True})
+    clear()
+
+
+# we cannot blackbox test generated handles in this iteration since the "user.py" file has not been implemented
+# however, once user.py is implemented, tests similar to below can be created:
+# correct concatenation (< 20 characters)
+# correct concatenation (> 20 characters)
+# correct concatenation (produces modified name, as original concatenation has already been taken)
+# correct concatenationn (modified name, if several original concatenations have been taken)
+# incorrect: concatenation is too long
+# incorrect: concatenation already exists
+# incorrect: concatenates incorrectly (wrong mix/cut-off)
+
+
+
 
 # assume correct number of inputs is given
-# assume input types are all correct
+# assume input types are all correct (e.g. strings, ints, etc.)
 # all emails are covered in our regex (is this a reasonable assumption?)
 # assume registration will log you in
 # assume handles are generated correctly for now
