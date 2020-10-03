@@ -60,6 +60,11 @@ channels_and_members = {}
 # the first user to sign up
 flockr_owner = users[0]
 
+# messages in channels
+#channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
+#channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
+channels_and_messages = {}
+
 
 # add functions below if needed
 def clear():
