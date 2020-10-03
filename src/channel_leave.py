@@ -17,8 +17,12 @@ def channel_leave(token, channel_id):
     for channel in db.public_channels:
         if channel['channel_id'] == channel_id:
             channel_found = 1
+            owner_exists = 0
             #check if owner
-            if db.users[0]['u_id'] == u_id:
+            for owner in db.channels_and_members[channel_id][0]:
+                if owner['u_id'] == u_id:
+                    owner_exists = 1
+            if owner_exists == 1:
                 #removal from owners 
                 for user in db.channels_and_members[channel_id][0]:
                     if user['u_id'] == u_id:
@@ -36,9 +40,12 @@ def channel_leave(token, channel_id):
     for channel in db.private_channels:
         if channel['channel_id'] == channel_id:
             channel_found = 1
-            
+            owner_exists = 0
             #check if owner
-            if db.users[0]['u_id'] == u_id:
+            for owner in db.channels_and_members[channel_id][0]:
+                if owner['u_id'] == u_id:
+                    owner_exists = 1
+            if owner_exists == 1:
                 #removal from owners 
                 
                 for user in db.channels_and_members[channel_id][0]:
@@ -53,6 +60,8 @@ def channel_leave(token, channel_id):
                     user_found = 1
                 if len(db.channels_and_members[channel_id][1]) == 0 :
                     del db.channels_and_members[channel_id]
+                    del db.private_channels[channel_id]
+                    del db.public_channels[channel_id]
                     
 
     if channel_found != 1 :
