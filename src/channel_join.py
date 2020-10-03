@@ -79,3 +79,4 @@ Assumptions:
     flockr owner can join private channels as well
 """
 #channel_join('1', 2 )
+#print(f"owner + public {db.channels_and_members}")
