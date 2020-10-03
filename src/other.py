@@ -1,5 +1,25 @@
+from database import master_users, user, users, message, messages, channel, channels, member, members
+
+# add functions below if needed
 def clear():
-    pass
+    global master_users
+    master_users.clear()
+    global user
+    user.clear()
+    global users
+    users.clear()
+    global message
+    message.clear()
+    global messages
+    messages.clear()
+    global channel
+    channel.clear()
+    global channels
+    channels.clear()
+    global member
+    member.clear()
+    global members
+    members.clear()
 
 def users_all(token):
     return {

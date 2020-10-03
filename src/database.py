@@ -77,21 +77,3 @@ member = {}
 # Members
 members = []
 
-# add functions below if needed
-def clear():
-    global user
-    user.clear()
-    global users
-    users.clear()
-    global message
-    message.clear()
-    global messages
-    messages.clear()
-    global channel
-    channel.clear()
-    global channels
-    channels.clear()
-    global member
-    member.clear()
-    global members
-    members.clear()
