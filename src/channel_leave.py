@@ -10,6 +10,7 @@ def channel_leave(token, channel_id):
         u_id = int(token)
     except:
         raise AccessError #invalid token
+    
     channel_found = 0
     user_found = 0
     #search public channels and need to update found after private search too or else return input error
@@ -59,6 +60,3 @@ def channel_leave(token, channel_id):
     }
 
 
-print( db.channels_and_members)
-channel_leave('1', 1)
-print( db.channels_and_members)
