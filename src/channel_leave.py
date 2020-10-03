@@ -1,4 +1,4 @@
-import database as db
+import database_edited as db
 from error import InputError
 from error import AccessError
 
@@ -10,6 +10,7 @@ def channel_leave(token, channel_id):
         u_id = int(token)
     except:
         raise AccessError #invalid token
+    
     channel_found = 0
     user_found = 0
     #search public channels and need to update found after private search too or else return input error
@@ -20,13 +21,15 @@ def channel_leave(token, channel_id):
             if db.users[0]['u_id'] == u_id:
                 #removal from owners 
                 for user in db.channels_and_members[channel_id][0]:
-                    if master_users['u_id'] == u_id:
+                    if user['u_id'] == u_id:
                         db.channels_and_members[channel_id][0].remove(user)
             #removal from all members 
             for user in db.channels_and_members[channel_id][1]:
-                if master_users['u_id'] == u_id:
+                if user['u_id'] == u_id:
                     db.channels_and_members[channel_id][1].remove(user)
                     user_found = 1
+                if len(db.channels_and_members[channel_id][1]) == 0 :
+                    del db.channels_and_members[channel_id]
     
     #if reached this point, means that channel/user could possibly be in private channel
 
@@ -39,15 +42,17 @@ def channel_leave(token, channel_id):
                 #removal from owners 
                 
                 for user in db.channels_and_members[channel_id][0]:
-                    if master_users['u_id'] == u_id:
+                    if user['u_id'] == u_id:
                         db.channels_and_members[channel_id][0].remove(user)
                         
             #removal from all members 
             for user in db.channels_and_members[channel_id][1]:
                 #print("yay")
-                if master_users['u_id'] == u_id:
+                if user['u_id'] == u_id:
                     db.channels_and_members[channel_id][1].remove(user)
                     user_found = 1
+                if len(db.channels_and_members[channel_id][1]) == 0 :
+                    del db.channels_and_members[channel_id]
                     
 
     if channel_found != 1 :
@@ -59,6 +64,7 @@ def channel_leave(token, channel_id):
     }
 
 
-print( db.channels_and_members)
+print(db.channels_and_members)
+print("yay")
 channel_leave('1', 1)
-print( db.channels_and_members)
+print(db.channels_and_members)
