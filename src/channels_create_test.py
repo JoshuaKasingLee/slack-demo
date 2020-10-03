@@ -47,8 +47,9 @@ db.clear()
 # channels with duplicate names (should still work?)
 def test_repeat_name():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channels_create(user1_token, 'exceptionalll', True)
-    assert(channels_create(user1_token, 'exceptionalll', True) == 2)
+    user2_token = auth.auth_register('user2@example.com', 'password', 'user2', 'name')['token']
+    channels_create(user1_token, 'duplicate', True)
+    assert(channels_create(user2_token, 'duplicate', True) == 2)
 db.clear()
 
 # INVALID TOKEN
