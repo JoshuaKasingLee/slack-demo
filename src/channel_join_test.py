@@ -10,7 +10,7 @@ from error import AccessError
 
 def test_join() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_join(token_2, channel_id)
     (name, owner_members, all_members)  = channel_details(token_2, channel_id)
@@ -23,7 +23,7 @@ def test_join() :
 
 def test_valid_channel() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_id_2 = 999
     with pytest.raises(InputError) as e:
@@ -32,7 +32,7 @@ def test_valid_channel() :
 
 def test_private_access() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
     channel_id = channels.channels_create(token, "Channel1", False)
     with pytest.raises(AccessError) as e:
         channel_join(token_2, channel_id)

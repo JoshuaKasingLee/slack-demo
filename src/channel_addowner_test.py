@@ -33,7 +33,7 @@ def test_not_global_or_local_owner() :
     (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
     channel_id = channels.channels_create(token, "Channel1", True)
     with pytest.raises(AccessError) as e:
-        channel_addowner(token_2, channel_id, u_id)
+        channel_addowner(token_2, channel_id, u_id_2)
     other.clear()   
 
 def test_global_but_not_local_owner() :

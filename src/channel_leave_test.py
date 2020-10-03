@@ -11,7 +11,7 @@ from error import AccessError
 
 def test_leave() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_join(token_2, channel_id)
     channel_leave(token_2, channel_id)
@@ -33,7 +33,7 @@ def test_valid_channel() :
 
 def test_not_a_channel_member() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
     channel_id = channels.channels_create(token, "Channel1", True)
     with pytest.raises(AccessError) as e:
         channel_leave(token_2, channel_id)
