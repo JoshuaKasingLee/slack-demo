@@ -1,7 +1,7 @@
 import pytest
 from auth_login import auth_login
 from auth_register import auth_register
-from database import clear
+from other import clear
 from error import InputError
 
 # Testing an undefined user

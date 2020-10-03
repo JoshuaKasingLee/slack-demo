@@ -2,7 +2,7 @@ import pytest
 from auth_login import auth_login
 from auth_register import auth_register
 from auth_logout import auth_logout
-from database import clear
+from other import clear
 from error import InputError
 
 # Tests a successful log-out
