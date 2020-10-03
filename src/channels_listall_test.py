@@ -59,7 +59,14 @@ def test_empty():
         'channels': [],
     }
 
-def test_error():
+def test_invalid_token_name():
     token  = "blahblah"
-    with pytest.raiser(AccessError): 
-        channels_listall(token) 
+    with pytest.raises(AccessError): 
+        channels_listall(token)
+
+def test_invalid_user():
+    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")
+    token  = token + "1"
+    with pytest.raises(AccessError): 
+        channels_listall(token)
+    
