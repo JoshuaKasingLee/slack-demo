@@ -32,12 +32,11 @@ def auth_login(email, password):
         if email == user["email"]:
             if password != user["password"]:
                 raise InputError(f"Error, the password is incorrect")
+                
             else:
                 id = user["u_id"]
                 tok = user["token"]
                 user["log"] = True
-                print("Kelly is bad at cantonese")
-
     return {
         'u_id': id,
         'token': tok,
