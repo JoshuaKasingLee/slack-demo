@@ -1,7 +1,8 @@
+from channel_messages import channel_messages
 import pytest
 import database
-import channel_messages
 import error
+import auth
 ## idk what to put here
 
 def test_one_message():
