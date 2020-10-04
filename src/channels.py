@@ -60,14 +60,14 @@ def channels_create(token, name, is_public):
         if user['u_id'] == u_id and user['log'] == True:
             user_exists = 1 # 'log' == True if logged in
     if user_exists != 1:
-        raise AccessError
+        raise AccessError   
     
     ## check valid name
     if len(name) > 20 or len(name) == 0:
         raise InputError
 
     ## add channel details
-    channel_id = len(db.channels) - 1
+    channel_id = len(db.channels)
 
     channel = {}
     channel['channel_id'] = channel_id
