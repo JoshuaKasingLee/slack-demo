@@ -26,7 +26,7 @@ master_users = []
 #   }
 
 # User
-user = {}
+# user = {}
 # user = {"u_id" : 1, "email" : "a", "name_first": "kelly", "name_last": "zhou", "handle_str": "kellyzhou"}
 # The general structure of user is summarised below
 # user = {
@@ -39,7 +39,7 @@ user = {}
 # the auth register file in auth aims to pass in a user to append to users
 
 # Users
-users = []
+# users = []
 # Users contain a list of user
 # An example is as below:
 # [

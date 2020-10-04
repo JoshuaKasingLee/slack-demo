@@ -4,10 +4,10 @@ from database import master_users, user, users, message, messages, channel, chan
 def clear():
     global master_users
     master_users.clear()
-    global user
-    user.clear()
-    global users
-    users.clear()
+    #global user
+    #user.clear()
+    #global users
+    #users.clear()
     global message
     message.clear()
     global messages
