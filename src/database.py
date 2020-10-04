@@ -77,3 +77,12 @@ member = {}
 # Members
 members = []
 
+# channel with members
+# channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
+channels_and_members = {}
+
+
+# messages in channels
+#channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
+#channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
+channels_and_messages = {}
