@@ -1,5 +1,4 @@
-from database import master_users, message, messages, channel, channels, member, members, channels_and_members, channels_and_messages, \
-private_channels, public_channels 
+from database import master_users, channels, channels_and_members, channels_and_messages, private_channels, public_channels
 
 # add functions below if needed
 def clear():
