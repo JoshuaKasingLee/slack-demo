@@ -6,6 +6,7 @@ import auth
 from error import InputError, AccessError
 
 def test_leave() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -24,6 +25,7 @@ def test_leave() :
     clear()
  
 def test_valid_channel() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -34,6 +36,7 @@ def test_valid_channel() :
     clear()
  
 def test_not_a_channel_member() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']

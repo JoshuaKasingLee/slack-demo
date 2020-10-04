@@ -170,6 +170,7 @@ database.clear()
 '''
 
 def test_invalid_token(): # invalid token - AccessError
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
@@ -179,6 +180,7 @@ def test_invalid_token(): # invalid token - AccessError
     clear()
 
 def test_missing_channel(): # invalid channel_id - InputError (bc of channel_details spec)
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -187,6 +189,7 @@ def test_missing_channel(): # invalid channel_id - InputError (bc of channel_det
     clear()
 
 def test_missing_user(): # user doesn't exist - AccessError
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -197,6 +200,7 @@ def test_missing_user(): # user doesn't exist - AccessError
     clear()
 
 def test_negative_index(): # invalid index - InputError
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']

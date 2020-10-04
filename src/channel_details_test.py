@@ -5,7 +5,8 @@ import auth
 import channels
 from other import clear
  
-def test_no_owner():   
+def test_no_owner(): 
+    clear()  
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -25,6 +26,7 @@ def test_no_owner():
     clear()
         
 def test_one_owner():   
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -51,6 +53,7 @@ def test_one_owner():
     clear()
  
 def test_one_owner_two_members(): # two members, one of them is an ownr
+    clear()
     user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id_1 = user_1['u_id']
     token_1 = user_1['token']
@@ -86,6 +89,7 @@ def test_one_owner_two_members(): # two members, one of them is an ownr
     clear()
  
 def test_invalid_token(): # invalid token - AccessError
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -95,6 +99,7 @@ def test_invalid_token(): # invalid token - AccessError
     clear()
  
 def test_not_member(): # user not in channel - AccessError
+    clear()
     user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id_1 = user_1['u_id']
     token_1 = user_1['token']
@@ -107,6 +112,7 @@ def test_not_member(): # user not in channel - AccessError
     clear()
  
 def test_missing_channel(): # invalid channel_id - InputError
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
