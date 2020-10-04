@@ -1,8 +1,6 @@
 import pytest
 from other import clear
-from channel_leave import channel_leave
-from channel_join import channel_join
-from channel_details import channel_details
+from channel import channel_leave, channel_join, channel_details
 import channels
 import auth
 from error import InputError, AccessError
@@ -28,7 +26,8 @@ def test_leave() :
 def test_valid_channel() :
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
-    token = user['token']    channel_id = channels.channels_create(token, "Channel1", True)
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)
     channel_id_2 = 999
     with pytest.raises(InputError) as e:
         channel_leave(token, channel_id_2)

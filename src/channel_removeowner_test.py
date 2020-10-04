@@ -1,9 +1,6 @@
 import pytest
 from other import clear
-from channel_addowner import channel_addowner
-from channel_removeowner import channel_removeowner
-from channel_details import channel_details
-from channel_join import channel_join
+from channel import channel_addowner, channel_removeowner, channel_details, channel_join
 import channels
 import auth
 from error import InputError, AccessError

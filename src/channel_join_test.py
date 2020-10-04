@@ -1,7 +1,6 @@
 import pytest
 from other import clear
-from channel_join import channel_join
-from channel_details import channel_details
+from channel import channel_join, channel_details
 import channels
 import auth
 from error import InputError, AccessError

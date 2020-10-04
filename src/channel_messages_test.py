@@ -1,8 +1,11 @@
-from channel_messages import channel_messages
+from channel import channel_messages
+import channels
 import pytest
-import error
+from error import InputError as InputError
+from error import AccessError as AccessError
 import auth
 from other import clear
+
 
 '''
 def test_one_message():
@@ -167,7 +170,7 @@ database.clear()
 '''
 
 def test_invalid_token(): # invalid token - AccessError
-    channel_id = channels.channels_create(token, "channel1", True)
+    channel_id = channels.channels_create("token", "channel1", True)
     #db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages('heyheyhey', channel_id, 0)

@@ -1,5 +1,4 @@
-from channel_invite import channel_invite
-from channel_details import channel_details
+from channel import channel_invite, channel_details
 import channels
 import pytest
 import database

@@ -1,6 +1,4 @@
-from channel_details import channel_details
-from channel_invite import channel_invite
-from channel_addowner import channel_addowner
+from channel import channel_details, channel_invite, channel_addowner
 import pytest
 import database
 import auth
