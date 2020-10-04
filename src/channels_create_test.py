@@ -1,11 +1,9 @@
 import pytest
-from channels_create import channels_create
-import channels
+from channels import channels_create
 import channel
 import auth
 from error import AccessError
-
-import database_edited_for_channels as db
+from other import clear
 
 ## channels_create
 
@@ -13,36 +11,37 @@ import database_edited_for_channels as db
 def test_first_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     assert(channels_create(user1_token, 'exceptionalll', True) == 0)
-db.clear()
+    clear()
+
 
 # second channel
 def test_second_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     channels_create(user1_token, 'exceptionalll', True)
     assert(channels_create(user1_token, 'exceptionalll_2', True) == 1)
-db.clear()
+    clear()
 
-# test private channel is private
-def test_private():
-    user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channels_create(user1_token, 'exceptionalll', False)
-    success = 0
-    for channel in private_channels:
-        if channel['name'] == 'exceptionalll':
-            success = 1
-    assert(success == 1)
-db.clear()
+# test private channel is private - could potentially test by getting a person to join a private channel to check it doesn't work
+#def test_private():
+#    user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
+#    channels_create(user1_token, 'exceptionalll', False)
+#    success = 0
+#    for channel in private_channels:
+#        if channel['name'] == 'exceptionalll':
+#            success = 1
+#    assert(success == 1)
+#    clear()
 
 # test public channel is public
-def test_public():
-    user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channels_create(user1_token, 'exceptionalll', True)
-    success = 0
-    for channel in public_channels:
-        if channel['name'] == 'exceptionalll':
-            success = 1
-    assert(success == 1)
-db.clear()
+#def test_public():
+#    user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
+#    channels_create(user1_token, 'exceptionalll', True)
+#    success = 0
+#    for channel in public_channels:
+#        if channel['name'] == 'exceptionalll':
+#            success = 1
+#    assert(success == 1)
+#    clear()
 
 # channels with duplicate names (should still work?)
 def test_repeat_name():
@@ -50,30 +49,30 @@ def test_repeat_name():
     user2_token = auth.auth_register('user2@example.com', 'password', 'user2', 'name')['token']
     channels_create(user1_token, 'duplicate', True)
     assert(channels_create(user2_token, 'duplicate', True) == 1)
-db.clear()
+    clear()
 
 # INVALID TOKEN
 def test_invalid_token():
     with pytest.raises(AccessError) as e: # what does this e mean
         channels.channels_create('bad token', 'channel1', True)
-db.clear()
+    clear()
 
 # user does not exist
 def test_missing_user():
     with pytest.raises(AccessError) as e:
         channels.channels_create(996, 'channel1', True)
-db.clear()
+    clear()
 
 # name 20+ characters
 def test_invalid_name_long():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     with pytest.raises(InputError) as e:
         channels_create(user1_token, 'hahahahahahahahahahaaaa', True)
-db.clear()
+    clear()
 
 # name 0 characters
 def test_invalid_name_empty():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     with pytest.raises(InputError) as e:
         channels_create(user1_token, '', True)
-db.clear()
+    clear()
