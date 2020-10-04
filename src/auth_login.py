@@ -41,13 +41,3 @@ def auth_login(email, password):
         'u_id': id,
         'token': tok,
     }
-
-# Assumptions
-"""
-You cannot log-in if another user or the current user is logged in
-"""
-
-# auth_register("kellyczhou@gmail.com", "password", "name", "last")
-
-# auth_login("kellyczhou", "password")
-# print(master_users)

@@ -69,36 +69,8 @@ def auth_register(email, password, name_first, name_last):
     
     # add new user to the master_users database
     master_users.append(master_user)
-    print(master_users)
 
     return {
         'u_id': id,
         'token': str(id),
     }
-
-#auth_register("kellyczhou@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou1@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou2@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou3@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou4@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou5@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou6@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou7@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou8@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou9@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou10@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou11@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou12@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou13@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou14@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou15@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou16@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou17@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou18@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou19@gmail.com", "password", "name", "last")
-#auth_register("kellyczhou20@gmail.com", "password", "name", "last")
-
-
-
-
-# assumes there will be < 100 users with the same name
