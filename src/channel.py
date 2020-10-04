@@ -67,7 +67,7 @@ def channel_details(token, channel_id):
             if_in = 1 # 'log' == True if logged in
     if if_in != 1:
         raise AccessError #u_id doesnt exist / u_id isnt logged in
-   
+    
     db.channels_and_members
     if_in = 0
     try:
@@ -81,9 +81,13 @@ def channel_details(token, channel_id):
     if if_in != 1: 
         raise AccessError
     
+    valid_channel = False
     for channel in db.channels:
         if channel['channel_id'] == channel_id:
             name = channel['name']
+            valid_channel = True
+    if valid_channel == False:
+        raise AccessError(f"Channel does not exist")
         
         
     return {'name': name, 'owner_members': db.channels_and_members[channel_id][0], 'all_members' : db.channels_and_members[channel_id][1] }
