@@ -1,7 +1,5 @@
 import pytest
-from auth_login import auth_login
-from auth_register import auth_register
-from auth_logout import auth_logout
+from auth import auth_login, auth_logout, auth_register
 from other import clear
 from error import InputError
 
