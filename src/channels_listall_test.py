@@ -7,6 +7,7 @@ from other import clear
 
 
 def test_one():
+    clear()
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     assert channels_listall(token) == {
@@ -21,6 +22,7 @@ def test_one():
 
 
 def test_two_owner():
+    clear()
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     channel_id2 = channels.channels_create(token, "Channel2", False)['channel_id']
@@ -40,6 +42,7 @@ def test_two_owner():
         
 
 def test_two_not_owner():
+    clear()
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     token2 = auth.auth_register("email2@gmail.com", "password", "Andreea2", "Viss2")['token']
@@ -60,6 +63,7 @@ def test_two_not_owner():
 
   
 def test_empty():
+    clear()
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     assert channels_listall(token) == {
         'channels': [],
@@ -68,6 +72,7 @@ def test_empty():
     
 
 def test_invalid_token_name():
+    clear()
     token  = "blahblah"
     with pytest.raises(AccessError): 
         channels_listall(token)
@@ -75,6 +80,7 @@ def test_invalid_token_name():
         
 
 def test_invalid_user():
+    clear()
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     token  = token + "1"
     with pytest.raises(AccessError): 
