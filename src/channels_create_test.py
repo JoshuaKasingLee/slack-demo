@@ -3,6 +3,7 @@ from channels import channels_create
 import channel
 import auth
 from error import AccessError
+from error import InputError
 from other import clear
 
 ## channels_create
@@ -12,7 +13,6 @@ def test_first_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     assert(channels_create(user1_token, 'exceptionalll', True) == 0)
     clear()
-
 
 # second channel
 def test_second_channel():
@@ -53,26 +53,26 @@ def test_repeat_name():
 
 # INVALID TOKEN
 def test_invalid_token():
-    with pytest.raises(AccessError) as e: # what does this e mean
-        channels.channels_create('bad token', 'channel1', True)
+    with pytest.raises(AccessError):
+        channels_create('bad token', 'channel1', True)
     clear()
 
 # user does not exist
 def test_missing_user():
-    with pytest.raises(AccessError) as e:
-        channels.channels_create(996, 'channel1', True)
+    with pytest.raises(AccessError):
+        channels_create(996, 'channel1', True)
     clear()
 
 # name 20+ characters
 def test_invalid_name_long():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         channels_create(user1_token, 'hahahahahahahahahahaaaa', True)
     clear()
 
 # name 0 characters
 def test_invalid_name_empty():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         channels_create(user1_token, '', True)
     clear()
