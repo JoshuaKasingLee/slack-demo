@@ -241,7 +241,7 @@ def channel_join(token, channel_id):
     # check if the user is valid
     valid_user = 0
     for user in db.master_users:
-        if user['u_id'] == u_id and user[log] == True:
+        if user['u_id'] == u_id and user['log'] == True:
             valid_user = 1
     if valid_user != 1:
         raise AccessError #user doesnt exist  or isnt logged in ie user token isnt valid

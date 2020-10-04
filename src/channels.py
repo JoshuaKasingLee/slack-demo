@@ -1,5 +1,5 @@
 import database as db
-import channel
+from channel import channel_join
 from error import InputError
 from error import AccessError
 
@@ -58,7 +58,7 @@ def channels_create(token, name, is_public):
     user_exists = 0
     for user in db.master_users:
         if user['u_id'] == u_id and user['log'] == True:
-            valid_user = 1 # 'log' == True if logged in
+            user_exists = 1 # 'log' == True if logged in
     if user_exists != 1:
         raise AccessError   
     
@@ -75,9 +75,12 @@ def channels_create(token, name, is_public):
 
     ## add to various lists
     # extract member details from user
+    member = {}
     name_first = db.master_users[u_id]['name_first']
     name_last = db.master_users[u_id]['name_last']
-    member = { u_id, name_first, name_last }
+    member['u_id'] = u_id
+    member['name_first'] = name_first
+    member['name_last'] = name_last
     members = [member]
     db.channels_and_members[channel_id] = [members, members]
     db.channels.append(channel)

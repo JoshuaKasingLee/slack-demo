@@ -23,7 +23,7 @@ def test_uid_not_channel_owner() :
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
-    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    user_2 = auth.auth_register("email2@gmail.com", "passwords", "Johns", "Smiths")
     u_id_2 = user_2['u_id']
     token_2 = user_2['token'] 
     channel_id = channels.channels_create(token, "Channel1", True)
@@ -35,7 +35,7 @@ def test_not_global_or_local_owner() :
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
-    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    user_2 = auth.auth_register("email2@gmail.com", "passwords", "Johns", "Smiths")
     u_id_2 = user_2['u_id']
     token_2 = user_2['token']   
     channel_id = channels.channels_create(token, "Channel1", True)
@@ -47,7 +47,7 @@ def test_global_but_not_local_owner() :
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
-    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    user_2 = auth.auth_register("email2@gmail.com", "passwords", "Johns", "Smiths")
     u_id_2 = user_2['u_id']
     token_2 = user_2['token']   
     channel_id = channels.channels_create(token_2, "Channel1", True)
