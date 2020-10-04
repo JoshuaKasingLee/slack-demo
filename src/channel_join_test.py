@@ -6,6 +6,7 @@ import auth
 from error import InputError, AccessError
 
 def test_join() :
+    clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -23,6 +24,7 @@ def test_join() :
     clear()
  
 def test_valid_channel() :
+    clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -36,6 +38,7 @@ def test_valid_channel() :
     clear()
  
 def test_private_access() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -48,6 +51,7 @@ def test_private_access() :
     clear()
  
 def test_invalid_token(): # non integer token - accesserror
+    clear()
     user = auth.auth_register("cyruschow@gmail.com", "password", "Cyrus", "Chow")
     u_id = user['u_id']
     token = user['token']
@@ -57,6 +61,7 @@ def test_invalid_token(): # non integer token - accesserror
     clear()
  
 def test_missing_user(): # wrong user token - accesserror
+    clear()
     user = auth.auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
     u_id = user['u_id']
     token = user['token']

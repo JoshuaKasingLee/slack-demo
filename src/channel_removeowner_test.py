@@ -11,6 +11,7 @@ from error import InputError, AccessError
 # regular testing: token is owner and u_id is owner
 
 def test_valid_channel() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -20,6 +21,7 @@ def test_valid_channel() :
     clear()
  
 def test_uid_not_channel_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -32,6 +34,7 @@ def test_uid_not_channel_owner() :
     clear()
  
 def test_not_global_or_local_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -44,6 +47,7 @@ def test_not_global_or_local_owner() :
     clear()   
  
 def test_global_but_not_local_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']

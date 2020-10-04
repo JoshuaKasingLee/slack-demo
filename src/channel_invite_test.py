@@ -8,6 +8,7 @@ from other import clear # to change later
 
 # The creator is added to the channel
 def test_invite_success():
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -23,6 +24,7 @@ def test_invite_success():
  
 # Test a new member is added successfully
 def test_add_member():   
+    clear()
     user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id_1 = user_1['u_id']
     token_1 = user_1['token']
@@ -42,6 +44,7 @@ def test_add_member():
     
 # Test an invalid channel when none exist
 def test_invalid_channel_1():
+    clear()
     user = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id = user['u_id']
     token = user['token']
@@ -52,6 +55,7 @@ def test_invalid_channel_1():
  
 # # Test an invalid channel when one already exists
 def test_invalid_channel_2():
+    clear()
     user = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id = user['u_id']
     token = user['token']
@@ -63,6 +67,7 @@ def test_invalid_channel_2():
  
 # # Test invalid user
 def test_invalid_user():
+    clear()
     user = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     u_id = user['u_id']
     token = user['token']
