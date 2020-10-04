@@ -5,9 +5,12 @@ import pytest
 import database
 import auth
 import channels
-
+from other import clear
+ 
 def test_no_owner():   
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Andreea", "Vissarion")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_invite(token, channel_id, u_id)   
     assert channel_details(token, channel_id) == {
@@ -21,11 +24,12 @@ def test_no_owner():
             }
         ],
     }
-
-database.clear()
+    clear()
         
 def test_one_owner():   
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Hayden", "Jacobs")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_invite(token, channel_id, u_id) 
     channel_addowner(token, channel_id, u_id)   
@@ -46,15 +50,20 @@ def test_one_owner():
             }
         ],
     }
-
+    clear()
+ 
 def test_one_owner_two_members(): # two members, one of them is an ownr
-    (u_id1, token1) = auth.auth_register("email1@gmail.com", "password", "Hayden", "Jacobs")
-    (u_id2, token2) = auth.auth_register("email2@gmail.com", "password", "Andreea", "Vissarion")
+    user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
+    u_id_1 = user_1['u_id']
+    token_1 = user_1['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    u_id_2 = user_2['u_id']
+    token_2 = user_2['token']
     channel_id = channels.channels_create(token, "Channel1", True)
-    channel_invite(token1, channel_id, u_id1)
-    channel_addowner(token1, channel_id, u_id1)
-    channel_invite(token1, channel_id, u_id2)
-    assert channel_details(token1, channel_id) == {
+    channel_invite(token_1, channel_id, u_id_1)
+    channel_addowner(token_1, channel_id, u_id_1)
+    channel_invite(token_1, channel_id, u_id_2)
+    assert channel_details(token_1, channel_id) == {
         'name': 'Channel1',
         'owner_members': [
             {
@@ -76,21 +85,33 @@ def test_one_owner_two_members(): # two members, one of them is an ownr
             }
         ],
     }
-
+    clear()
+ 
 def test_invalid_token(): # invalid token - AccessError
-    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
     with pytest.raises(AccessError):
         channel_details('imalil', channel_id)
-
+    clear()
+ 
 def test_not_member(): # user not in channel - AccessError
-    (u_id1, token1) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
-    (u_id2, token2) = auth.auth_register("user2@gmail.com", "password", "user2", "lastname2")
-    channel_id = channels.channels_create(token1, "channel1", True)
+    user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
+    u_id_1 = user_1['u_id']
+    token_1 = user_1['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    u_id_2 = user_2['u_id']
+    token_2 = user_2['token']
+    channel_id = channels.channels_create(token_1, "channel1", True)
     with pytest.raises(AccessError):
-        channel_details(token2, channel_id)
-
+        channel_details(token_2, channel_id)
+    clear()
+ 
 def test_missing_channel(): # invalid channel_id - InputError
-    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     with pytest.raises(InputError):
         channel_details(token, channel_id)
+    clear()

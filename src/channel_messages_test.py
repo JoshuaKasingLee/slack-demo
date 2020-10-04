@@ -1,8 +1,8 @@
 from channel_messages import channel_messages
 import pytest
-import database
 import error
 import auth
+from other import clear
 
 '''
 def test_one_message():
@@ -171,25 +171,31 @@ def test_invalid_token(): # invalid token - AccessError
     #db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages('heyheyhey', channel_id, 0)
-database.clear()
+    clear()
 
 def test_missing_channel(): # invalid channel_id - InputError (bc of channel_details spec)
-    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     with pytest.raises(InputError):
         channel_messages(token, channel_id, 0)
-database.clear()
+    clear()
 
 def test_missing_user(): # user doesn't exist - AccessError
-    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
     db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages(22, channel_id, 1)
-database.clear()
+    clear()
 
 def test_negative_index(): # invalid index - InputError
-    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
     with pytest.raises(InputError):
         channel_messages(token, channel_id, -10)
-database.clear()
+    clear()

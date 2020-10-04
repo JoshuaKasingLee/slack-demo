@@ -1,16 +1,18 @@
 import pytest
-import database
-import other
+from other import clear
 from channel_join import channel_join
 from channel_details import channel_details
 import channels
 import auth
-from error import InputError
-from error import AccessError
+from error import InputError, AccessError
 
 def test_join() :
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    u_id_2 = user_2['u_id']
+    token_2 = user_2['token']   
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_join(token_2, channel_id)
     (name, owner_members, all_members)  = channel_details(token_2, channel_id)
@@ -19,36 +21,47 @@ def test_join() :
         if member['u_id'] == u_id_2:
             is_in = 1
     assert (is_in == 1)
-    other.clear()
-
+    clear()
+ 
 def test_valid_channel() :
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    u_id_2 = user_2['u_id']
+    token_2 = user_2['token'] 
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_id_2 = 999
     with pytest.raises(InputError) as e:
         channel_join(token_2, channel_id_2)
-    other.clear()
-
+    clear()
+ 
 def test_private_access() :
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou")   
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    u_id_2 = user_2['u_id']
+    token_2 = user_2['token']   
     channel_id = channels.channels_create(token, "Channel1", False)
     with pytest.raises(AccessError) as e:
         channel_join(token_2, channel_id)
-    other.clear()
-
-
+    clear()
+ 
 def test_invalid_token(): # non integer token - accesserror
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
     with pytest.raises(AccessError):
         channel_join('heyheyhey', channel_id)
-    other.clear()
-
+    clear()
+ 
 def test_missing_user(): # wrong user token - accesserror
-    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    u_id = user['u_id']
+    token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)
     with pytest.raises(AccessError):
         channel_join(39, channel_id)
-    other.clear()
+    clear()
