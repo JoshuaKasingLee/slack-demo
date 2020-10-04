@@ -60,22 +60,26 @@ master_users = []
 # ]
 
 # Message
-message = {}
+#message = {}
 
 # Messages
-messages = []
+#messages = []
 
 # Channel
-channel = {}
+#channel = {}
 
 # Channels
+# List of dictionaries, where each dictionary contains types { channel_id, name }
 channels = []
 
+private_channels = [] # [{'channel_id': 2, 'name': 'channel1'},]
+public_channels = []# [{'channel_id': 1, 'name': 'channel2'}, ]
+
 # Member
-member = {}
+#member = {}
 
 # Members
-members = []
+#members = []
 
 # channel with members
 # channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
