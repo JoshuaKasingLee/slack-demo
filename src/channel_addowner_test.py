@@ -51,7 +51,7 @@ def test_global_but_not_local_owner() :
 
 def test_promote() :
     (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
-    (u_id_2 token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
+    (u_id_2, token_2) = auth.auth_register("email2@gmail.com", "password2", "Kelly", "Zhou") 
     channel_id = channels.channels_create(token, "Channel1", True)
     channel_join(token_2, channel_id)
     channel_addowner(token_1, channel_id, u_id_2)
