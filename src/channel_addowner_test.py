@@ -11,8 +11,9 @@ from error import AccessError
 # valid channel (input error), u_id is already owner (input error). 
 # access error if token is not global owner OR owner of channel
 # regular testing: token is owner AND, u_id is not part of channel at all. case 2: token is owner AND u_id is already regular member
- 
+
 def test_valid_channel() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -22,6 +23,7 @@ def test_valid_channel() :
     clear()
  
 def test_already_channel_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -31,6 +33,7 @@ def test_already_channel_owner() :
     clear()
  
 def test_not_global_or_local_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -43,6 +46,7 @@ def test_not_global_or_local_owner() :
     clear() 
  
 def test_global_but_not_local_owner() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
@@ -60,6 +64,7 @@ def test_global_but_not_local_owner() :
     clear()   
  
 def test_promote() :
+    clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
