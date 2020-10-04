@@ -8,8 +8,10 @@ from error import AccessError
 #channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
 channels_and_messages = {}
 
-assumptions: we can only return 50 messages. between start and start+50 there are either 51 or 49 (inclusive or exclusive).
+we can only return 50 messages. between start and start+50 there are either 51 or 49 (inclusive or exclusive).
 i will return between start and start+49 inclusive, with end index = start+50 (or whatever it happens to be, depending on message count).
+
+ASSUMPTIONS: InputError when start < 0
 '''
 
 def channel_messages(token, channel_id, start):
@@ -29,11 +31,14 @@ def channel_messages(token, channel_id, start):
     except:
         raise InputError # channel doesn't exist
     if access == 0:
-        raise AccessError # user is not a member
+        raise AccessError # user is not a member OR invalid token
+
+    if start < 0:
+        raise InputError
 
     messages = db.channels_and_messages[channel_id]
 
-    ## check 'start' isn't greater than total # of messages
+    ## check 'start' isn't greater than total # of messages OR negative
     message_max = len(messages)
     if start > message_max:
         raise InputError

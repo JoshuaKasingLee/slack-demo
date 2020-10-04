@@ -3,8 +3,8 @@ import pytest
 import database
 import error
 import auth
-## idk what to put here
 
+'''
 def test_one_message():
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
     channel_id = channels.channels_create(token, "channel1", True)
@@ -29,7 +29,7 @@ def test_one_message():
         'end': -1,
     }
     )
-clear()
+database.clear()
 
 def test_two_messages():
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
@@ -66,7 +66,7 @@ def test_two_messages():
         'end': -1,
     }
     )
-clear()
+database.clear()
 
 def test_two_messages_start_1():
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
@@ -108,7 +108,7 @@ def test_two_messages_start_1():
         'end': -1,
     }
     )
-clear()
+database.clear()
 
 def test_return_index(): # so it returns an index that isn't -1
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
@@ -140,7 +140,7 @@ def test_return_index(): # so it returns an index that isn't -1
         'end': 50,
     }
     )
-
+database.clear()
 
 def test_no_messages(): # raise InputError
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
@@ -148,6 +148,7 @@ def test_no_messages(): # raise InputError
     db.channels_and_messages[channel_id] = []
     with pytest.raises(InputError):
         channel_messages(token, channel_id, 1)
+database.clear()
 
 def test_large_index(): # index too large, raise InputError
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
@@ -162,20 +163,33 @@ def test_large_index(): # index too large, raise InputError
         ]
     with pytest.raises(InputError):
         channel_messages(token, channel_id, 10)
+database.clear()
+'''
 
 def test_invalid_token(): # invalid token - AccessError
     channel_id = channels.channels_create(token, "channel1", True)
-    db.channels_and_messages[channel_id] = []
+    #db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
         channel_messages('heyheyhey', channel_id, 0)
+database.clear()
 
 def test_missing_channel(): # invalid channel_id - InputError (bc of channel_details spec)
     (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
     with pytest.raises(InputError):
         channel_messages(token, channel_id, 0)
+database.clear()
 
 def test_missing_user(): # user doesn't exist - AccessError
+    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
     channel_id = channels.channels_create(token, "channel1", True)
     db.channels_and_messages[channel_id] = []
     with pytest.raises(AccessError):
-        channel_messages(22, channel_id, 0)
+        channel_messages(22, channel_id, 1)
+database.clear()
+
+def test_negative_index(): # invalid index - InputError
+    (u_id, token) = auth.auth_register("user1@gmail.com", "password", "user1", "lastname1")
+    channel_id = channels.channels_create(token, "channel1", True)
+    with pytest.raises(InputError):
+        channel_messages(token, channel_id, -10)
+database.clear()

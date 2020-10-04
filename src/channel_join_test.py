@@ -37,3 +37,18 @@ def test_private_access() :
     with pytest.raises(AccessError) as e:
         channel_join(token_2, channel_id)
     other.clear()
+
+
+def test_invalid_token(): # non integer token - accesserror
+    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
+    channel_id = channels.channels_create(token, "channel1", True)
+    with pytest.raises(AccessError):
+        channel_join('heyheyhey', channel_id)
+    other.clear()
+
+def test_missing_user(): # wrong user token - accesserror
+    (u_id, token) = auth.auth_register("email@gmail.com", "password", "Joshua", "Lee")
+    channel_id = channels.channels_create(token, "channel1", True)
+    with pytest.raises(AccessError):
+        channel_join(39, channel_id)
+    other.clear()
