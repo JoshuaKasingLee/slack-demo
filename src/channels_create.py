@@ -29,7 +29,7 @@ def channels_create(token, name, is_public):
         raise InputError
 
     ## add channel details
-    channel_id = len(db.channels) + 1
+    channel_id = len(db.channels)
 
     channel = {}
     channel['channel_id'] = channel_id

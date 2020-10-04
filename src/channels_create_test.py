@@ -12,14 +12,14 @@ import database_edited_for_channels as db
 # first channel
 def test_first_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    assert(channels_create(user1_token, 'exceptionalll', True) == 1)
+    assert(channels_create(user1_token, 'exceptionalll', True) == 0)
 db.clear()
 
 # second channel
 def test_second_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     channels_create(user1_token, 'exceptionalll', True)
-    assert(channels_create(user1_token, 'exceptionalll_2', True) == 2)
+    assert(channels_create(user1_token, 'exceptionalll_2', True) == 1)
 db.clear()
 
 # test private channel is private
@@ -49,7 +49,7 @@ def test_repeat_name():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     user2_token = auth.auth_register('user2@example.com', 'password', 'user2', 'name')['token']
     channels_create(user1_token, 'duplicate', True)
-    assert(channels_create(user2_token, 'duplicate', True) == 2)
+    assert(channels_create(user2_token, 'duplicate', True) == 1)
 db.clear()
 
 # INVALID TOKEN
