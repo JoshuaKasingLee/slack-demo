@@ -8,7 +8,6 @@ from error import InputError, AccessError
 def test_join() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
-    u_id = user['u_id']
     token = user['token']
     user_2 = auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
     u_id_2 = user_2['u_id']
@@ -26,34 +25,28 @@ def test_join() :
 def test_valid_channel() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
-    u_id = user['u_id']
     token = user['token']
     user_2 = auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
-    u_id_2 = user_2['u_id']
-    token_2 = user_2['token'] 
-    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    token_2 = user_2['token']
     channel_id_2 = 999
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         channel_join(token_2, channel_id_2)
     clear()
  
 def test_private_access() :
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
-    u_id = user['u_id']
     token = user['token']
     user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
-    u_id_2 = user_2['u_id']
     token_2 = user_2['token']   
     channel_id = channels.channels_create(token, "Channel1", False)["channel_id"]
-    with pytest.raises(AccessError) as e:
+    with pytest.raises(AccessError):
         channel_join(token_2, channel_id)
     clear()
  
 def test_invalid_token(): # non integer token - accesserror
     clear()
     user = auth.auth_register("cyruschow@gmail.com", "password", "Cyrus", "Chow")
-    u_id = user['u_id']
     token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)["channel_id"]
     with pytest.raises(AccessError):
@@ -63,7 +56,6 @@ def test_invalid_token(): # non integer token - accesserror
 def test_missing_user(): # wrong user token - accesserror
     clear()
     user = auth.auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
-    u_id = user['u_id']
     token = user['token']
     channel_id = channels.channels_create(token, "channel1", True)["channel_id"]
     with pytest.raises(AccessError):
