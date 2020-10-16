@@ -89,8 +89,6 @@ def test_invalid_user():
         
 
 
-## tests which don't work
-
 # there are no channels
 def test_no_channels():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
@@ -123,7 +121,7 @@ def test_two_channels():
 def test_invalid_token():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     channel_1 = channels.channels_create(user1_token, 'channel1', True)
-    with pytest.raises(AccessError) as e: # what does this e mean
+    with pytest.raises(AccessError) as e: 
         channels_listall('bad token')
     clear()
 
