@@ -5,7 +5,7 @@ import channels
 import auth
 from error import InputError, AccessError
 
-def test_join() :
+def test_join():
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -22,9 +22,9 @@ def test_join() :
     assert (is_in == 1)
     clear()
  
-def test_valid_channel() :
+def test_valid_channel():
     clear()
-    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     user_2 = auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
     token_2 = user_2['token']
     channel_id_2 = 999
@@ -32,7 +32,7 @@ def test_valid_channel() :
         channel_join(token_2, channel_id_2)
     clear()
  
-def test_private_access() :
+def test_private_access():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']

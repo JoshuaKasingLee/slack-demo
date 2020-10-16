@@ -27,7 +27,7 @@ def test_valid_channel():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
-    channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
+    channels.channels_create(token, "Channel1", True)['channel_id']
     channel_id_2 = 999
     with pytest.raises(InputError):
         channel_leave(token, channel_id_2)
