@@ -15,10 +15,8 @@ def test_leave():
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     channel_join(token_2, channel_id)
     channel_leave(token_2, channel_id)
-    details = channel_details(token, channel_id)
-    all_members = details['all_members']
+    all_members = channel_details(token, channel_id)['all_members']
     is_in = 0
-    print(all_members)
     for member in all_members:
         if member['u_id'] == u_id_2:
             is_in = 1
@@ -31,17 +29,17 @@ def test_valid_channel():
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     channel_id_2 = 999
-    with pytest.raises(InputError) as e:
+    with pytest.raises(InputError):
         channel_leave(token, channel_id_2)
     clear()
  
-def test_not_a_channel_member() :
+def test_not_a_channel_member():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
     user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
     token_2 = user_2['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
-    with pytest.raises(AccessError) as e:
+    with pytest.raises(AccessError):
         channel_leave(token_2, channel_id)
     clear()
