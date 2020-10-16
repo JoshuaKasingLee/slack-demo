@@ -5,6 +5,7 @@ import channels
 from other import clear
 from error import AccessError, InputError
 import database as db
+
 def test_owner(): 
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
@@ -30,40 +31,30 @@ def test_owner():
     clear()
 def test_one_owner_two_members(): # two members, one of them is an ownr
     clear()
-    print(db.channels_and_members)
-    print("         ")
     user_1 = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
     token_1 = user_1['token']
     u_id_1 = user_1['u_id']
-    print(u_id_1)
-    print("         ")
     user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
     u_id_2 = user_2['u_id']
-    print(u_id_2)
-    print("         ")
     channel_id = channels.channels_create(token_1, "Channel1", True)['channel_id']
-    print(db.channels_and_members)
-    print("         ")
     channel_invite(token_1, channel_id, u_id_2)
-    print(db.channels_and_members)
-    print("         ")
     assert channel_details(token_1, channel_id) == {
         'name': 'Channel1',
         'owner_members': [
             {
-                'u_id': u_id_1, # should this be a 0?
+                'u_id': u_id_1,
                 'name_first': 'Andreea',
                 'name_last': 'Vissarion',
             }
         ],
         'all_members': [
             {
-                'u_id': u_id_1, # should this be a 0?
+                'u_id': u_id_1,
                 'name_first': 'Andreea',
                 'name_last': 'Vissarion',
             },
             {
-                'u_id': u_id_2, # should this be a 1?
+                'u_id': u_id_2,
                 'name_first': 'John',
                 'name_last': 'Smith',
             }
