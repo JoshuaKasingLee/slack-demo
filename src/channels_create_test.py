@@ -13,7 +13,7 @@ def test_first_channel():
     clear()
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     assert(channels_create(user1_token, 'exceptionalll', True) == {
-        'channel_id': 0, # is this right?
+        'channel_id': 0, 
     })
     clear()
 
@@ -23,7 +23,7 @@ def test_second_channel():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
     channels_create(user1_token, 'exceptionalll', True)
     assert(channels_create(user1_token, 'exceptionalll_2', True) == {
-        'channel_id': 1, # is this right?
+        'channel_id': 1,
     })
     clear()
 
@@ -33,7 +33,7 @@ def test_repeat_name():
     user2_token = auth.auth_register('user2@example.com', 'password', 'user2', 'name')['token']
     channels_create(user1_token, 'duplicate', True)
     assert(channels_create(user2_token, 'duplicate', True) == {
-        'channel_id': 1, # is this right?
+        'channel_id': 1, 
     })
     clear()
 
