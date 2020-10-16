@@ -81,8 +81,8 @@ def channels_create(token, name, is_public):
     member['u_id'] = u_id
     member['name_first'] = name_first
     member['name_last'] = name_last
-    members = [member]
-    db.channels_and_members[channel_id] = [members, members]
+    # members = [member]
+    db.channels_and_members[channel_id] = [[member], [member]]
     db.channels.append(channel)
     if is_public == True:
         db.public_channels.append(channel)

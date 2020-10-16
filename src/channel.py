@@ -24,14 +24,12 @@ def channel_invite(token, channel_id, u_id):
             if member['u_id'] == u_id_invitee:
                 if_in = 1
             if member['u_id'] == u_id: # already in channel
-                return{
-                }
+                raise InputError
     except:
         raise InputError
-                   
+
     if if_in != 1: 
         raise AccessError
-    
     if_in = 0
     for user in db.master_users:
         if user['u_id'] == u_id:
@@ -88,7 +86,6 @@ def channel_details(token, channel_id):
             valid_channel = True
     if valid_channel == False:
         raise AccessError(f"Channel does not exist")
-        
         
     return {'name': name, 'owner_members': db.channels_and_members[channel_id][0], 'all_members' : db.channels_and_members[channel_id][1] }
     
@@ -259,7 +256,7 @@ def channel_join(token, channel_id):
     except:
         raise InputError #channel deosnt exist
  
-
+    # print(db.channels_and_members[channel_id][0])
     for channel in db.public_channels:
         if channel['channel_id'] == channel_id:
             if db.master_users[0]['u_id'] == u_id:
@@ -270,9 +267,7 @@ def channel_join(token, channel_id):
                 member['name_last'] = db.master_users[0]['name_last']
                 # join to all_members:
                 db.channels_and_members[channel_id][1].append(member)
-                # join to owner_members:
-               # db.channels_and_members[channel_id][0].append(member)
-                #print(f"owner + public {db.channels_and_members}")
+                # print(db.channels_and_members[channel_id][0])
             elif db.master_users[0]['u_id'] != u_id:
                     #  join as normal member only
                     member ={}
@@ -281,9 +276,9 @@ def channel_join(token, channel_id):
                             member['u_id'] = u_id
                             member['name_first'] = user['name_first']
                             member['name_last'] = user['name_last']
-                    # join to all_members:                    
+                    # join to all_members:
+               
                     db.channels_and_members[channel_id][1].append(member)
-                    #print(f"normal {db.channels_and_members}")
             return {
             }
         
@@ -302,9 +297,6 @@ def channel_join(token, channel_id):
              member['name_last'] = db.master_users[0]['name_last']
              # join to all_members:
              db.channels_and_members[channel_id][1].append(member)
-             # join to owner_members:
-             #db.channels_and_members[channel_id][0].append(member)
-             #print(f"owner + priate {db.channels_and_members}")
              return {
              }
 
