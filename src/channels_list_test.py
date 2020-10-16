@@ -47,7 +47,7 @@ def test_two_not_owner():
     token = auth.auth_register("email@gmail.com", "password", "Andreea", "Viss")['token']
     channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     token2 = auth.auth_register("email2@gmail.com", "password", "Andreea2", "Viss2")['token']
-    channel_id2 = channels.channels_create(token2, "Channel2", False)['channel_id']
+    channels.channels_create(token2, "Channel2", False)['channel_id']
     assert channels_list(token) == {
         'channels': [
         	{

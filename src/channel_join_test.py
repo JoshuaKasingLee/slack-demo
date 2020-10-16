@@ -25,7 +25,6 @@ def test_join() :
 def test_valid_channel() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
-    token = user['token']
     user_2 = auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
     token_2 = user_2['token']
     channel_id_2 = 999

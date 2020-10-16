@@ -98,37 +98,37 @@ def test_no_channels():
 # there is one public channel
 def test_one_public():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel_1 = channels.channels_create(user1_token, 'channel1', True)
+    channels.channels_create(user1_token, 'channel1', True)
     assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }]})
     clear()
 
 # there is one private channel
 def test_one_private():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel_1 = channels.channels_create(user1_token, 'channel1', False)
+    channels.channels_create(user1_token, 'channel1', False)
     assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }],})
     clear()
     
 # there are two channels
 def test_two_channels():
     user1_token = auth.auth_register('user@example.com', 'password', 'user1', 'name')['token']
-    channel_1 = channels.channels_create(user1_token, 'channel1', True)
-    channel_2 = channels.channels_create(user1_token, 'channel2', False)
+    channels.channels_create(user1_token, 'channel1', True)
+    channels.channels_create(user1_token, 'channel2', False)
     assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }, { 'channel_id': 1, 'name': 'channel2' }],})
     clear()
 
 # INVALID TOKEN
 def test_invalid_token():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel_1 = channels.channels_create(user1_token, 'channel1', True)
-    with pytest.raises(AccessError) as e: 
+    channels.channels_create(user1_token, 'channel1', True)
+    with pytest.raises(AccessError): 
         channels_listall('bad token')
     clear()
 
 # user does not exist
 def test_missing_user():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel_1 = channels.channels_create(user1_token, 'channel1', True)
-    with pytest.raises(AccessError) as e:
+    channels.channels_create(user1_token, 'channel1', True)
+    with pytest.raises(AccessError):
         channels_listall(996)
     clear()
