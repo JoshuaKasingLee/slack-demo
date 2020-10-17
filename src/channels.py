@@ -4,18 +4,10 @@ from error import InputError
 from error import AccessError
 
 def channels_list(token):
-    # check if token is valid
-    try:
-        u_id = int(token)
-    except:
-        raise AccessError #invalid token
-    valid_user = 0
-    for user in db.master_users:
-        if user['u_id'] == u_id and user['log'] == True:
-            valid_user = 1 # 'log' == True if logged in
-    if valid_user != 1:
-        raise AccessError
-    
+
+    u_id = token_check(token)
+    user_exist_check(u_id)
+
     channels = []
     for key in db.channels_and_members:
         for member in db.channels_and_members[key][1]:
@@ -31,16 +23,9 @@ def channels_list(token):
 
 
 def channels_listall(token):
-    try:
-        u_id = int(token)
-    except:
-        raise AccessError #invalid token
-    valid_user = 0
-    for user in db.master_users:
-        if user['u_id'] == u_id and user['log'] == True:
-            valid_user = 1 # 'log' == True if logged in
-    if valid_user != 1:
-        raise AccessError
+
+    u_id = token_check(token)
+    user_exist_check(u_id)
              
     return {
         'channels': db.channels
@@ -48,19 +33,9 @@ def channels_listall(token):
 
 
 def channels_create(token, name, is_public):
-    ## check valid token
-    try:
-        u_id = int(token)
-    except:
-        raise AccessError
-    
-    ## check user exists (not currently working, idk)
-    user_exists = 0
-    for user in db.master_users:
-        if user['u_id'] == u_id and user['log'] == True:
-            user_exists = 1 # 'log' == True if logged in
-    if user_exists != 1:
-        raise AccessError   
+
+    u_id = token_check(token)
+    user_exist_check(u_id) 
     
     ## check valid name
     if len(name) > 20 or len(name) == 0:
@@ -68,20 +43,17 @@ def channels_create(token, name, is_public):
 
     ## add channel details
     channel_id = len(db.channels)
-
     channel = {}
     channel['channel_id'] = channel_id
     channel['name'] = name
 
-    ## add to various lists
-    # extract member details from user
-    member = {}
+    ## add to database
     name_first = db.master_users[u_id]['name_first']
     name_last = db.master_users[u_id]['name_last']
+    member = {}
     member['u_id'] = u_id
     member['name_first'] = name_first
     member['name_last'] = name_last
-    # members = [member]
     db.channels_and_members[channel_id] = [[member], [member]]
     db.channels.append(channel)
     if is_public == True:
@@ -93,5 +65,22 @@ def channels_create(token, name, is_public):
     channel_join(token, channel_id)
 
     return {
-        'channel_id': channel_id, # is this right?
+        'channel_id': channel_id,
     }
+
+def token_check(token):
+    ''' check if the token string is a valid integer'''
+    try:
+        u_id = int(token)
+    except:
+        raise AccessError #invalid token
+    return u_id
+
+def user_exist_check(u_id):
+    ''' check if a user exists for the given u_id'''
+    valid_user = 0
+    for user in db.master_users:
+        if user['u_id'] == u_id and user['log'] == True:
+            valid_user = 1 # 'log' == True if logged in
+    if valid_user != 1:
+        raise AccessError
