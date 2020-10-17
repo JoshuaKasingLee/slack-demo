@@ -3,19 +3,10 @@ from error import InputError
 from database import master_users
 
 def auth_login(email, password):
-    # check whether email is valid
-    # given regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
 
-    # check if a user is already logged on
-    # for id in master_users:
-    #     if id["log"] == True:
-    #         # Loggin in when another user is logged in should raise an input error as follows
-    #         raise InputError(f"Error, a user is already logged in")
+    validate_email(email)
 
-    # check whether email address is in the database and check if the password is correct
+    # check for email address in database
     if len(master_users) == 0:
         raise InputError(f"Error, {email} has not been registered")
     exists = False
@@ -25,12 +16,11 @@ def auth_login(email, password):
     if exists == False:
         raise InputError(f"Error, {email} has not been registered")
 
-    # check if password is wrong and raise error
+    # check if password is wrong
     for user in master_users:
         if email == user["email"]:
             if password != user["password"]:
                 raise InputError(f"Error, the password is incorrect")
-                
             else:
                 id = user["u_id"]
                 tok = user["token"]
@@ -42,7 +32,8 @@ def auth_login(email, password):
 
 
 def auth_logout(token):
-    # check to see if token exists
+
+    # check if token exists
     # if the token is active, log the user out
     for users in master_users:
         if token == users["token"] and users["log"] == True:
@@ -50,18 +41,15 @@ def auth_logout(token):
             return {
             'is_success': True,
         }
-    # else, the token is inactive, return false
+    # else token is inactive, return false
     return {
         'is_success': False,
     }
 
 
 def auth_register(email, password, name_first, name_last):
-    # check whether email is valid
-    # given regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
+
+    validate_email(email)
 
     # check whether email address is being used by another user
     for id in master_users:
@@ -126,3 +114,9 @@ def auth_register(email, password, name_first, name_last):
         'u_id': id,
         'token': str(id),
     }
+
+def validate_email(email):
+    '''check valid email, regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/'''
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if not re.search(regex, email):
+        raise InputError(f"Error, {email} is invalid")
