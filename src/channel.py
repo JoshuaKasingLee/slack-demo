@@ -5,7 +5,6 @@ from error import AccessError
 def channel_invite(token, channel_id, u_id):
     # can only invite if member of channel
     #instantly join once invited - wouldnt be owner because not the first in
-    #print(db.channels_and_members)
 
     u_id_inviter = token_check(token)
     token_user_exist_check(u_id_inviter)
@@ -23,7 +22,6 @@ def channel_invite(token, channel_id, u_id):
             member['name_last'] = user['name_last']
     # join to all_members:
     db.channels_and_members[channel_id][1].append(member)
-    #print(db.channels_and_members)
     return {
         
     }
@@ -56,15 +54,7 @@ def channel_messages(token, channel_id, start):
     token_user_exist_check(u_id)
     
     ## check if user is a member of channel/ if channel exists
-    access = 0
-    try:
-        for member in db.channels_and_members[channel_id][1]:
-            if member['u_id'] == u_id:
-                access = 1
-    except:
-        raise InputError # channel doesn't exist
-    if access == 0:
-        raise AccessError # user is not a member OR invalid token
+    in_all_members(channel_id, u_id)
 
     if start < 0:
         raise InputError
@@ -164,7 +154,6 @@ def channel_leave(token, channel_id):
 def channel_join(token, channel_id):
     # can only join if channel is public and go in all_members
     # UNLESS they are the flock owner, then can join private too and go in all_members
-    #print( db.channels_and_members)
     u_id = token_check(token)
     
     # check if the user is valid
@@ -179,7 +168,6 @@ def channel_join(token, channel_id):
     except:
         raise InputError #channel deosnt exist
  
-    # print(db.channels_and_members[channel_id][0])
     for channel in db.public_channels:
         if channel['channel_id'] == channel_id:
             if db.master_users[0]['u_id'] == u_id:
@@ -190,7 +178,6 @@ def channel_join(token, channel_id):
                 member['name_last'] = db.master_users[0]['name_last']
                 # join to all_members:
                 db.channels_and_members[channel_id][1].append(member)
-                # print(db.channels_and_members[channel_id][0])
             elif db.master_users[0]['u_id'] != u_id:
                     #  join as normal member only
                     member ={}
@@ -229,13 +216,11 @@ def channel_join(token, channel_id):
 def channel_addowner(token, channel_id, u_id):
     # can only add owner if token is already an owner of channel or owner of flockr
     # u_id becomes owner
-    #print(db.channels_and_members)
     u_id_inviter = token_check(token)
      
     token_user_exist_check(u_id_inviter)
     
     if_in = 0
-    #print(db.channels_and_members[channel_id][0])
     try:
         for member in db.channels_and_members[channel_id][0]:
             if member['u_id'] == u_id_inviter:
@@ -249,7 +234,6 @@ def channel_addowner(token, channel_id, u_id):
         if_in = 1
             
     if if_in != 1: 
-        #print(if_in)
         raise AccessError
     
     valid_user = 0
@@ -270,8 +254,7 @@ def channel_addowner(token, channel_id, u_id):
             if member['u_id'] == u_id: # invited person is already a member of channel                    
                 in_all = 1
     if in_all == 0:
-        db.channels_and_members[channel_id][1].append(new_owner)
-    #print(db.channels_and_members)     
+        db.channels_and_members[channel_id][1].append(new_owner)   
     return {
     }
 
@@ -285,7 +268,6 @@ def channel_removeowner(token, channel_id, u_id):
     
     token_if_in = 0
     invited_if_in = 0
-    #print(db.channels_and_members[channel_id][0])
     try:
         for member in db.channels_and_members[channel_id][0]:
             if member['u_id'] == u_id_inviter:
@@ -294,13 +276,14 @@ def channel_removeowner(token, channel_id, u_id):
                 invited_if_in = 1
     except:
         raise InputError #channel_id doesnt exist 
+
+    if invited_if_in != 1 : #does u_id exist in the 'owners of channel'
+    raise InputError
                    
     if token_if_in != 1 and db.master_users[0]['u_id'] != u_id_inviter: 
         #checking if possibly global owner
         raise AccessError
     
-    if invited_if_in != 1 : #does u_id exist in the 'owners of channel'
-        raise InputError
 
     for user in db.channels_and_members[channel_id][0]:
         if user['u_id'] == u_id:
@@ -309,6 +292,12 @@ def channel_removeowner(token, channel_id, u_id):
     return {
     }
 
+
+
+
+
+
+##HELPER FUNCTIONS BELOW
 
 def token_check(token):
     try:
@@ -354,8 +343,9 @@ def in_all_members(channel_id, u_id):
             if member['u_id'] == u_id:
                 if_in = 1
     except:
-        raise InputError
+        raise InputError # channel doesn't exist
         
             
     if if_in != 1: 
-        raise AccessError
+        raise AccessError # user is not a member OR invalid token
+
