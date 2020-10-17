@@ -9,10 +9,13 @@ def channel_invite(token, channel_id, u_id):
     u_id_inviter = token_check(token)
     token_user_exist_check(u_id_inviter)
     
-    inviter_in_invitee_out_check(channel_id, u_id,u_id_inviter)
-
+    valid_channel(channel_id)
+    inviter_in_check(channel_id, u_id_inviter)
     user_exist_check(u_id)
-     
+    add_required = no_add_required(channel_id, u_id)
+    if (add_required == 0):
+        return {}
+
     #find user and make member
     member ={}
     for user in db.master_users:
@@ -22,9 +25,7 @@ def channel_invite(token, channel_id, u_id):
             member['name_last'] = user['name_last']
     # join to all_members:
     db.channels_and_members[channel_id][1].append(member)
-    return {
-        
-    }
+    return {}
 
 
 def channel_details(token, channel_id):
@@ -32,16 +33,13 @@ def channel_details(token, channel_id):
     u_id = token_check(token)
         
     token_user_exist_check(u_id)
-    
+    valid_channel(channel_id)
     in_all_members(channel_id, u_id)
-    
-    valid_channel = False
     for channel in db.channels:
         if channel['channel_id'] == channel_id:
             name = channel['name']
-            valid_channel = True
-    if valid_channel == False:
-        raise AccessError(f"Channel does not exist")
+            
+
         
     return {'name': name, 'owner_members': db.channels_and_members[channel_id][0], 'all_members' : db.channels_and_members[channel_id][1] }
     
@@ -54,6 +52,7 @@ def channel_messages(token, channel_id, start):
     token_user_exist_check(u_id)
     
     ## check if user is a member of channel/ if channel exists
+    valid_channel(channel_id)
     in_all_members(channel_id, u_id)
 
     if start < 0:
@@ -87,68 +86,55 @@ def channel_leave(token, channel_id):
     
     token_user_exist_check(u_id)
 
-    channel_found = 0
-    user_found = 0
+    valid_channel(channel_id)
+    in_all_members(channel_id, u_id)
     #search public channels and need to update found after private search too or else return input error
     for channel in db.public_channels:
-        if channel['channel_id'] == channel_id:
-            channel_found = 1
-            owner_exists = 0
-            #check if owner
-            for owner in db.channels_and_members[channel_id][0]:
-                if owner['u_id'] == u_id:
-                    owner_exists = 1
-            if owner_exists == 1:
-                #removal from owners 
-                for user in db.channels_and_members[channel_id][0]:
-                    if user['u_id'] == u_id:
-                        db.channels_and_members[channel_id][0].remove(user)
-            #removal from all members 
-            for user in db.channels_and_members[channel_id][1]:
+        owner_exists = 0
+        #check if owner
+        for owner in db.channels_and_members[channel_id][0]:
+            if owner['u_id'] == u_id:
+                owner_exists = 1
+        if owner_exists == 1:
+            #removal from owners 
+            for user in db.channels_and_members[channel_id][0]:
                 if user['u_id'] == u_id:
-                    db.channels_and_members[channel_id][1].remove(user)
-                    user_found = 1
-                if len(db.channels_and_members[channel_id][1]) == 0 :
-                    del db.channels_and_members[channel_id]
-                    del db.public_channels[channel_id]
-                    del db.channels[channel_id]
+                    db.channels_and_members[channel_id][0].remove(user)
+        #removal from all members 
+        for user in db.channels_and_members[channel_id][1]:
+            if user['u_id'] == u_id:
+                db.channels_and_members[channel_id][1].remove(user)
+            if len(db.channels_and_members[channel_id][1]) == 0 :
+                del db.channels_and_members[channel_id]
+                del db.public_channels[channel_id]
+                del db.channels[channel_id]
     
     #if reached this point, means that channel/user could possibly be in private channel
 
-    for channel in db.private_channels:
-        if channel['channel_id'] == channel_id:
-            channel_found = 1
-            owner_exists = 0
-            #check if owner
-            for owner in db.channels_and_members[channel_id][0]:
-                if owner['u_id'] == u_id:
-                    owner_exists = 1
-            if owner_exists == 1:
-                #removal from owners 
-                
-                for user in db.channels_and_members[channel_id][0]:
-                    if user['u_id'] == u_id:
-                        db.channels_and_members[channel_id][0].remove(user)
-                        
-            #removal from all members 
-            for user in db.channels_and_members[channel_id][1]:
-           
-           
+    for channel in db.private_channels:   
+        owner_exists = 0
+        #check if owner
+        for owner in db.channels_and_members[channel_id][0]:
+            if owner['u_id'] == u_id:
+                owner_exists = 1
+        if owner_exists == 1:
+            #removal from owners 
+            for user in db.channels_and_members[channel_id][0]:
                 if user['u_id'] == u_id:
-                    db.channels_and_members[channel_id][1].remove(user)
-                    user_found = 1
-                if len(db.channels_and_members[channel_id][1]) == 0 :
-                    del db.channels_and_members[channel_id]
-                    del db.private_channels[channel_id]
-                    del db.channels[channel_id]
+                    db.channels_and_members[channel_id][0].remove(user)
+                    
+        #removal from all members 
+        for user in db.channels_and_members[channel_id][1]:               
+            if user['u_id'] == u_id:
+                db.channels_and_members[channel_id][1].remove(user)
+            if len(db.channels_and_members[channel_id][1]) == 0 :
+                del db.channels_and_members[channel_id]
+                del db.private_channels[channel_id]
+                del db.channels[channel_id]
     
-    if channel_found != 1 :
-        raise InputError
-    if user_found != 1 :
-        raise AccessError
 
-    return {
-    }
+
+    return {}
 
 
 def channel_join(token, channel_id):
@@ -160,13 +146,11 @@ def channel_join(token, channel_id):
     token_user_exist_check(u_id)
 
     # check whether user has joined the channel already
-    try :
-        for member in db.channels_and_members[channel_id][1]:
-            if member['u_id'] == u_id:
-                return { # already joined
-                }
-    except:
-        raise InputError #channel deosnt exist
+    valid_channel(channel_id)
+    
+    add_required = no_add_required(channel_id, u_id)
+    if (add_required == 0):
+        return {}
  
     for channel in db.public_channels:
         if channel['channel_id'] == channel_id:
@@ -189,8 +173,7 @@ def channel_join(token, channel_id):
                     # join to all_members:
                
                     db.channels_and_members[channel_id][1].append(member)
-            return {
-            }
+            return {}
         
     # means that the channel is a private channel because it exists yet is not in public
     # if not flockr owner:
@@ -200,15 +183,14 @@ def channel_join(token, channel_id):
     # means the channel is private AND flockr owner
     for channel in db.private_channels:
         if channel['channel_id'] == channel_id:
-             #  join as owner of channel and normal
-             member ={}
-             member['u_id'] = u_id
-             member['name_first'] = db.master_users[0]['name_first']
-             member['name_last'] = db.master_users[0]['name_last']
-             # join to all_members:
-             db.channels_and_members[channel_id][1].append(member)
-             return {
-             }
+            #  join as owner of channel and normal
+            member = {}
+            member['u_id'] = u_id
+            member['name_first'] = db.master_users[0]['name_first']
+            member['name_last'] = db.master_users[0]['name_last']
+            # join to all_members:
+            db.channels_and_members[channel_id][1].append(member)
+            return {}
 
     return {}
 
@@ -216,10 +198,8 @@ def channel_join(token, channel_id):
 def channel_addowner(token, channel_id, u_id):
     # can only add owner if token is already an owner of channel or owner of flockr
     # u_id becomes owner
-    u_id_inviter = token_check(token)
-     
-    token_user_exist_check(u_id_inviter)
-    
+    u_id_inviter = token_check(token)     
+    token_user_exist_check(u_id_inviter)    
     if_in = 0
     try:
         for member in db.channels_and_members[channel_id][0]:
@@ -237,7 +217,7 @@ def channel_addowner(token, channel_id, u_id):
         raise AccessError
     
     valid_user = 0
-    new_owner ={}
+    new_owner = {}
     for user in db.master_users:
         if user['u_id'] == u_id:
             new_owner['u_id'] = u_id
@@ -255,8 +235,7 @@ def channel_addowner(token, channel_id, u_id):
                 in_all = 1
     if in_all == 0:
         db.channels_and_members[channel_id][1].append(new_owner)   
-    return {
-    }
+    return {}
 
 
 def channel_removeowner(token, channel_id, u_id):
@@ -276,21 +255,19 @@ def channel_removeowner(token, channel_id, u_id):
                 invited_if_in = 1
     except:
         raise InputError #channel_id doesnt exist 
-
-    if invited_if_in != 1 : #does u_id exist in the 'owners of channel'
-    raise InputError
                    
     if token_if_in != 1 and db.master_users[0]['u_id'] != u_id_inviter: 
         #checking if possibly global owner
         raise AccessError
     
+    if invited_if_in != 1 : #does u_id exist in the 'owners of channel'
+        raise InputError
 
     for user in db.channels_and_members[channel_id][0]:
         if user['u_id'] == u_id:
             db.channels_and_members[channel_id][0].remove(user)
 
-    return {
-    }
+    return {}
 
 
 
@@ -322,30 +299,37 @@ def user_exist_check(u_id):
     if if_in != 1: 
         raise InputError
 
-def inviter_in_invitee_out_check(channel_id, u_id, u_id_inviter):
+def inviter_in_check(channel_id, u_id_inviter):
     if_in = 0
-    try:
-        for member in db.channels_and_members[channel_id][1]:
-            if member['u_id'] == u_id_inviter:
-                if_in = 1
-            if member['u_id'] == u_id: # already in channel
-                raise InputError
-    except:
-        raise InputError
+    for member in db.channels_and_members[channel_id][1]:
+        if member['u_id'] == u_id_inviter:
+            if_in = 1
 
     if if_in != 1: 
         raise AccessError
 
 def in_all_members(channel_id, u_id):
     if_in = 0
-    try:
-        for member in db.channels_and_members[channel_id][1]:
-            if member['u_id'] == u_id:
-                if_in = 1
-    except:
-        raise InputError # channel doesn't exist
+    for member in db.channels_and_members[channel_id][1]:
+        if member['u_id'] == u_id:
+            if_in = 1
         
             
     if if_in != 1: 
         raise AccessError # user is not a member OR invalid token
 
+
+def no_add_required(channel_id, u_id):
+    if_in = 0
+    for member in db.channels_and_members[channel_id][1]:
+        if member['u_id'] == u_id:
+            if_in = 1
+            return 0 #return 1 if they are already added in channel
+
+    return 1
+
+def valid_channel(channel_id):
+    try:
+        return db.channels_and_members[channel_id]
+    except: 
+        raise InputError

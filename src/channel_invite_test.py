@@ -78,13 +78,3 @@ def test_invalid_user():
     clear()
  
 
-# Test just returns nothing because no action is taken if already in channel
-# Test user already in the channel
-def test_user_in_channel():
-    user = auth.auth_register("email1@gmail.com", "password", "Andreea", "Vissarion")
-    u_id = user['u_id']
-    token = user['token']
-    channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
-    with pytest.raises(InputError):
-        channel_invite(token, channel_id, u_id)
-    clear()
