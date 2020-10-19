@@ -1,6 +1,6 @@
 import pytest
 from auth import auth_register
-from user import user_profile, user_profile_setname, user_profile_setemail
+from user import user_profile, set_profile_setemail
 from other import clear
 from error import InputError, AccessError
 
@@ -21,6 +21,7 @@ def test_change_multiple_emails():
     user_profile_setemail(user_details["token"], "imsuperfunny@gmail.com")
     user_profile_setemail(user_details["token"], "waitimmachangethisagain@gmail.com")
     user_profile_setemail(user_details["token"], "last1iswear@gmail.com")
+    profile = user_profile(user_details["token"], user_details["u_id"])
     assert(profile["user"]["email"] == "last1iswear@gmail.com")
     clear()
 
@@ -57,13 +58,13 @@ def test_taken_email():
     user1 = auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
     user2 = auth_register("joshualee@gmail.com", "password", "Joshua", "Lee")
     with pytest.raises(InputError):
-        user_profile_setemail(user2["token"], "kellyczhou@gmail.com")
+        user_profile_setemail(user2["token"], "kellyzhou@gmail.com")
     clear()
 
 def test_invalid_token():
     clear()
     auth_register("kellyzhou@gmail.com", "cats<3", "Kelly", "Zhou")
     with pytest.raises(AccessError):
-        user_profile_setemail('badtoken', "Valid", "Name")
+        user_profile_setemail('badtoken', "validemail@gmailcom")
     clear()
 
