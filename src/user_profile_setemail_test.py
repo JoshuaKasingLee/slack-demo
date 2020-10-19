@@ -1,6 +1,6 @@
 import pytest
 from auth import auth_register
-from user import user_profile, set_profile_setemail
+from user import user_profile, user_profile_setemail
 from other import clear
 from error import InputError, AccessError
 
