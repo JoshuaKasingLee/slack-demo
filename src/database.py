@@ -373,7 +373,6 @@ def channel_in_all_members(channel_id, u_id):
 
 
 def channel_no_add_required(channel_id, u_id):
-    if_in = 0
     for member in channels_and_members[channel_id][1]:
         if member['u_id'] == u_id:
             #if_in = 1
