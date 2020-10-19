@@ -1,60 +1,23 @@
 import re
 from error import InputError
-from database import master_users
+import database
 
 def auth_login(email, password):
 
     validate_email(email)
-
-    # check for email address in database
-    if len(master_users) == 0:
-        raise InputError(f"Error, {email} has not been registered")
-    exists = False
-    for user in master_users:
-        if email == user["email"]:
-            exists = True
-    if exists == False:
-        raise InputError(f"Error, {email} has not been registered")
-
-    # check if password is wrong
-    for user in master_users:
-        if email == user["email"]:
-            if password != user["password"]:
-                raise InputError(f"Error, the password is incorrect")
-            else:
-                id = user["u_id"]
-                tok = user["token"]
-                user["log"] = True
-    return {
-        'u_id': id,
-        'token': tok,
-    }
+    database.auth_check_email_login(email)
+    return database.auth_check_password(email, password)
 
 
 def auth_logout(token):
 
-    # check if token exists
-    # if the token is active, log the user out
-    for users in master_users:
-        if token == users["token"] and users["log"] == True:
-            users["log"] = False
-            return {
-            'is_success': True,
-        }
-    # else token is inactive, return false
-    return {
-        'is_success': False,
-    }
+    return database.auth_logout_user(token)
 
 
 def auth_register(email, password, name_first, name_last):
 
     validate_email(email)
-
-    # check whether email address is being used by another user
-    for id in master_users:
-        if email == id["email"]:
-            raise InputError(f"Error, {email} has been taken")
+    database.auth_check_email_register(email)
 
     # check whether password is 6 characters or greater
     if len(password) < 6:
@@ -67,7 +30,7 @@ def auth_register(email, password, name_first, name_last):
         raise InputError(f"Error, last name must be between 1 and 50 characters")
 
     # assign u_id in chronological order of registration
-    id = len(master_users)
+    id = database.auth_assign_id()
 
     # for iteration 1, let the token be the u_id
     token = str(id)
@@ -78,23 +41,7 @@ def auth_register(email, password, name_first, name_last):
     if len(handle) > 20:
         handle = handle[:20]
 
-    # create variables that allow us to manipulate the handle string
-    handle_list = list(handle)
-    i = 1
-
-    # loop to ensure new user handle is new
-    for users in master_users:
-        # if new user handle exists, tweak it
-        if handle == users['handle']:
-            if i < 10:
-                handle_list[-1] = str(i)
-                handle = "".join(handle_list)
-                i = i + 1
-            elif i < 100:
-                handle_list[-2] = str(i)[0]
-                handle_list[-1] = str(i)[1]
-                handle = "".join(handle_list)
-                i = i + 1
+    handle = database.auth_assign_user_handle(handle)
     
     # create a master user profile by filling in relevant fields
     master_user = {}
@@ -108,12 +55,14 @@ def auth_register(email, password, name_first, name_last):
     master_user['log'] = True # assume that user is logged in after registering
     
     # add new user to the master_users database
-    master_users.append(master_user)
+    database.auth_add_user(master_user)
 
     return {
         'u_id': id,
         'token': str(id),
     }
+
+# NON-DATABASE HELPER FUNCTIONS #
 
 def validate_email(email):
     '''check valid email, regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/'''
