@@ -13,7 +13,7 @@ def test_change_first_name():
     profile = user_profile(user_details["token"], user_details["u_id"])
     assert(profile["user"]["name_first"] == "Frankenstein")
     assert(profile["user"]["name_last"] == "Fort")
-    assert(profile["user"]["handle"] == "frankiefort")
+    assert(profile["user"]["handle_str"] == "frankiefort")
     clear()
 
 def test_change_last_name():
@@ -23,7 +23,7 @@ def test_change_last_name():
     profile = user_profile(user_details["token"], user_details["u_id"])
     assert(profile["user"]["name_first"] == "Frankie")
     assert(profile["user"]["name_last"] == "Fantastic")
-    assert(profile["user"]["handle"] == "frankiefort")
+    assert(profile["user"]["handle_str"] == "frankiefort")
     clear()
 
 def test_change_name():
@@ -33,7 +33,7 @@ def test_change_name():
     profile = user_profile(user_details["token"], user_details["u_id"])
     assert(profile["user"]["name_first"] == "Cinderella")
     assert(profile["user"]["name_last"] == "Princess")
-    assert(profile["user"]["handle"] == "moanadisney")
+    assert(profile["user"]["handle_str"] == "moanadisney")
     clear()
 
 def test_change_many_names():
@@ -51,7 +51,7 @@ def test_change_many_names():
         "name_first": "Cyrus Yu Seng", "name_last": "Chow", "handle_str": "cyruschow"}}
     correct_profile2 = {"user": {"u_id" : user2['u_id'], "email" : "kellyzhou@gmail.com", \
         "name_first": "Kel", "name_last": "Zhou", "handle_str": "kellyzhou"}}
-    correct_profile2 = {"user": {"u_id" : user3['u_id'], "email" : "andreeavissarion@hotmail.com", \
+    correct_profile3 = {"user": {"u_id" : user3['u_id'], "email" : "andreeavissarion@hotmail.com", \
         "name_first": "Andreea", "name_last": "Viss", "handle_str": "andreeavissarion"}}
     assert(profile1 == correct_profile1)
     assert(profile2 == correct_profile2)
@@ -95,7 +95,7 @@ def test_change_no_name():
 
 def test_invalid_token():
     clear()
-    user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
+    auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
     with pytest.raises(AccessError):
         user_profile_setname('badtoken', "Valid", "Name")
     clear()
