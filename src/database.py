@@ -90,3 +90,13 @@ channels_and_members = {}
 #channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
 #channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
 channels_and_messages = {}
+
+# messages = {
+#   'message_id': {
+#       'channel_id':
+#       'u_id':
+#       'message':
+#       'deleted':
+#   }
+# }
+messages = {}
