@@ -37,7 +37,7 @@ def auth_register(email, password, name_first, name_last):
     
     # create user handle
     handle = name_first + name_last
-    handle.lower()
+    handle = handle.lower()
     if len(handle) > 20:
         handle = handle[:20]
 
@@ -51,7 +51,7 @@ def auth_register(email, password, name_first, name_last):
     master_user['name_last'] = name_last
     master_user['password'] = password
     master_user['token'] = token
-    master_user['handle'] = handle
+    master_user['handle_str'] = handle
     master_user['log'] = True # assume that user is logged in after registering
     
     # add new user to the master_users database
