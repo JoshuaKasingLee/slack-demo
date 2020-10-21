@@ -1,5 +1,6 @@
 from error import InputError
 from error import AccessError
+import hashlib
 # To be put into iteration 1
 
 # (not given in spec) master users variables (contains ALL data relevant to ALL registered users)
@@ -39,7 +40,7 @@ def auth_check_password(email, password): # in context: return auth_check_passwo
     ''' check if password is wrong '''
     for user in master_users:
         if email == user["email"]:
-            if password != user["password"]:
+            if hashlib.sha256(password.encode()).hexdigest() != user["password"]:
                 raise InputError(f"Error, the password is incorrect")
             else:
                 id = user["u_id"]
@@ -86,11 +87,11 @@ def auth_assign_user_handle(handle): # in context: handle = auth_check_user_hand
     i = 1
     for users in master_users:
         # if new user handle exists, tweak it
-        if handle == users['handle'] and i < 10:
+        if handle == users['handle_str'] and i < 10:
             handle_list[-1] = str(i)
             handle = "".join(handle_list)
             i = i + 1
-        elif handle == users['handle'] and i < 100:
+        elif handle == users['handle_str'] and i < 100:
             handle_list[-2] = str(i)[0]
             handle_list[-1] = str(i)[1]
             handle = "".join(handle_list)

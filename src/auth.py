@@ -1,6 +1,19 @@
 import re
 from error import InputError
 import database
+import hashlib
+#import jwt
+
+
+# NON-DATABASE HELPER FUNCTIONS #
+
+def validate_email(email):
+    '''check valid email, regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/'''
+    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
+    if not re.search(regex, email):
+        raise InputError(f"Error, {email} is invalid")
+
+# auth functions
 
 def auth_login(email, password):
 
@@ -34,6 +47,10 @@ def auth_register(email, password, name_first, name_last):
 
     # for iteration 1, let the token be the u_id
     token = str(id)
+    #SECRET = 'kellycyrusandreeajoshnick'
+    #encoded_jwt = jwt.encode(token, SECRET, algorithm='HS256').decode('utf-8')
+    #print(encoded_jwt)
+    #print(jwt.decode(encoded_jwt.encode('utf-8'), SECRET, algorithms=['HS256']))
     
     # create user handle
     handle = name_first + name_last
@@ -49,7 +66,7 @@ def auth_register(email, password, name_first, name_last):
     master_user['email'] = email
     master_user['name_first'] = name_first
     master_user['name_last'] = name_last
-    master_user['password'] = password
+    master_user['password'] = hashlib.sha256(password.encode()).hexdigest()
     master_user['token'] = token
     master_user['handle_str'] = handle
     master_user['log'] = True # assume that user is logged in after registering
@@ -62,10 +79,6 @@ def auth_register(email, password, name_first, name_last):
         'token': str(id),
     }
 
-# NON-DATABASE HELPER FUNCTIONS #
+auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
 
-def validate_email(email):
-    '''check valid email, regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/'''
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
+
