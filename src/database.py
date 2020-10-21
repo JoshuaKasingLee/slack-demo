@@ -21,7 +21,6 @@ channels_and_members = {}
 #channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
 channels_and_messages = {}
 
-<<<<<<< HEAD
 # messages = {
 #   'message_id': {
 #       'channel_id':
@@ -31,7 +30,6 @@ channels_and_messages = {}
 #   }
 # }
 messages = {}
-=======
 
 # AUTH FUNCTIONS #
 
@@ -397,4 +395,3 @@ def channel_valid_channel(channel_id):
         return channels_and_members[channel_id]
     except: 
         raise InputError
->>>>>>> iteration_2
