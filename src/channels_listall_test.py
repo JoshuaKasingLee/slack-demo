@@ -88,51 +88,47 @@ def test_invalid_user():
     clear()
         
 
-'''
-## tests which don't work
 
 # there are no channels
 def test_no_channels():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    assert(channels.channels_listall(user1_token) == {'channels': [],}
-
-db.clear()
+    assert(channels.channels_listall(user1_token) == {'channels': []})
+    clear()
 
 # there is one public channel
-def test_no_memberships():
+def test_one_public():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel1 = channels.channels_create(user1_token, 'channel1', True)
-    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 1, 'name': 'channel1' }],}
-db.clear()
+    channels.channels_create(user1_token, 'channel1', True)
+    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }]})
+    clear()
 
 # there is one private channel
-def test_no_memberships():
+def test_one_private():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel1 = channels.channels_create(user1_token, 'channel1', False)
-    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 1, 'name': 'channel1' }],}
-db.clear()
+    channels.channels_create(user1_token, 'channel1', False)
+    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }],})
+    clear()
     
 # there are two channels
-def test_all_memberships():
+def test_two_channels():
     user1_token = auth.auth_register('user@example.com', 'password', 'user1', 'name')['token']
-    channel1 = channels.channels_create(user1_token, 'channel1', True)
-    channel2 = channels.channels_create(user1_token, 'channel2', False)
-    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 1, 'name': 'channel1' }, { 'channel_id': 2, 'name': 'channel2' }],}
-db.clear()
+    channels.channels_create(user1_token, 'channel1', True)
+    channels.channels_create(user1_token, 'channel2', False)
+    assert(channels.channels_listall(user1_token) == {'channels': [ {'channel_id': 0, 'name': 'channel1' }, { 'channel_id': 1, 'name': 'channel2' }],})
+    clear()
 
 # INVALID TOKEN
 def test_invalid_token():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel1 = channels.channels_create(user1_token, 'channel1', True)
-    with pytest.raises(AccessError) as e: # what does this e mean
+    channels.channels_create(user1_token, 'channel1', True)
+    with pytest.raises(AccessError): 
         channels_listall('bad token')
-db.clear()
+    clear()
 
 # user does not exist
 def test_missing_user():
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
-    channel1 = channels.channels_create(user1_token, 'channel1', True)
-    with pytest.raises(AccessError) as e:
+    channels.channels_create(user1_token, 'channel1', True)
+    with pytest.raises(AccessError):
         channels_listall(996)
-db.clear()
-'''
+    clear()
