@@ -1,35 +1,24 @@
-import re
 from error import InputError
 import database
 import hashlib
 import jwt
+import helper
 
-
-# NON-DATABASE HELPER FUNCTIONS #
-
-def validate_email(email):
-    '''check valid email, regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/'''
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
 
 # auth functions
 
 def auth_login(email, password):
-
-    validate_email(email)
+    helper.validate_email(email)
     database.auth_check_email_login(email)
     return database.auth_check_password(email, password)
 
 
 def auth_logout(token):
-
     return database.auth_logout_user(token)
 
 
 def auth_register(email, password, name_first, name_last):
-
-    validate_email(email)
+    helper.validate_email(email)
     database.auth_check_email_register(email)
 
     # check whether password is 6 characters or greater
@@ -45,12 +34,8 @@ def auth_register(email, password, name_first, name_last):
     # assign u_id in chronological order of registration
     id = database.auth_assign_id()
 
-    # let the token be an encoded u_id
-    token = str(id)
-    #SECRET = 'kellycyrusandreeajoshnick'
-    #token = jwt.encode({"u_id": id}, SECRET, algorithm='HS256').decode('utf-8')
-    #print(token)
-    #print(jwt.decode(token.encode('utf-8'), SECRET, algorithms=['HS256']))
+    # let the token be an encoded u_id dictionary
+    token = jwt.encode({"u_id": id}, database.SECRET, algorithm='HS256').decode('utf-8')
     
     # create user handle
     handle = name_first + name_last
@@ -76,9 +61,8 @@ def auth_register(email, password, name_first, name_last):
 
     return {
         'u_id': id,
-        'token': str(id),
+        'token': token,
     }
 
-#auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
-#auth_register("email@gmail.com", "password", "Kelly", "Zhou")
-
+auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
+auth_register("email@gmail.com", "password", "Kelly", "Zhou")

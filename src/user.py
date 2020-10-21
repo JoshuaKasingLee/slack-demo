@@ -1,21 +1,12 @@
 from error import InputError, AccessError
-from database import master_users
+#from database import master_users
+import database
 import re
+import helper
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
-    user_exists = False
-    for user in master_users:
-        if u_id == user["u_id"]:
-            user_exists = True
-            found_user = user
-            break
-    if user_exists == False:
-        raise InputError(f"User with u_id {u_id} is not a valid user")
-
-    # check if input token is valid - if not, return AccessError
-    if not (token == found_user["token"] and found_user["log"] == True):
-        raise AccessError("Token passed in is not a valid token.")
+    found_user = database.token_u_id_check(token, u_id)
 
     # if u_id exists and input token is valid, return as required
     return {
@@ -30,13 +21,7 @@ def user_profile(token, u_id):
 
 def user_profile_setname(token, name_first, name_last):
     # check if input token is valid - if not, return AccessError
-    valid_token = False
-    for i in range(0, len(master_users)):
-        if token == master_users[i]["token"] and master_users[i]["log"] == True:
-            valid_token = True
-            found_i = i
-    if valid_token == False:
-        raise AccessError("Token passed in is not a valid token.")
+    id = database.token_check_return(token)
 
     # if token is valid, check whether first and last names are valid
     if len(name_first) < 1 or len(name_first) > 50:
@@ -45,60 +30,52 @@ def user_profile_setname(token, name_first, name_last):
         raise InputError(f"Error, last name must be between 1 and 50 characters")
 
     # if names are valid, change name in database
-    master_users[found_i]['name_first'] = name_first
-    master_users[found_i]['name_last'] = name_last
+    database.update_first_name(id, name_first)
+    database.update_last_name(id, name_last)
 
     return {
     }
 
 def user_profile_setemail(token, email):
     # check if input token is valid - if not, return AccessError
-    valid_token = False
-    for i in range(0, len(master_users)):
-        if token == master_users[i]["token"] and master_users[i]["log"] == True:
-            valid_token = True
-            found_i = i
-    if valid_token == False:
-        raise AccessError("Token passed in is not a valid token.")
+    id = database.token_check_return(token)
 
     # check whether email is valid
-    # given regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
+    helper.validate_email(email)
 
     # check whether email address is being used by another user
-    for id in master_users:
-        if email == id["email"]:
-            raise InputError(f"Error, {email} has been taken")
-            
+    database.auth_check_email_register(email)  
+
     # update email
-    master_users[found_i]['email'] = email
+    database.update_email(id, email)
 
     return {
     }
 
 def user_profile_sethandle(token, handle_str):
      # check if input token is valid - if not, return AccessError
-    valid_token = False
-    for i in range(0, len(master_users)):
-        if token == master_users[i]["token"] and master_users[i]["log"] == True:
-            valid_token = True
-            found_i = i
-    if valid_token == False:
-        raise AccessError("Token passed in is not a valid token.")
+    # valid_token = False
+    # for i in range(0, len(master_users)):
+    #     if token == master_users[i]["token"] and master_users[i]["log"] == True:
+    #         valid_token = True
+    #         found_i = i
+    # if valid_token == False:
+    #     raise AccessError("Token passed in is not a valid token.")
+    id = database.token_check_return(token)
 
     # check whether handle is too long or short
     if len(handle_str) < 3 or len(handle_str) > 20:
         raise InputError("Handle must be between 3 and 20 characters")
 
     # check whether handle has been taken
-    for id in master_users:
-        if handle_str == id["handle_str"]:
-            raise InputError(f"Error, {handle_str} handle has been taken")
-      
+    # for user in master_users:
+    #     if handle_str == user["handle_str"]:
+    #         raise InputError(f"Error, {handle_str} handle has been taken")
+    database.check_handle(handle_str)
+
     # update email
-    master_users[found_i]['handle_str'] = handle_str
+    #master_users[found_i]['handle_str'] = handle_str
+    database.update_handle(id, handle_str)
 
     return {
     }

@@ -1,12 +1,13 @@
 import database
 from error import InputError
 from error import AccessError
+import helper
 
 def channel_invite(token, channel_id, u_id):
     # can only invite if member of channel
     #instantly join once invited - wouldnt be owner because not the first in
 
-    u_id_inviter = token_check(token)
+    u_id_inviter = database.token_check(token)
     database.channel_token_user_exist_check(u_id_inviter)
     
     database.channel_valid_channel(channel_id)
@@ -27,7 +28,7 @@ def channel_invite(token, channel_id, u_id):
 
 def channel_details(token, channel_id):
     
-    u_id = token_check(token)
+    u_id = database.token_check(token)
         
     database.channel_token_user_exist_check(u_id)
     database.channel_valid_channel(channel_id)
@@ -42,7 +43,7 @@ def channel_details(token, channel_id):
 
 def channel_messages(token, channel_id, start):
     ## check valid token
-    u_id = token_check(token)
+    u_id = database.token_check(token)
 
     database.channel_token_user_exist_check(u_id)
     
@@ -77,7 +78,7 @@ def channel_leave(token, channel_id):
     #input error if not valid channel id (channel does not exist)
     #access error if user is not part of the channel_id (channel exists). remember to remove from owner if they are owner too. need to check that within code
 
-    u_id = token_check(token)
+    u_id = database.token_check(token)
     
     database.channel_token_user_exist_check(u_id)
 
@@ -92,7 +93,7 @@ def channel_leave(token, channel_id):
 def channel_join(token, channel_id):
     # can only join if channel is public and go in all_members
     # UNLESS they are the flock owner, then can join private too and go in all_members
-    u_id = token_check(token)
+    u_id = database.token_check(token)
     
     # check if the user is valid
     database.channel_token_user_exist_check(u_id)
@@ -125,7 +126,7 @@ def channel_join(token, channel_id):
 def channel_addowner(token, channel_id, u_id):
     # can only add owner if token is already an owner of channel or owner of flockr
     # u_id becomes owner
-    u_id_inviter = token_check(token)
+    u_id_inviter = database.token_check(token)
     database.channel_token_user_exist_check(u_id_inviter)
 
     if_in = database.channel_if_owner(u_id_inviter, channel_id)
@@ -149,7 +150,7 @@ def channel_addowner(token, channel_id, u_id):
 def channel_removeowner(token, channel_id, u_id):
    #input error if not valid channel id (channel does not exist), CASE2 : if removed u_id is not an owner of the channel
    #access error token is not global or local owner
-    u_id_inviter = token_check(token)
+    u_id_inviter = database.token_check(token)
 
     database.channel_token_user_exist_check(u_id_inviter)
     
@@ -167,13 +168,3 @@ def channel_removeowner(token, channel_id, u_id):
     database.channel_remove_owner(u_id, channel_id)
 
     return {}
-
-
-# HELPER FUNCTIONS BELOW #
-
-def token_check(token):
-    try:
-        u_id_inviter = int(token)
-    except:
-        raise AccessError #invalid token
-    return u_id_inviter
