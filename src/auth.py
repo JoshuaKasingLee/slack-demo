@@ -2,7 +2,7 @@ import re
 from error import InputError
 import database
 import hashlib
-#import jwt
+import jwt
 
 
 # NON-DATABASE HELPER FUNCTIONS #
@@ -45,12 +45,12 @@ def auth_register(email, password, name_first, name_last):
     # assign u_id in chronological order of registration
     id = database.auth_assign_id()
 
-    # for iteration 1, let the token be the u_id
+    # let the token be an encoded u_id
     token = str(id)
     #SECRET = 'kellycyrusandreeajoshnick'
-    #encoded_jwt = jwt.encode(token, SECRET, algorithm='HS256').decode('utf-8')
-    #print(encoded_jwt)
-    #print(jwt.decode(encoded_jwt.encode('utf-8'), SECRET, algorithms=['HS256']))
+    #token = jwt.encode({"u_id": id}, SECRET, algorithm='HS256').decode('utf-8')
+    #print(token)
+    #print(jwt.decode(token.encode('utf-8'), SECRET, algorithms=['HS256']))
     
     # create user handle
     handle = name_first + name_last
@@ -79,6 +79,6 @@ def auth_register(email, password, name_first, name_last):
         'token': str(id),
     }
 
-auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
-
+#auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
+#auth_register("email@gmail.com", "password", "Kelly", "Zhou")
 
