@@ -90,3 +90,31 @@ channels_and_members = {}
 #channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
 #channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
 channels_and_messages = {}
+
+# DATABASE FUNCTION: (clear)
+
+def clear():
+    global master_users
+    master_users = []
+    global channels
+    channels = []
+    global channels_and_members
+    channels_and_members = {}
+    global channels_and_messages
+    channels_and_messages = {}
+    global private_channels
+    private_channels = []
+    global public_channels
+    public_channels = []
+ 
+# DATABASE VARIABLE: (admin list)
+admin_users = []
+
+# DATABASE FUNCTION: (admin list)
+def make_admin(token):
+    global admin_users
+    admin_users.append(token)
+
+def remove_admin(token):
+    global admin_users
+    admin_users.remove(token)
