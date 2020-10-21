@@ -22,14 +22,10 @@ def auth_register(email, password, name_first, name_last):
     database.auth_check_email_register(email)
 
     # check whether password is 6 characters or greater
-    if len(password) < 6:
-        raise InputError(f"Error, password must be >= 6 characters")
+    helper.check_password_length(password)
 
     # check whether first and last name meet character requirements
-    if len(name_first) < 1 or len(name_first) > 50:
-        raise InputError(f"Error, first name must be between 1 and 50 characters")
-    if len(name_last) < 1 or len(name_last) > 50:
-        raise InputError(f"Error, last name must be between 1 and 50 characters")
+    helper.check_name_length(name_first, name_last)
 
     # assign u_id in chronological order of registration
     id = database.auth_assign_id()
@@ -63,6 +59,3 @@ def auth_register(email, password, name_first, name_last):
         'u_id': id,
         'token': token,
     }
-
-auth_register("emaill@gmail.com", "password", "Kelly", "Zhou")
-auth_register("email@gmail.com", "password", "Kelly", "Zhou")

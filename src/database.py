@@ -406,7 +406,7 @@ def token_check(token):
 
 # USER FUNCTIONS #
 
-def token_check_return(token):
+def return_token_u_id(token):
     ''' check if the token exists in database, and return u_id of token'''
     valid_token = False
     for i in range(0, len(master_users)):
@@ -417,8 +417,8 @@ def token_check_return(token):
         raise AccessError("Token passed in is not a valid token.")
     return found_i
 
-def token_u_id_check(token, u_id):
-    'check if the u_id and token exist and match up, if so, return user'
+def check_token_u_id_match(token, u_id):
+    '''check if the u_id and token exist and match up, if so, return user'''
     # check if u_id exists in database - if not, return InputError
     user_exists = False
     for user in master_users:
