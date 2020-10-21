@@ -10,7 +10,7 @@ from error import InputError, AccessError
 # access error if token is not global owner OR owner of channel
 # regular testing: token is owner and u_id is owner
 
-def test_valid_channel() :
+def test_valid_channel():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
@@ -20,7 +20,7 @@ def test_valid_channel() :
         channel_removeowner(token, channel_id, u_id)
     clear()
  
-def test_uid_not_channel_owner() :
+def test_uid_not_channel_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -31,7 +31,7 @@ def test_uid_not_channel_owner() :
         channel_removeowner(token, channel_id, u_id_2)
     clear()
  
-def test_not_global_or_local_owner() :
+def test_not_global_or_local_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
@@ -44,7 +44,7 @@ def test_not_global_or_local_owner() :
     clear()   
 
 
-def test_global_but_not_local_owner() :
+def test_global_but_not_local_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']

@@ -7,7 +7,7 @@ import auth
 from error import InputError
 from error import AccessError
 
-def test_valid_channel() :
+def test_valid_channel():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
@@ -17,7 +17,7 @@ def test_valid_channel() :
         channel_addowner(token, channel_id, u_id)
     clear()
  
-def test_already_channel_owner() :
+def test_already_channel_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
@@ -27,7 +27,7 @@ def test_already_channel_owner() :
         channel_addowner(token, channel_id, u_id)
     clear()
  
-def test_not_global_or_local_owner() :
+def test_not_global_or_local_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -39,7 +39,7 @@ def test_not_global_or_local_owner() :
         channel_addowner(token_2, channel_id, u_id_2)
     clear() 
  
-def test_global_but_not_local_owner() :
+def test_global_but_not_local_owner():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
@@ -56,7 +56,7 @@ def test_global_but_not_local_owner() :
     assert (is_in == 1)
     clear()   
  
-def test_promote() :
+def test_promote():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
