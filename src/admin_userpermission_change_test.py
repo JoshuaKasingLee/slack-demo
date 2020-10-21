@@ -48,8 +48,17 @@ def test_invalid_permission_id() :
     token = user['token']
     user_2 = auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
     u_id_2 = user_2['u_id']
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         admin_userpermission_change(token, u_id_2, 4)
+    clear()
+    
+def test_invalid_u_id() :
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    auth.auth_register("sallychampion@gmail.com", "password", "Sally", "Champion")
+    with pytest.raises(InputError):
+        admin_userpermission_change(token, 100, 1)
     clear()
 
 def test_not_admin_not_owner() :
@@ -59,7 +68,7 @@ def test_not_admin_not_owner() :
     token_2 = user_2['token']
     user_3 = auth.auth_register("jane@gmail.com", "password", "Jane", "Doe")
     u_id_3 = user_3['u_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         admin_userpermission_change(token_2, u_id_3, 1)
     clear()
 
@@ -73,6 +82,6 @@ def test_admin_but_not_owner() :
     admin_userpermission_change(token, u_id_2, 1)
     user_3 = auth.auth_register("jane@gmail.com", "password", "Jane", "Doe")
     u_id_3 = user_3['u_id']
-    with pytest.raises(InputError):
+    with pytest.raises(AccessError):
         admin_userpermission_change(token_2, u_id_3, 1)
     clear()
