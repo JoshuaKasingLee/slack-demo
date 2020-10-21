@@ -13,7 +13,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -52,7 +52,13 @@ def test_invalid_token_http(url): # invalid token - AccessError
     payload = response.json()
     channel_id = payload['channel_id']
 
-    response = requests.get(url + 'channel/messages', params=('heyheyhey', channel_id, 1))
+    data_in = {
+        'token' : 'heyheyhey',
+        'channel_id' : channel_id,
+        'start' : 1
+    }
+
+    response = requests.get(url + 'channel/messages', params = data_in)
     assert(response.status_code == 400)
     requests.delete(url + 'clear')
 
@@ -68,7 +74,12 @@ def test_missing_channel_http(url): # invalid channel_id - InputError (bc of cha
     payload = response.json()
     token = payload['token']
  
-    response = requests.get(url + 'channel/messages', params=(token, 99, 0))
+    data_in = {
+        'token' : token,
+        'channel_id' : 99,
+        'start' : 0
+    }
+    response = requests.get(url + 'channel/messages', params = data_in)
     assert(response.status_code == 400)
     requests.delete(url + 'clear')
 
@@ -94,7 +105,13 @@ def test_missing_user_http(url): # user doesn't exist - AccessError
     payload = response.json()
     channel_id = payload['channel_id']
 
-    response = requests.get(url + 'channel/messages', params=(99, channel_id, 1)) # 99 is an arbitrary nonexistent token
+    data_in = {
+        'token' : 99,
+        'channel_id' : channel_id,
+        'start' : 1
+    }
+
+    response = requests.get(url + 'channel/messages', params = data_in) # 99 is an arbitrary nonexistent token
     assert(response.status_code == 400)
     requests.delete(url + 'clear')
 
@@ -120,6 +137,12 @@ def test_negative_index(url): # invalid index - InputError
     payload = response.json()
     channel_id = payload['channel_id']
 
-    response = requests.get(url + 'channel/messages', params=(token, channel_id, -10)) # 99 is an arbitrary nonexistent token
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id,
+        'start' : -10
+    }
+
+    response = requests.get(url + 'channel/messages', params = data_in) # 99 is an arbitrary nonexistent token
     assert(response.status_code == 400)
     requests.delete(url + 'clear')

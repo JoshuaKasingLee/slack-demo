@@ -285,6 +285,10 @@ def channel_check_valid_user(u_id):
 
 def channel_add_owner(new_owner, u_id, channel_id):
     # append to owner members, and all members if not already in channel
+
+    if new_owner in channels_and_members[channel_id][0] :
+        raise InputError
+
     channels_and_members[channel_id][0].append(new_owner)
     in_all = 0
     for member in channels_and_members[channel_id][1]:

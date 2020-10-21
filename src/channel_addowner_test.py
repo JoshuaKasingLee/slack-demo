@@ -1,5 +1,4 @@
 import pytest
-import database
 from other import clear
 from channel import channel_addowner, channel_join, channel_details
 import channels
@@ -22,7 +21,7 @@ def test_already_channel_owner():
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     u_id = user['u_id']
     token = user['token']
-    channel_id = channels.channels_create(token, "Channel1", True)
+    channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
     with pytest.raises(InputError):
         channel_addowner(token, channel_id, u_id)
     clear()

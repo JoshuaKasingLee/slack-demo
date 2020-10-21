@@ -7,6 +7,8 @@ import requests
 import json
 
 
+
+
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
 @pytest.fixture
@@ -29,9 +31,12 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def test_echo(url):
-    '''
-    A simple test to check echo
-    '''
-    resp = requests.get(url + 'echo', params={'data': 'hello'})
-    assert json.loads(resp.text) == {'data': 'hello'}
+def test_email_invalid_1_http(url):
+    data_in = {
+        'email' : "email",
+        'password' : "password",
+        'name_first' : "first",
+        'name_last' : "last"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    assert (response.status_code == 400)

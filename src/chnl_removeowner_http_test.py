@@ -13,7 +13,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -180,7 +180,12 @@ def test_global_but_not_local_owner_http(url):
         'u_id' : u_id_2
     }
     requests.post(url + 'channel/removeowner', json = data_in)
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
+
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id
+    }
+    response = requests.get(url + 'channel/details', params = data_in)
     payload = response.json()
     owner_members = payload['owner_members']
     all_members = payload['all_members']
