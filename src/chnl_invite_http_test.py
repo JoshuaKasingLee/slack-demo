@@ -31,7 +31,7 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def add_member_http_test(url):
+def test_add_member_http(url):
     requests.delete(url + 'clear')
 
     data_in = {
@@ -85,7 +85,7 @@ def add_member_http_test(url):
     requests.delete(url + 'clear')
 
 # Test an invalid channel when none exist
-def invalid_channel1_http_test(url):
+def test_invalid_channel1_http(url):
     requests.delete(url + 'clear')
 
     data_in = {
@@ -109,7 +109,7 @@ def invalid_channel1_http_test(url):
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
-def invalid_channel2_http_test(url):
+def test_invalid_channel2_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email' : "email1@gmail.com",

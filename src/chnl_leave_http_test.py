@@ -31,7 +31,7 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def leave_http_test(url):
+def test_leave_http(url):
     requests.delete(url + 'clear')
 
     data_in = {
@@ -84,7 +84,7 @@ def leave_http_test(url):
 
     requests.delete(url + 'clear')
 
-def valid_channel_http_test(url):
+def test_valid_channel_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email' : "email2@gmail.com",
@@ -112,7 +112,7 @@ def valid_channel_http_test(url):
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
-def not_a_channel_mem_http_test(url):
+def test_not_a_channel_mem_http(url):
 
     requests.delete(url + 'clear')
 
