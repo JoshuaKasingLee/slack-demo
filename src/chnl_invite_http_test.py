@@ -6,10 +6,7 @@ from time import sleep
 import requests
 import json
 
-import channel
-import channels
-import auth
-from other import clear
+
 
 
 # Use this fixture to get the URL of the server. It starts the server for you,
@@ -34,7 +31,7 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def add_member_http_test():
+def add_member_http_test(url):
     requests.delete(url + 'clear')
 
     data_in = {
@@ -88,7 +85,7 @@ def add_member_http_test():
     requests.delete(url + 'clear')
 
 # Test an invalid channel when none exist
-def invalid_channel1_http_test():
+def invalid_channel1_http_test(url):
     requests.delete(url + 'clear')
 
     data_in = {
@@ -112,7 +109,7 @@ def invalid_channel1_http_test():
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
-def invalid_channel2_http_test():
+def invalid_channel2_http_test(url):
     requests.delete(url + 'clear')
     data_in = {
         'email' : "email1@gmail.com",
@@ -144,7 +141,7 @@ def invalid_channel2_http_test():
     assert (response.status_code == 400)    
     requests.delete(url + 'clear')
 
-def test_invalid_user():
+def test_invalid_user(url):
     requests.delete(url + 'clear')
     data_in = {
         'email' : "email1@gmail.com",

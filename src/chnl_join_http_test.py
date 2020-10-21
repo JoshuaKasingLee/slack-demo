@@ -30,68 +30,17 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-
-#TESTING OF CHANNEL FUNCTIONS
-
-def test_owner_http(url):
+def test_join_http_test(url):
     requests.delete(url + 'clear')
-
-    data_in = {
-        'email' : "test1@gmail.com",
-        'password' : "password",
-        'name_first' : "John",
-        'name_last' : "Smith"
-    }
-
-    response = requests.post(url + 'auth/register', json = data_in)
-    payload = response.json()
-    u_id = payload['u_id']
-    token = payload['token']
-
-    data_in = {
-        'token' : token,
-        'name' : "Channel1",
-        'is_public' : True
-    }
-
-    response = requests.post(url + 'channels/create', json = data_in)
-    payload = response.json()
-    channel_id = payload['channel_id']
-
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
-    payload = response.json()
-    assert(payload == {
-        'name': 'Channel1',
-        'owner_members': [
-         {
-            'u_id': u_id, 
-            'name_first': 'John',
-            'name_last': 'Smith',
-        }],
-        'all_members': [
-            {
-                'u_id': u_id, 
-                'name_first': 'John',
-                'name_last': 'Smith',
-            }
-        ],
-    })
-    requests.delete(url + 'clear')
-
-def test_one_owner_two_members_http(url):
-    requests.delete(url + 'clear')
-
     data_in = {
         'email' : "email1@gmail.com",
         'password' : "password",
         'name_first' : "Andreea",
         'name_last' : "Vissarion"
     }
-
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
-    u_id_1 = payload['u_id']
-    token_1 = payload['token']
+    token = payload['token']
 
     data_in = {
         'email' : "email2@gmail.com",
@@ -99,69 +48,12 @@ def test_one_owner_two_members_http(url):
         'name_first' : "John",
         'name_last' : "Smith"
     }
-
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
+    token_2 = payload['token']
     u_id_2 = payload['u_id']
 
     data_in = {
-        'token' : token_1,
-        'name' : "Channel1",
-        'is_public' : True
-    }
-
-    response = requests.post(url + 'channels/create', json = data_in)
-    payload = response.json()
-    channel_id = payload['channel_id']
-
-    data_in = {
-        'token' : token_1,
-        'channel_id' : channel_id,
-        'u_id' : u_id_2
-    }    
-    requests.post(url + 'channel/invite', json = data_in)
-
-    response = requests.get(url + 'channel/details', params=(token_1, channel_id))
-    payload = response.json()
-    assert(payload == {
-        'name': 'Channel1',
-        'owner_members': [
-            {
-                'u_id': u_id_1,
-                'name_first': 'Andreea',
-                'name_last': 'Vissarion',
-            }
-        ],
-        'all_members': [
-            {
-                'u_id': u_id_1,
-                'name_first': 'Andreea',
-                'name_last': 'Vissarion',
-            },
-            {
-                'u_id': u_id_2,
-                'name_first': 'John',
-                'name_last': 'Smith',
-            }
-        ],
-    })
-    requests.delete(url + 'clear')    
-
-def test_invalid_token_http(url):
-    requests.delete(url + 'clear')
-
-    data_in = {
-        'email' : "email1@gmail.com",
-        'password' : "password",
-        'name_first' : "Andreea",
-        'name_last' : "Vissarion"
-    }
-
-    response = requests.post(url + 'auth/register', json = data_in)
-    payload = response.json()
-    token = payload['token']
-
-    data_in = {
         'token' : token,
         'name' : "Channel1",
         'is_public' : True
@@ -171,23 +63,56 @@ def test_invalid_token_http(url):
     payload = response.json()
     channel_id = payload['channel_id']
 
-    response = requests.get(url + 'channel/details', params=('imalil', channel_id))
+    data_in = {
+        'token' : token_2,
+        'channel_id' : channel_id
+    }
+
+    requests.post(url + 'channel/join', json = data_in)
+
+    response = requests.get(url + 'channel/details', params=(token_2, channel_id))
+    payload = response.json()
+    all_members = payload['all_members']
+    is_in = 0
+    for member in all_members:
+        if member['u_id'] == u_id_2:
+            is_in = 1
+    assert (is_in == 1)
+    requests.delete(url + 'clear')
+
+def valid_channel_http_test(url):
+    requests.delete(url + 'clear')
+    data_in = {
+        'email' : "email2@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    payload = response.json()
+    token_2 = payload['token']
+    channel_id_2 = 999
+
+    data_in = {
+        'token' : token_2,
+        'channel_id' : channel_id_2
+    }
+
+    response = requests.post(url + 'channel/join', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
-def test_not_member_http(url):
+def private_access_http_test(url):
     requests.delete(url + 'clear')
-
     data_in = {
         'email' : "email1@gmail.com",
         'password' : "password",
         'name_first' : "Andreea",
         'name_last' : "Vissarion"
     }
-
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
-    token_1 = payload['token']
+    token = payload['token']
 
     data_in = {
         'email' : "email2@gmail.com",
@@ -195,13 +120,44 @@ def test_not_member_http(url):
         'name_first' : "John",
         'name_last' : "Smith"
     }
-
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
     token_2 = payload['token']
 
     data_in = {
-        'token' : token_1,
+        'token' : token,
+        'name' : "Channel1",
+        'is_public' : False
+    }
+
+    response = requests.post(url + 'channels/create', json = data_in)
+    payload = response.json()
+    channel_id = payload['channel_id']
+
+    data_in = {
+        'token' : token_2,
+        'channel_id' : channel_id
+    }
+
+    response = requests.post(url + 'channel/join', json = data_in)
+    assert (response.status_code == 400)
+
+    requests.delete(url + 'clear')
+
+def invalid_token_http_test(url): # non integer token - accesserror
+    requests.delete(url + 'clear')
+    data_in = {
+        'email' : "email2@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    payload = response.json()
+    token = payload['token']
+
+    data_in = {
+        'token' : token,
         'name' : "Channel1",
         'is_public' : True
     }
@@ -210,28 +166,43 @@ def test_not_member_http(url):
     payload = response.json()
     channel_id = payload['channel_id']
 
-    response = requests.get(url + 'channel/details', params=(token_2, channel_id))
-
-    assert(response.status_code == 400)
-    requests.delete(url + 'clear')
-
-def test_missing_channel_http(url): # invalid channel_id - InputError
-    requests.delete(url + 'clear')
-
     data_in = {
-        'email' : "email1@gmail.com",
-        'password' : "password",
-        'name_first' : "Andreea",
-        'name_last' : "Vissarion"
+        'token' : 'heyheyhey',
+        'channel_id' : channel_id
     }
 
+    response = requests.post(url + 'channel/join', json = data_in)
+    assert (response.status_code == 400)
+
+    requests.delete(url + 'clear')
+
+def missing_user_http_test(url): # wrong user token - accesserror
+    requests.delete(url + 'clear')
+    data_in = {
+        'email' : "email2@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
     token = payload['token']
 
-    channel_id = 1
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
+    data_in = {
+        'token' : token,
+        'name' : "Channel1",
+        'is_public' : True
+    }
 
-    assert(response.status_code == 400)
+    response = requests.post(url + 'channels/create', json = data_in)
+    payload = response.json()
+    channel_id = payload['channel_id']
+
+    data_in = {
+        'token' : 39,
+        'channel_id' : channel_id
+    }
+
+    response = requests.post(url + 'channel/join', json = data_in)
+    assert (response.status_code == 400)
     requests.delete(url + 'clear')
-
