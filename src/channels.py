@@ -6,21 +6,21 @@ from error import AccessError
 def channels_list(token):
 
     u_id = token_check(token)
-    database.channels_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
     return database.channels_return_membership(u_id)
 
 
 def channels_listall(token):
 
     u_id = token_check(token)
-    database.channels_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
     return database.channels_return_all()
 
 
 def channels_create(token, name, is_public):
 
     u_id = token_check(token)
-    database.channels_user_exist_check(u_id) 
+    database.channels_user_log_check(u_id) 
     
     ## check valid name
     if len(name) > 20 or len(name) == 0:

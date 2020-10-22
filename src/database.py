@@ -254,24 +254,14 @@ def channel_add_member(channel_id, u_id): # made changes i don't get
     joined = False
     for channel in public_channels:
         if channel['channel_id'] == channel_id:
-            if master_users[0]['u_id'] == u_id:
-                # join as normal
-                member = {}
-                member['u_id'] = u_id
-                member['name_first'] = master_users[0]['name_first']
-                member['name_last'] = master_users[0]['name_last']
-                # join to all_members:
-                channels_and_members[channel_id][1].append(member)
-            elif master_users[0]['u_id'] != u_id:
-                # join as normal member only
-                member = {}
-                for user in master_users:
-                    if user['u_id'] == u_id:
-                        member['u_id'] = u_id
-                        member['name_first'] = user['name_first']
-                        member['name_last'] = user['name_last']
-                # join to all_members:
-                channels_and_members[channel_id][1].append(member)
+            member = {}
+            for user in master_users:
+                if user['u_id'] == u_id:
+                    member['u_id'] = u_id
+                    member['name_first'] = user['name_first']
+                    member['name_last'] = user['name_last']
+            # join to all_members:
+            channels_and_members[channel_id][1].append(member)
             joined = True
     return joined
             
@@ -324,23 +314,20 @@ def channel_add_owner(new_owner, u_id, channel_id):
     channels_and_members[channel_id][0].append(new_owner)
     in_all = 0
     for member in channels_and_members[channel_id][1]:
-            if member['u_id'] == u_id: # invited person is already a member of channel                    
-                in_all = 1
+        if member['u_id'] == u_id: # invited person is already a member of channel                    
+            in_all = 1
     if in_all == 0:
         channels_and_members[channel_id][1].append(new_owner)
 
-def channel_check_owners(u_id_inviter, u_id, channel_id):
-    token_if_in = 0
-    invited_if_in = 0
+def channel_check_owners(u_id, channel_id):
+    if_in = 0
     try:
         for member in channels_and_members[channel_id][0]:
-            if member['u_id'] == u_id_inviter: # inviter is an owner of channel
-                token_if_in = 1
             if member['u_id'] == u_id: # owner to be removed is in the channel
-                invited_if_in = 1
+                if_in = 1
     except:
         raise InputError #channel_id doesnt exist
-    return token_if_in, invited_if_in
+    return if_in
 
 
 def channels_return_membership(u_id):
@@ -391,7 +378,7 @@ def channels_add_to_database(u_id, name, channel_id, is_public):
         private_channels.append(channel)
 
 
-def channels_user_exist_check(u_id):
+def channels_user_log_check(u_id):
     ''' check if a user exists for the given u_id'''
     valid_user = 0
     for user in master_users:
@@ -407,15 +394,6 @@ def channel_remove_owner(u_id, channel_id):
     for user in channels_and_members[channel_id][0]:
         if user['u_id'] == u_id:
             channels_and_members[channel_id][0].remove(user)
-
-
-def channel_token_user_exist_check(u_id_inviter):
-    if_in = 0
-    for user in master_users:
-        if user['u_id'] == u_id_inviter and user['log'] == True:
-            if_in = 1 # 'log' == True if logged in
-    if if_in != 1:
-        raise AccessError #u_id_invitee doesnt exist
 
 
 def channel_user_exist_check(u_id):
@@ -436,21 +414,12 @@ def channel_inviter_in_check(channel_id, u_id_inviter):
         raise AccessError
 
 
-def channel_in_all_members(channel_id, u_id):
+def channel_in_check(channel_id, u_id):
     if_in = 0
     for member in channels_and_members[channel_id][1]:
         if member['u_id'] == u_id:
-            if_in = 1
-    if if_in != 1: 
-        raise AccessError # user is not a member OR invalid token
-
-
-def channel_no_add_required(channel_id, u_id):
-    for member in channels_and_members[channel_id][1]:
-        if member['u_id'] == u_id:
-            #if_in = 1
-            return 0 #return 1 if they are already added in channel
-    return 1
+            return 1 # return 1 if they are in
+    return 0 # return 0 if they are not in
 
 
 def channel_valid_channel(channel_id):
@@ -458,3 +427,8 @@ def channel_valid_channel(channel_id):
         return channels_and_members[channel_id]
     except: 
         raise InputError
+
+
+def channel_member_permissions(channel_id, u_id):
+    if (channel_in_check(channel_id, u_id) == 0):
+        raise AccessError # not a member of channel
