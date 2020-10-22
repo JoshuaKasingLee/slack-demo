@@ -50,10 +50,12 @@ def remove_admin(token):
     admin_users.remove(token)
 # messages = {
 #   'message_id': {
+#       'message_id':
 #       'channel_id':
 #       'u_id':
 #       'message':
 #       'deleted':
+#       'time':
 #   }
 # }
 messages = {}
@@ -397,6 +399,103 @@ def channel_valid_channel(channel_id):
         raise InputError
 
 
+<<<<<<< HEAD
 def channel_member_permissions(channel_id, u_id):
     if (channel_in_check(channel_id, u_id) == 0):
         raise AccessError # not a member of channel
+=======
+# Functions:
+# Check a user exists
+def message_user_exists(token):
+    # First that the user is in the channel_id
+    # To do this we find the u_id through the token
+    # Either call a function in the database or copy and paste this
+    u_id_exists = False
+    for user in master_users:
+        if user['token'] == token:
+            u_id = user['u_id']
+            u_id_exists = True
+    # If u_id does not exist, the user does not exist
+    return u_id_exists
+
+# Given token, find u_id
+def message_uid_from_token(token):
+    # First that the user is in the channel_id
+    # To do this we find the u_id through the token
+    # Either call a function in the database or copy and paste this
+    u_id_exists = False
+    for user in master_users:
+        u_id = user['u_id']
+    # If u_id does not exist, the user does not exist
+    return u_id
+
+# Check whether there are any channels (to prevent index errors)
+def message_channel_exists():
+    channel_exists = len(channels)
+    if channel_exists > 0:
+        return True
+    return False
+
+# Given a channel_id and user_id, check whether user is a member
+def message_user_is_member(u_id, channel_id):
+    for users in channels_and_members[channel_id][1]:
+        if u_id == users['u_id']:
+            return True
+    return False
+
+# Determine message_id of new message
+def message_new_message_id():
+    return len(messages)
+
+# Append a message to the database
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    return
+
+# Given a channel, check if u_id is an owner
+def message_user_is_owner(u_id, channel_id):
+    for users in channels_and_members[channel_id][0]:
+        if u_id == users['u_id']:
+            return True
+    return False
+
+# Given a channel, check if u_id is an admin
+def message_user_is_admin(u_id):
+    for users in admin_users:
+        if u_id == users:
+            return True
+    return False
+
+# Given a message_id, change the deleted key to true
+def message_delete_message(message_id):
+    messages[f'{message_id}']['deleted'] = True
+    return
+
+# Check if there are any messages in database
+def message_messages_empty():
+    if len(messages) == 0:
+        return True
+    return False
+
+# Given a message_id, check if it exists
+def message_message_exist(message_id):
+    if f'{message_id}' in messages:
+        return True
+    return False
+
+# Given a message_id, check if it has been deleted
+def message_message_deleted(message_id):
+    if messages[f'{message_id}']['deleted'] == True:
+        return True
+    return False
+
+# Given message_id find channel_id
+def message_channel_id_from_message_id(message_id):
+    return messages[f'{message_id}']['channel_id']
+
+# Given a message, edit the database
+def message_edit_message(message, message_id):
+    messages[f'{message_id}']['message'] = message
+    return
+
+>>>>>>> message
