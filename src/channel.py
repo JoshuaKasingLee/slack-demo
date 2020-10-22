@@ -7,13 +7,14 @@ def channel_invite(token, channel_id, u_id):
     #instantly join once invited - wouldnt be owner because not the first in
 
     u_id_inviter = token_check(token)
-    database.channel_token_user_exist_check(u_id_inviter)
+    database.channels_user_log_check(u_id_inviter)
     
     database.channel_valid_channel(channel_id)
-    database.channel_inviter_in_check(channel_id, u_id_inviter)
+    database.channel_member_permissions(channel_id, u_id_inviter)
     database.channel_user_exist_check(u_id)
-    add_required = database.channel_no_add_required(channel_id, u_id)
-    if (add_required == 0):
+
+    add_required = database.channel_in_check(channel_id, u_id)
+    if (add_required == 1):
         return {}
 
     #find user and make member
@@ -29,9 +30,9 @@ def channel_details(token, channel_id):
     
     u_id = token_check(token)
         
-    database.channel_token_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
     database.channel_valid_channel(channel_id)
-    database.channel_in_all_members(channel_id, u_id)
+    database.channel_member_permissions(channel_id, u_id)
 
     name = database.channel_fetch_name(channel_id)
     owner_members = database.channel_fetch_owners(channel_id)
@@ -44,11 +45,11 @@ def channel_messages(token, channel_id, start):
     ## check valid token
     u_id = token_check(token)
 
-    database.channel_token_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
     
     ## check if user is a member of channel/ if channel exists
     database.channel_valid_channel(channel_id)
-    database.channel_in_all_members(channel_id, u_id)
+    database.channel_member_permissions(channel_id, u_id)
 
     if start < 0:
         raise InputError
@@ -79,10 +80,10 @@ def channel_leave(token, channel_id):
 
     u_id = token_check(token)
     
-    database.channel_token_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
 
     database.channel_valid_channel(channel_id)
-    database.channel_in_all_members(channel_id, u_id)
+    database.channel_member_permissions(channel_id, u_id)
 
     database.channel_remove_member(channel_id, u_id)
 
@@ -95,13 +96,13 @@ def channel_join(token, channel_id):
     u_id = token_check(token)
     
     # check if the user is valid
-    database.channel_token_user_exist_check(u_id)
+    database.channels_user_log_check(u_id)
 
     # check whether user has joined the channel already
     database.channel_valid_channel(channel_id)
     
-    add_required = database.channel_no_add_required(channel_id, u_id)
-    if (add_required == 0):
+    add_required = database.channel_in_check(channel_id, u_id)
+    if (add_required == 1):
         return {}
  
     joined = database.channel_add_member(channel_id, u_id)
@@ -126,7 +127,7 @@ def channel_addowner(token, channel_id, u_id):
     # can only add owner if token is already an owner of channel or owner of flockr
     # u_id becomes owner
     u_id_inviter = token_check(token)
-    database.channel_token_user_exist_check(u_id_inviter)
+    database.channels_user_log_check(u_id_inviter)
 
     if_in = database.channel_if_owner(u_id_inviter, channel_id)
     
@@ -151,13 +152,14 @@ def channel_removeowner(token, channel_id, u_id):
    #access error token is not global or local owner
     u_id_inviter = token_check(token)
 
-    database.channel_token_user_exist_check(u_id_inviter)
+    database.channels_user_log_check(u_id_inviter)
     
-    token_if_in, invited_if_in = database.channel_check_owners(u_id_inviter, u_id, channel_id)
+    inviter_if_in = database.channel_check_owners(u_id_inviter, channel_id)
+    invited_if_in = database.channel_check_owners(u_id, channel_id)
     
     inviter_is_owner = database.channel_check_flockr_owner(u_id_inviter)
 
-    if token_if_in != 1 and inviter_is_owner == False: 
+    if inviter_if_in != 1 and inviter_is_owner == False: 
         # if not global owner or current owner
         raise AccessError
     
