@@ -14,7 +14,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -71,11 +71,17 @@ def test_leave_http(url):
     }
 
     requests.post(url + 'channel/join', json = data_in)
-    requests.delete(url + 'channel/leave', json = data_in)
+    requests.post(url + 'channel/leave', json = data_in)
 
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id
+    }
+
+    response = requests.get(url + 'channel/details', params = data_in)
     payload = response.json()
     all_members = payload['all_members']
+    print(all_members)
     is_in = 0
     for member in all_members:
         if member['u_id'] == u_id_2:
@@ -108,7 +114,7 @@ def test_valid_channel_http(url):
         'token' : token,
         'channel_id' : 999
     }
-    response = requests.delete(url + 'channel/leave', json = data_in)
+    response = requests.post(url + 'channel/leave', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
@@ -149,6 +155,6 @@ def test_not_a_channel_mem_http(url):
         'token' : token_2,
         'channel_id' : channel_id
     }
-    response = requests.delete(url + 'channel/leave', json = data_in)
+    response = requests.post(url + 'channel/leave', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')

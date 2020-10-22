@@ -14,7 +14,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -43,7 +43,6 @@ def test_add_member_http(url):
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
     token_1 = payload['token']
-
     data_in = {
         'email' : "email2@gmail.com",
         'password' : "password",
@@ -64,15 +63,18 @@ def test_add_member_http(url):
     response = requests.post(url + 'channels/create', json = data_in)
     payload = response.json()
     channel_id = payload['channel_id']
-
     data_in = {
         'token' : token_1,
         'channel_id' : channel_id,
         'u_id' : u_id_2
     }    
     requests.post(url + 'channel/invite', json = data_in)
-
-    response = requests.get(url + 'channel/details', params=(token_1, channel_id))
+    data_in = {
+        'token' : token_1,
+        'channel_id' : channel_id
+    }
+    response = requests.get(url + 'channel/details', params = data_in)
+    assert( response.status_code == 200)
     payload = response.json()
     all_members = payload['all_members']
 

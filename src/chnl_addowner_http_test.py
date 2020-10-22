@@ -13,7 +13,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -57,7 +57,7 @@ def test_valid_channel_http(url):
 def test_already_channel_owner_http(url):
     requests.delete(url + 'clear')
     data_in = {
-        'email' : "email2@gmail.com",
+        'email' : "test1@gmail.com",
         'password' : "password",
         'name_first' : "John",
         'name_last' : "Smith"
@@ -127,7 +127,12 @@ def test_global_but_not_local_owner_http(url):
     }
     requests.post(url + 'channel/addowner', json = data_in)
 
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id
+    }
+
+    response = requests.get(url + 'channel/details', params = data_in)
     payload = response.json()
     owner_members = payload['owner_members']
 
@@ -225,7 +230,12 @@ def test_promote_http(url):
     }
     requests.post(url + 'channel/addowner', json = data_in)
 
-    response = requests.get(url + 'channel/details', params=(token, channel_id))
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id
+    }
+
+    response = requests.get(url + 'channel/details', params = data_in)
     payload = response.json()
     owner_members = payload['owner_members']
     is_in = 0

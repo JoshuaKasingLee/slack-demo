@@ -13,9 +13,9 @@ def test_one() :
             {
                 'u_id': u_id,
                 'email': 'jonathon@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
+                'name_first': 'John',
+                'name_last': 'Smith',
+                'handle_str': 'johnsmith',
             },
         ],
     }
@@ -33,9 +33,9 @@ def test_two() :
             {
                 'u_id': u_id,
                 'email': 'jonathon@gmail.com',
-                'name_first': 'Hayden',
-                'name_last': 'Jacobs',
-                'handle_str': 'haydenjacobs',
+                'name_first': 'John',
+                'name_last': 'Smith',
+                'handle_str': 'johnsmith',
             },
             {
                 'u_id': u_id2,

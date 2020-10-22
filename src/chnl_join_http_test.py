@@ -13,7 +13,7 @@ import json
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -70,7 +70,12 @@ def test_join_http_test(url):
 
     requests.post(url + 'channel/join', json = data_in)
 
-    response = requests.get(url + 'channel/details', params=(token_2, channel_id))
+    data_in = {
+        'token' : token_2,
+        'channel_id' : channel_id
+    }
+
+    response = requests.get(url + 'channel/details', data_in)
     payload = response.json()
     all_members = payload['all_members']
     is_in = 0
