@@ -25,7 +25,7 @@ def test_make_admin() :
     token_2 = user_2['token']
     admin_userpermission_change(token, u_id_2, 1)
     channel_id = channels.channels_create(token, "Channel1", False)["channel_id"]
-    assert(channel.channel_join(token_2, channel_id))
+    assert(channel.channel_join(token_2, channel_id) == {} ) # doesn't AccessError
     clear()
 
 def test_remove_admin() :

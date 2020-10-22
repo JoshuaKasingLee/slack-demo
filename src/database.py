@@ -3,6 +3,7 @@ from error import AccessError
 import hashlib
 # To be put into iteration 1
 
+
 # list of dictionary's containing ALL users :
 master_users = []
 # (contains ALL data relevant to ALL registered users)
@@ -84,7 +85,65 @@ def remove_admin(u_id):
     
 def is_str_in_msg(query_str, message):
     return (query_str in message)
+
+def is_flockr_owner(token):    
+    if master_users[0]['token'] == token:
+        return True
+    raise AccessError
     
+def convert_from_tok_to_u_id(token):
+    u_id = -1
+    for user in master_users:
+        if user['token'] == token:
+            u_id = user['u_id']
+    return u_id
+
+def add_all_users_to_list(list_of_users):
+    single_user = {}
+    for user in master_users:
+        single_user['u_id'] = user['u_id']
+        single_user['email'] = user['email']
+        single_user['name_first'] = user['name_first']
+        single_user['name_last'] = user['name_last']
+        single_user['handle_str'] = user['handle_str']
+        list_of_users.append(single_user)
+        single_user = {}
+    return list_of_users
+
+def add_selected_messages_to_list(query_str, token, list_of_messages):
+    single_message = {}
+    u_id = convert_from_tok_to_u_id(token)
+    print("messages is:")
+    print(messages)
+    for message in messages: 
+        print("message is:")
+        print(message)
+        message = messages[message]
+        print("message is:")
+        print(message)
+        try:
+            cond_one = channel_in_check(message['channel_id'], u_id)
+        except:
+            #channel_id doesnt exist (ie channel as been deleted)
+            cond_one = False
+        cond_two = is_str_in_msg(query_str, message['message'])
+        cond_three = message['deleted'] == False
+        if cond_one and cond_two and cond_three:
+            single_message['message_id'] = message['message_id']
+            single_message['u_id'] = message['u_id']
+            single_message['message'] = message['message']
+            single_message['time_created'] = message['time_created']
+            list_of_messages.append(single_message)
+            single_message = {}
+    return list_of_messages
+
+def token_check(token):
+    try:
+        u_id = int(token)
+    except:
+        raise AccessError #invalid token
+    return u_id
+   
     
 # AUTH FUNCTIONS #
 
@@ -266,10 +325,14 @@ def channel_add_member(channel_id, u_id): # made changes i don't get
     return joined
             
 
-def channel_check_flockr_owner(u_id):
+def channel_check_admin(u_id):
     if master_users[0]['u_id'] == u_id:
         return True
-    return False
+    try:
+        if admin_users['u_id'] == True:
+            return True
+    except:
+        return False
 
 def channel_add_member_private(channel_id, u_id):
     for channel in private_channels:
@@ -404,18 +467,7 @@ def channel_user_exist_check(u_id):
     if if_in != 1: 
         raise InputError
 
-
-def channel_inviter_in_check(channel_id, u_id_inviter):
-    if_in = 0
-    for member in channels_and_members[channel_id][1]:
-        if member['u_id'] == u_id_inviter:
-            if_in = 1
-    if if_in != 1: 
-        raise AccessError
-
-
 def channel_in_check(channel_id, u_id):
-    if_in = 0
     for member in channels_and_members[channel_id][1]:
         if member['u_id'] == u_id:
             return 1 # return 1 if they are in
