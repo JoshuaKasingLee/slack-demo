@@ -399,12 +399,12 @@ def channel_valid_channel(channel_id):
         raise InputError
 
 
-<<<<<<< HEAD
 def channel_member_permissions(channel_id, u_id):
     if (channel_in_check(channel_id, u_id) == 0):
         raise AccessError # not a member of channel
-=======
-# Functions:
+
+# MESSAGE FUNCTIONS #
+
 # Check a user exists
 def message_user_exists(token):
     # First that the user is in the channel_id
@@ -498,4 +498,3 @@ def message_edit_message(message, message_id):
     messages[f'{message_id}']['message'] = message
     return
 
->>>>>>> message
