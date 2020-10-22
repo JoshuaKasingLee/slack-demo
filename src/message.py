@@ -11,14 +11,14 @@ def message_send(token, channel_id, message):
     assert(database.message_user_exists(token) == True)
 
     # Find u_id from token
-    u_id = database.message_uid_from_token(token)
+    u_id = database.convert_from_tok_to_u_id(token)
 
     # Make sure a channel exists
     assert(database.message_channel_exists() == True)
 
     # # Now check if the user exists in the channel_id
     u_id_is_member = database.message_user_is_member(u_id, channel_id)
-
+    
     # Raise AccessError if the user is not part of the channel they are trying to post in
     if u_id_is_member == False:
         raise AccessError(f"Error, u_id:{u_id} cannot post in a channel they have not joined. The channel has channel_id: {channel_id}.")
@@ -63,7 +63,7 @@ def message_remove(token, message_id):
     assert(database.message_user_exists(token) == True)
 
     # Find u_id from token
-    u_id = database.message_uid_from_token(token)
+    u_id = database.convert_from_tok_to_u_id(token)
 
     # # Make sure a channel exists
     assert(database.message_channel_exists() == True)
@@ -116,7 +116,7 @@ def message_edit(token, message_id, message):
     assert(database.message_user_exists(token) == True)
 
     # Find u_id from token
-    u_id = database.message_uid_from_token(token)
+    u_id = database.convert_from_tok_to_u_id(token)
 
     # Make sure a channel exists
     assert(database.message_channel_exists() == True)

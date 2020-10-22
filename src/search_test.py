@@ -5,6 +5,7 @@ import channels
 import auth
 import message
 from error import AccessError
+from datetime import date
 
 def test_empty():
     clear()
@@ -25,8 +26,8 @@ def test_one() :
             {
                 'message_id': msg_id_1,
                 'u_id': u_id,
-                'message': 'Hello world',
-                'time_created': 1582426789 ,
+                'message': 'Hello World',
+                'time_created': date.today(),
             }
         ]
     }
@@ -46,8 +47,8 @@ def test_two_messages_one_match() :
             {
                 'message_id': msg_id_1,
                 'u_id': u_id,
-                'message': 'Hello world',
-                'time_created': 1582426789 ,
+                'message': 'Hello World',
+                'time_created': date.today(),
             }
         ]
     }
@@ -66,13 +67,13 @@ def test_two_messages_two_match() :
             {
                 'message_id': msg_id_1,
                 'u_id': u_id,
-                'message': 'Hello world',
-                'time_created': 1582426789 ,
+                'message': 'Hello World',
+                'time_created': date.today(),
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'Hello, this is a test message',
-                'time_created': 1582426789 ,
+                'time_created': date.today(),
             }
         ]
     }
@@ -93,12 +94,12 @@ def test_three_messages_two_match() :
                 'message_id': msg_id_1,
                 'u_id': u_id,
                 'message': 'This is a test message',
-                'time_created': 1582426789 ,
+                'time_created': date.today(),
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'then he said to test',
-                'time_created': 1582426789 ,
+                'time_created': date.today(),
             }
         ]
     }
@@ -113,7 +114,7 @@ def test_mult_match_messages_but_diff_channels() :
     token_2 = user_2['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     channel_id_2 = channels.channels_create(token_2, "Channel1", True)["channel_id"]
-    channel.channel_join(token, channel_id)
+    channel.channel_join(token, channel_id_2)
     message.message_send(token, channel_id, "Hello Comp1531")
     msg_id_1 = message.message_send(token, channel_id_2, "Comp1531 is fun")['message_id']
     message.message_send(token, channel_id, "i do Comp1531")
@@ -123,7 +124,7 @@ def test_mult_match_messages_but_diff_channels() :
                 'message_id': msg_id_1,
                 'u_id': u_id,
                 'message': 'Comp1531 is fun',
-                'time_created': 1582426789 ,
+                'time_created': date.today(),
             }
         ]
     }
@@ -143,13 +144,13 @@ def test_matching_letter() :
             {
                 'message_id': msg_id_1,
                 'u_id': u_id,
-                'message': '"Hello Comp1531',
-                'time_created': 1582426789 ,
+                'message': 'Hello Comp1531',
+                'time_created': date.today(),
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'i do Comp1531',
-                'time_created': 1582426789 ,
+                'time_created': date.today(),
             }
         ]
     }

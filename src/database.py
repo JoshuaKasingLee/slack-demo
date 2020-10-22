@@ -49,6 +49,23 @@ probably needs to be deleted:
 
 # # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
 
+# FUNCTIONS USED IN ALL FILES #
+
+def token_check(token):
+    try:
+        u_id = int(token)
+    except:
+        raise AccessError #invalid token
+    return u_id
+   
+    
+def convert_from_tok_to_u_id(token):
+    u_id = -1
+    for user in master_users:
+        if user['token'] == token:
+            u_id = user['u_id']
+    return u_id
+
 # OTHER.PY FUNCTIONS #
 
 def clear():
@@ -93,13 +110,6 @@ def is_flockr_owner(token):
         return True
     raise AccessError
     
-def convert_from_tok_to_u_id(token):
-    u_id = -1
-    for user in master_users:
-        if user['token'] == token:
-            u_id = user['u_id']
-    return u_id
-
 def add_all_users_to_list(list_of_users):
     single_user = {}
     for user in master_users:
@@ -115,14 +125,8 @@ def add_all_users_to_list(list_of_users):
 def add_selected_messages_to_list(query_str, token, list_of_messages):
     single_message = {}
     u_id = convert_from_tok_to_u_id(token)
-    print("messages is:")
-    print(messages)
     for message in messages: 
-        print("message is:")
-        print(message)
         message = messages[message]
-        print("message is:")
-        print(message)
         try:
             cond_one = channel_in_check(message['channel_id'], u_id)
         except:
@@ -134,18 +138,11 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             single_message['message_id'] = message['message_id']
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
-            single_message['time_created'] = message['time_created']
+            single_message['time_created'] = message['time']
             list_of_messages.append(single_message)
             single_message = {}
     return list_of_messages
 
-def token_check(token):
-    try:
-        u_id = int(token)
-    except:
-        raise AccessError #invalid token
-    return u_id
-   
     
 # AUTH FUNCTIONS #
 
@@ -487,6 +484,7 @@ def channel_member_permissions(channel_id, u_id):
     if (channel_in_check(channel_id, u_id) == 0):
         raise AccessError # not a member of channel
 
+
 # MESSAGE FUNCTIONS #
 
 # Check a user exists
@@ -501,17 +499,6 @@ def message_user_exists(token):
             u_id_exists = True
     # If u_id does not exist, the user does not exist
     return u_id_exists
-
-# Given token, find u_id
-def message_uid_from_token(token):
-    # First that the user is in the channel_id
-    # To do this we find the u_id through the token
-    # Either call a function in the database or copy and paste this
-    u_id_exists = False
-    for user in master_users:
-        u_id = user['u_id']
-    # If u_id does not exist, the user does not exist
-    return u_id
 
 # Check whether there are any channels (to prevent index errors)
 def message_channel_exists():
