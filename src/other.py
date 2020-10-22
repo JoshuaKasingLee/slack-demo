@@ -21,6 +21,7 @@ def users_all(token):
         single_user['name_last'] = user['name_last']
         single_user['handle_str'] = user['handle_str']
         list_of_users.append(single_user)
+        single_user = {}
         
     return {
         'users': list_of_users
