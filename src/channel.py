@@ -1,6 +1,7 @@
 import database
 from error import InputError
 from error import AccessError
+import helper
 
 def channel_invite(token, channel_id, u_id):
     # can only invite if member of channel
@@ -169,4 +170,3 @@ def channel_removeowner(token, channel_id, u_id):
     database.channel_remove_owner(u_id, channel_id)
 
     return {}
-

@@ -2,24 +2,25 @@ import database
 from channel import channel_join
 from error import InputError
 from error import AccessError
+import helper
 
 def channels_list(token):
 
-    u_id = token_check(token)
+    u_id = database.token_check(token)
     database.channels_user_log_check(u_id)
     return database.channels_return_membership(u_id)
 
 
 def channels_listall(token):
 
-    u_id = token_check(token)
+    u_id = database.token_check(token)
     database.channels_user_log_check(u_id)
     return database.channels_return_all()
 
 
 def channels_create(token, name, is_public):
 
-    u_id = token_check(token)
+    u_id = database.token_check(token)
     database.channels_user_log_check(u_id) 
     
     ## check valid name
@@ -36,13 +37,3 @@ def channels_create(token, name, is_public):
         'channel_id': channel_id,
     }
 
-
-# NON-DATABASE HELPER FUNCTIONS #
-
-def token_check(token):
-    ''' check if the token string is a valid integer'''
-    try:
-        u_id = int(token)
-    except:
-        raise AccessError #invalid token
-    return u_id

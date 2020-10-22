@@ -1,6 +1,7 @@
 from error import InputError
 from error import AccessError
 import hashlib
+import jwt
 # To be put into iteration 1
 
 
@@ -48,21 +49,29 @@ probably needs to be deleted:
 '''
 
 # # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
+# secret token encoder
+SECRET = 'kellycyrusandreeajoshnick'
 
 # FUNCTIONS USED IN ALL FILES #
 
 def token_check(token):
-    try:
-        u_id = int(token)
-    except:
+    ''' check if the token exists in database'''
+    token_exists = False
+    for user in master_users:
+        if token == user["token"] and user["log"] == True:
+            token_exists = True
+            break
+
+    if token_exists == True:
+        decoded_token = jwt.decode(token.encode('utf-8'), SECRET, algorithms=['HS256'])
+        return decoded_token["u_id"]
+    else:
         raise AccessError #invalid token
-    return u_id
-   
     
-def convert_from_tok_to_u_id(token):
+def convert_from_tok_to_u_id(decoded_token):
     u_id = -1
     for user in master_users:
-        if user['token'] == token:
+        if user['token'] == decoded_token:
             u_id = user['u_id']
     return u_id
 
@@ -569,3 +578,52 @@ def message_edit_message(message, message_id):
     messages[f'{message_id}']['message'] = message
     return
 
+
+
+# USER FUNCTIONS #
+
+def return_token_u_id(token):
+    ''' check if the token exists in database, and return u_id of token'''
+    valid_token = False
+    for i in range(0, len(master_users)):
+        if token == master_users[i]["token"] and master_users[i]["log"] == True:
+            valid_token = True
+            found_i = i
+    if valid_token == False:
+        raise AccessError("Token passed in is not a valid token.")
+    return found_i
+
+def check_token_u_id_match(token, u_id):
+    '''check if the u_id and token exist and match up, if so, return user'''
+    # check if u_id exists in database - if not, return InputError
+    user_exists = False
+    for user in master_users:
+        if u_id == user["u_id"]:
+            user_exists = True
+            found_user = user
+            break
+    if user_exists == False:
+        raise InputError(f"User with u_id {u_id} is not a valid user")
+
+    # check if input token is valid - if not, return AccessError
+    if not (token == found_user["token"] and found_user["log"] == True):
+        raise AccessError("Token passed in is not a valid token.")
+    
+    return found_user
+
+def update_first_name(u_id, name_first):
+    master_users[u_id]['name_first'] = name_first
+
+def update_last_name(u_id, name_last):
+    master_users[u_id]['name_last'] = name_last
+
+def update_email(u_id, email):
+    master_users[u_id]['email'] = email
+
+def update_handle(u_id, handle_str):
+    master_users[u_id]['handle_str'] = handle_str
+
+def check_handle(handle_str):
+    for user in master_users:
+        if handle_str == user["handle_str"]:
+            raise InputError(f"Error, {handle_str} handle has been taken")
