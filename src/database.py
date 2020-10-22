@@ -3,51 +3,29 @@ from error import AccessError
 import hashlib
 # To be put into iteration 1
 
-# (not given in spec) master users variables (contains ALL data relevant to ALL registered users)
-# should update token each time we login
+# list of dictionary's containing ALL users :
 master_users = []
+# (contains ALL data relevant to ALL registered users)
+# should update token each time we login
 
+#all channels:
 channels = []
 
-private_channels = [] # [{'channel_id': 2, 'name': 'channel1'},]
-public_channels = []# [{'channel_id': 1, 'name': 'channel2'}, ]
+# variables storing public and private channels id and name:
+private_channels = [] 
+# [{'channel_id': 1, 'name': 'channel1'},]
+public_channels = [] 
+# [{'channel_id': 2, 'name': 'channel2'}, ]
 
-# channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
+# dictionary of channels and respective members:
 channels_and_members = {}
+# channels_and_members = { channel_id: [owner_members, all_members], channel2: [owner_members2, all_members2], ...}
 
+# ditionary of u_id's of admins:
+admin_users = {}
 
-# messages in channels
-#channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
-#channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
-channels_and_messages = {}
-
-# DATABASE FUNCTION: (clear)
-
-def clear():
-    global master_users
-    master_users = []
-    global channels
-    channels = []
-    global channels_and_members
-    channels_and_members = {}
-    global channels_and_messages
-    channels_and_messages = {}
-    global private_channels
-    private_channels = []
-    global public_channels
-    public_channels = []
- 
-# DATABASE VARIABLE: (admin list)
-admin_users = []
-
-# DATABASE FUNCTION: (admin list)
-def make_admin(token):
-    global admin_users
-    admin_users.append(token)
-
-def remove_admin(token):
-    global admin_users
-    admin_users.remove(token)
+# dictionary of messages:
+messages = {}
 # messages = {
 #   'message_id': {
 #       'channel_id':
@@ -56,8 +34,58 @@ def remove_admin(token):
 #       'deleted':
 #   }
 # }
-messages = {}
 
+
+'''
+probably needs to be deleted:
+# messages in channels
+#channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
+#channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
+#channels_and_messages = {}
+'''
+
+# # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
+
+# OTHER.PY FUNCTIONS #
+
+def clear():
+    global master_users
+    master_users = []
+    global channels
+    channels = []
+    global private_channels
+    private_channels = []
+    global public_channels
+    public_channels = []
+    global channels_and_members
+    channels_and_members = {}
+    global admin_users
+    admin_users = {}
+    global messages
+    messages = {}
+    #global channels_and_messages
+    #channels_and_messages = {}
+
+    
+def make_admin(u_id):
+    global admin_users
+    admin_users['u_id'] = True
+
+def remove_admin(u_id):
+    global admin_users
+    admin_users.pop('u_id', None)
+    '''
+    or
+    try:
+        del admin_users['u_id']
+    except KeyError:
+        pass
+    '''
+    
+def is_str_in_msg(query_str, message):
+    return (query_str in message)
+    
+    
 # AUTH FUNCTIONS #
 
 def auth_check_email_login(email):
@@ -169,8 +197,12 @@ def channel_fetch_owners(channel_id):
 def channel_fetch_members(channel_id):
     return channels_and_members[channel_id][1]
 
+'''
+delete?
+
 def channel_fetch_messages(channel_id):
     return channels_and_messages[channel_id]
+'''
 
 def channel_remove_member(channel_id, u_id):
     ''' remove member from channel '''

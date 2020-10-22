@@ -3,9 +3,8 @@ from error import InputError#, AcccessError
 
 # add functions below if needed
 def clear():
-    database.clear()
-
-
+    database.clear()      
+        
 def users_all(token):
 
     # using the function in the database but hasnt been pushed yet:
@@ -58,10 +57,10 @@ def admin_userpermission_change(token, u_id, permission_id):
     is_permission_valid(permission_id)
 
     if permission_id == 1:
-        database.make_admin(token)
+        database.make_admin(u_id)
     
     if permission_id == 2:
-        database.remove_admin(token)
+        database.remove_admin(u_id)
         
     pass
 
@@ -82,14 +81,7 @@ def search(token, query_str):
         
         
     return {
-        'messages': [
-            {
-                'message_id': 1,
-                'u_id': 1,
-                'message': 'Hello world',
-                'time_created': 1582426789,
-            }
-        ],
+        'messages': list_of_messages
     }
         
 def is_permission_valid(permission_id):
