@@ -65,6 +65,21 @@ def admin_userpermission_change(token, u_id, permission_id):
     pass
 
 def search(token, query_str):
+    
+    list_of_messages = []
+    single_message = {}
+    for message in database.messages:       
+        cond_one = database.is_token_in_channel(token, message['channel_id'])
+        cond_two = database.is_str_in_msg(query_str, message['message'])
+        if cond_one and cond_two:
+            single_message['message_id'] = message['message_id']
+            single_message['u_id'] = message['u_id']
+            single_message['message'] = message['message']
+            single_message['time_created'] = message['time_created']
+            list_of_messages.append(single_message)
+            single_message = {}
+        
+        
     return {
         'messages': [
             {
