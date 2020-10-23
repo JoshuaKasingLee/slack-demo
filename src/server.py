@@ -143,8 +143,7 @@ def channel_creates():
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
-    data = request.get_json()
-    token = data['token']
+    token = request.args.get('token')
     list_of_users = other.users_all(token)
     return dumps(list_of_users)  
 
