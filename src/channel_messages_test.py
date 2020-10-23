@@ -1,5 +1,7 @@
 from channel import channel_messages
+import channel
 import channels
+import message
 import pytest
 from error import InputError as InputError
 from error import AccessError as AccessError
@@ -43,3 +45,15 @@ def test_negative_index(): # invalid index - InputError
     with pytest.raises(InputError):
         channel_messages(token, channel_id, -10)
     clear()
+
+def test_message_chronology():
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    u_id = user['u_id']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    message.message_send(token, channel_id, "first")['message_id']
+    message.message_send(token, channel_id, "second")['message_id']
+    msg_time_1 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
+    msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
+    assert (msg_time_2 > msg_time_1)

@@ -1,7 +1,7 @@
 import database
 from error import InputError
 from error import AccessError
-from datetime import date
+import time
 
 def message_send(token, channel_id, message):
     # First that the user is in the channel_id
@@ -37,8 +37,7 @@ def message_send(token, channel_id, message):
         'channel_id': channel_id,
         'u_id': u_id,
         'message': message,
-        'deleted': False,
-        'time': date.today(),
+        'time_created': time.time()
     }
     database.messages[f'{message_id}'] = message_package
 

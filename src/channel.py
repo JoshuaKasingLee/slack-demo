@@ -56,11 +56,20 @@ def channel_messages(token, channel_id, start):
     # fetch messages
     messages = database.channel_fetch_messages(channel_id)
 
-    channel_messages = { key:value for key, value in messages if value['channel_id'] == channel_id } # should work
-    messages_list = list(channel_messages.values()) # list of {'channel_id:'.. 'u_id:'.. 'message:'.. 'deleted:'..}
+    messages_list = []
+    single_message = {}
+    for message in messages:
+        extract_message = messages[message]
+        if (extract_message['channel_id'] == channel_id):
+            single_message['message_id'] = extract_message['message_id']
+            single_message['u_id'] = extract_message['u_id']
+            single_message['message'] = extract_message['message']
+            single_message['time_created'] = extract_message['time_created']
+            messages_list.append(single_message)
+            single_message = {}
 
     ## check 'start' isn't greater than total # of messages OR negative
-    message_max = len(messages_list)
+    message_max = len(messages_list) - 1
     if start > message_max or start < 0:
         raise InputError
 
@@ -70,12 +79,7 @@ def channel_messages(token, channel_id, start):
     while (current <= message_max) and (current < start + 50):
         messages_return.append(messages_list[current])
         current += 1
-
-    # remove the things we aren't using
-    for message in messages_return:
-        del message['channel_id']
-        # right now it will display deleted and undeleted messages. just kill the deleted tag and it should be chill
-    
+  
     # if we have reached the final message, return -1
     if current > message_max:
         current = -1

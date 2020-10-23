@@ -34,8 +34,7 @@ messages = {}
 #       'channel_id':
 #       'u_id':
 #       'message':
-#       'deleted':
-#       'time':
+#       'time_created':
 #   }
 # }
 
@@ -142,12 +141,11 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             #channel_id doesnt exist (ie channel as been deleted)
             cond_one = False
         cond_two = is_str_in_msg(query_str, message['message'])
-        cond_three = message['deleted'] == False
-        if cond_one and cond_two and cond_three:
+        if cond_one and cond_two:
             single_message['message_id'] = message['message_id']
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
-            single_message['time_created'] = message['time']
+            single_message['time_created'] = message['time_created']
             list_of_messages.append(single_message)
             single_message = {}
     return list_of_messages
