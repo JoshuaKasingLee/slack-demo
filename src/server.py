@@ -158,9 +158,8 @@ def change_user_permission():
 
 @APP.route("/search", methods=['GET'])
 def search_messages():
-    data = request.get_json()
-    token = data['token']
-    query_str = data['query_str']
+    token = request.args.get('token')
+    query_str = request.args.get('query_str')
     messages = other.search(token, query_str)
     return dumps(messages)  
 
