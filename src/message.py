@@ -71,8 +71,6 @@ def message_remove(token, message_id):
     # If a message doesn't exist, return input error
     if database.message_message_exist(message_id) == False:
         raise InputError(f"Error, the message does not exist")
-    elif database.message_message_deleted(message_id) == True:
-        raise InputError(f"Error, the message has already been deleted")
 
 
     # We have to find the channel_id using message_id
@@ -106,8 +104,6 @@ def message_edit(token, message_id, message):
     # If a message doesn't exist, return input error
     if database.message_message_exist(message_id) == False:
         raise InputError(f"Error, the message does not exist")
-    elif database.message_message_deleted(message_id) == True:
-        raise InputError(f"Error, the message has already been deleted")
     
     # Check to see if the user is an owner of this channel
     # First that the user is in the channel_id

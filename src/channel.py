@@ -46,34 +46,41 @@ def channel_messages(token, channel_id, start):
     ## check valid token
     u_id = database.token_check(token)
 
+    # check user exists/ is logged in
     database.channels_user_log_check(u_id)
     
     ## check if user is a member of channel/ if channel exists
     database.channel_valid_channel(channel_id)
     database.channel_member_permissions(channel_id, u_id)
 
-    if start < 0:
-        raise InputError
-
+    # fetch messages
     messages = database.channel_fetch_messages(channel_id)
 
+    channel_messages = { key:value for key, value in messages if value['channel_id'] == channel_id } # should work
+    messages_list = list(channel_messages.values()) # list of {'channel_id:'.. 'u_id:'.. 'message:'.. 'deleted:'..}
+
     ## check 'start' isn't greater than total # of messages OR negative
-    message_max = len(messages)
-    if start > message_max:
+    message_max = len(messages_list)
+    if start > message_max or start < 0:
         raise InputError
 
+    # return the correct number of messages
     messages_return = []
     current = start
     while (current <= message_max) and (current < start + 50):
-        messages_return.append(messages[current])
+        messages_return.append(messages_list[current])
         current += 1
+
+    # remove the things we aren't using
+    for message in messages_return:
+        del message['channel_id']
+        # right now it will display deleted and undeleted messages. just kill the deleted tag and it should be chill
     
     # if we have reached the final message, return -1
     if current > message_max:
         current = -1
 
     return { 'messages': messages_return, 'start': start, 'end': current, }
-
 
 def channel_leave(token, channel_id):
     #input error if not valid channel id (channel does not exist)

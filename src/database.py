@@ -264,12 +264,8 @@ def channel_fetch_owners(channel_id):
 def channel_fetch_members(channel_id):
     return channels_and_members[channel_id][1]
 
-'''
-delete?
-
 def channel_fetch_messages(channel_id):
-    return channels_and_messages[channel_id]
-'''
+    return messages
 
 def channel_remove_member(channel_id, u_id):
     ''' remove member from channel '''
@@ -548,7 +544,7 @@ def message_user_is_admin(u_id):
 
 # Given a message_id, change the deleted key to true
 def message_delete_message(message_id):
-    messages[f'{message_id}']['deleted'] = True
+    del messages[f'{message_id}']
     return
 
 # Check if there are any messages in database
@@ -560,12 +556,6 @@ def message_messages_empty():
 # Given a message_id, check if it exists
 def message_message_exist(message_id):
     if f'{message_id}' in messages:
-        return True
-    return False
-
-# Given a message_id, check if it has been deleted
-def message_message_deleted(message_id):
-    if messages[f'{message_id}']['deleted'] == True:
         return True
     return False
 
