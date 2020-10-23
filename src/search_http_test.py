@@ -40,38 +40,7 @@ def url():
             server.kill()
     else:
         server.kill()
-        raise Exception("Couldn't get URL from local server")
-
-###
-def test_onez(url) :
-    requests.delete(url + 'clear')
-    response = requests.post(url + 'auth/register', json = data_in_1)
-    payload = response.json()
-    u_id = payload['u_id']
-    response = requests.get(url + 'users/all', payload)
-    payload = response.json()
-    assert payload == {
-        'users': [
-            {
-                'u_id': u_id,
-                'email': 'jonathon@gmail.com',
-                'name_first': 'John',
-                'name_last': 'Smith',
-                'handle_str': 'johnsmith',
-            },
-        ],
-    }
-    requests.delete(url + 'clear')
-
-def test_invalid_tokenz(url): # wrong user token - accesserror
-    requests.delete(url + 'clear')
-    response = requests.post(url + 'auth/register', json = data_in_1)
-    token['token'] = 100
-    response = requests.get(url + 'users/all', token)
-    assert (response.status_code == 400)
-    requests.delete(url + 'clear')
-###
-    
+        raise Exception("Couldn't get URL from local server")    
 
 def test_empty(url):
     requests.delete(url + 'clear')
