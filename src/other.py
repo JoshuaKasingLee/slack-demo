@@ -2,7 +2,8 @@ import database
 from error import InputError
 
 def clear():
-    database.clear()      
+    database.clear() 
+    return {}     
         
 def users_all(token):
 
@@ -35,7 +36,7 @@ def admin_userpermission_change(token, u_id, permission_id):
     if permission_id == 2:
         database.remove_admin(u_id)
         
-    pass
+    return {}
 
 def search(token, query_str):
     

@@ -7,6 +7,7 @@ from error import InputError
 import channel 
 import channels 
 import auth
+import other
 
 def defaultHandler(err):
     response = err.get_response()
@@ -139,6 +140,39 @@ def channel_creates():
     is_public = data['is_public']
     created = channels.channels_create(token, name, is_public)
     return dumps(created)  
+
+@APP.route("/users/all", methods=['GET'])
+def display_users_all():
+    data = request.get_json()
+    token = data['token']
+    list_of_users = other.users_all(token)
+    return dumps(list_of_users)  
+
+@APP.route("/admin/userpermission/change", methods=['POST'])
+def change_user_permission():
+    data = request.get_json()
+    token = data['token']
+    u_id = data['u_id']
+    permission_id = data['permission_id']
+    change = other.admin_userpermission_change(token, u_id, permission_id)
+    return dumps(change)  
+
+@APP.route("/search", methods=['GET'])
+def search_messages():
+    data = request.get_json()
+    token = data['token']
+    query_str = data['query_str']
+    messages = other.search(token, query_str)
+    return dumps(messages)  
+
+@APP.route("/clear", methods=['DELETE'])
+def clear_all():
+    cleared = other.clear()
+    return dumps(cleared)  
+
+
+
+
 
 
 if __name__ == "__main__":
