@@ -29,6 +29,7 @@ def message_send(token, channel_id, message):
         raise InputError(f"Error, the message exceeds the 1000 character limit. You have input {message_length} characters.")
 
     # Otherwise message is valid
+
     # Create message_id. This is done by incrementing the number of messages in channels_and_messages.
     message_id = database.message_new_message_id()
 
@@ -37,7 +38,7 @@ def message_send(token, channel_id, message):
         'channel_id': channel_id,
         'u_id': u_id,
         'message': message,
-        'time_created': time.time()
+        'time_created': time.time(),
     }
     database.messages[f'{message_id}'] = message_package
 

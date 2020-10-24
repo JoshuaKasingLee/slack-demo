@@ -519,6 +519,8 @@ def message_user_is_member(u_id, channel_id):
 
 # Determine message_id of new message
 def message_new_message_id():
+    if "num_removed" in messages:
+        return len(messages)
     return len(messages)
 
 # Append a message to the database
@@ -543,6 +545,10 @@ def message_user_is_admin(u_id):
 # Given a message_id, change the deleted key to true
 def message_delete_message(message_id):
     del messages[f'{message_id}']
+    if "num_removed" in messages:
+        messages["num_removed"] += 1
+    else:
+        messages["num_removed"] = 1
     return
 
 # Check if there are any messages in database
@@ -566,7 +572,13 @@ def message_edit_message(message, message_id):
     messages[f'{message_id}']['message'] = message
     return
 
-
+# Check to see how many deleted messages there are
+def message_num_removed():
+    if "num_removed" in messages:
+        return messages["num_removed"]
+    else:
+        messages["num_removed"] = 0
+        return messages["num_removed"]
 
 # USER FUNCTIONS #
 
