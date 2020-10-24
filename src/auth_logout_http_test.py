@@ -27,40 +27,8 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-# Testing an undefined user
-def test_invalid_user_http(url):
-    requests.delete(url + 'clear')
-    data_in = {
-        'email' : "randomemail@gmail.com",
-        'password' : "123456"
-    }
-    response = requests.post(url + 'auth/login', json = data_in)
-    assert (response.status_code == 400)
-    requests.delete(url + 'clear')
-
-# Testing invalid password
-def test_invalid_password_http(url):
-    requests.delete(url + 'clear')
-    # register a user
-    data_in = {
-        'email' : "testmail@gmail.com",
-        'password' : "password",
-        'name_first' : "John",
-        'name_last' : "Smith"
-    }
-    response = requests.post(url + 'auth/register', json = data_in)
-    assert (response.status_code == 200)
-    # log the user in
-    data_in = {
-        'email' : "testmail@gmail.com",
-        'password' : "wrongpassword"
-    }
-    response = requests.post(url + 'auth/login', json = data_in)
-    assert (response.status_code == 400)
-    requests.delete(url + 'clear')
-
-# Testing successful login attempt !!
-def test_login_success_http(url):
+# Tests a successful log-out
+def test_successful_logout_http(url):
     requests.delete(url + 'clear')
     # register a user
     data_in = {
@@ -78,10 +46,49 @@ def test_login_success_http(url):
     }
     response = requests.post(url + 'auth/login', json = data_in)
     assert (response.status_code == 200)
+    payload = response.json()
+    # log the user out
+    data_in = {'token': payload['token']}
+    response = requests.post(url + 'auth/logout', json = data_in)
+    payload = response.json()
+    assert(payload == {"is_success": True})
     requests.delete(url + 'clear')
 
-# Testing that email has not been registered
-def test_unregistered(url):
+def test_failed_no_token_http(url):
+    requests.delete(url + 'clear')
+    data_in = {'token': ""}
+    response = requests.post(url + 'auth/logout', json = data_in)
+    payload = response.json()
+    assert(payload == {"is_success": False})
+    requests.delete(url + 'clear')
+
+
+def test_failed_bad_taken_http(url):
+    requests.delete(url + 'clear')
+    # register a user
+    data_in = {
+        'email' : "testmail@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    assert (response.status_code == 200)
+    # log the user in
+    data_in = {
+        'email' : "testmail@gmail.com",
+        'password' : "password"
+    }
+    response = requests.post(url + 'auth/login', json = data_in)
+    assert (response.status_code == 200)
+    # attempt to log user out
+    data_in = {'token': "Bad Token"}
+    response = requests.post(url + 'auth/logout', json = data_in)
+    payload = response.json()
+    assert(payload == {"is_success": False})
+    requests.delete(url + 'clear')
+
+def test_mixed_order_http(url):
     requests.delete(url + 'clear')
     # register a user
     data_in = {
@@ -92,6 +99,8 @@ def test_unregistered(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
+    payload = response.json()
+    token1 = payload['token']
     # register another user
     data_in = {
         'email' : "testmail2@gmail.com",
@@ -101,40 +110,53 @@ def test_unregistered(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
-    # log another user in
+    payload = response.json()
+    token2 = payload['token']
+    # register another user
     data_in = {
         'email' : "testmail3@gmail.com",
-        'password' : "password"
-    }
-    response = requests.post(url + 'auth/login', json = data_in)
-    assert (response.status_code == 400)
-    requests.delete(url + 'clear')
-
-
-# Testing double login works
-def test_login_twice_http(url):
-    requests.delete(url + 'clear')
-    # register a user
-    data_in = {
-        'email' : "testmail@gmail.com",
         'password' : "password",
         'name_first' : "John",
         'name_last' : "Smith"
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
-    # log the user in
-    data_in = {
-        'email' : "testmail@gmail.com",
-        'password' : "password"
-    }
-    response = requests.post(url + 'auth/login', json = data_in)
-    assert (response.status_code == 200)
-    # log the user in again
-    data_in = {
-        'email' : "testmail@gmail.com",
-        'password' : "password"
-    }
-    response = requests.post(url + 'auth/login', json = data_in)
-    assert (response.status_code == 200)
+    payload = response.json()
+    token3 = payload['token']
+    # log user 3 out
+    response = requests.post(url + 'auth/logout', json = {'token': token3})
+    payload = response.json()
+    assert(payload == {"is_success": True})
+    # log user 1 out
+    response = requests.post(url + 'auth/logout', json = {'token': token1})
+    payload = response.json()
+    assert(payload == {"is_success": True})
+    # log user 2 out
+    response = requests.post(url + 'auth/logout', json = {'token': token2})
+    payload = response.json()
+    assert(payload == {"is_success": True})
     requests.delete(url + 'clear')
+
+def test_logout_twice_http(url):
+    requests.delete(url + 'clear')
+    # register a user
+    data_in = {
+        'email' : "testmail1@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    assert (response.status_code == 200)
+    payload = response.json()
+    token = payload['token']
+    # log user out
+    response = requests.post(url + 'auth/logout', json = {'token': token})
+    payload = response.json()
+    assert(payload == {"is_success": True})
+    # attempt to log user out again
+    response = requests.post(url + 'auth/logout', json = {'token': token})
+    payload = response.json()
+    assert(payload == {"is_success": False})
+    requests.delete(url + 'clear')
+
