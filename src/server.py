@@ -8,6 +8,7 @@ import channel
 import channels 
 import auth
 import other
+import user
 
 def defaultHandler(err):
     response = err.get_response()
@@ -139,13 +140,46 @@ def channel_creates():
     name = data['name']
     is_public = data['is_public']
     created = channels.channels_create(token, name, is_public)
-    return dumps(created)  
+    return dumps(created)
+
+@APP.route("/user/profile", methods=['GET'])
+def user_profiles():
+    data = request.get_json()
+    u_id = data['u_id']
+    token = data['token']
+    profile = user.user_profile(token, u_id)
+    return dumps(profile)
+
+@APP.route("/user/profile/setname", methods=['PUT'])
+def user_profile_setnames():
+    data = request.get_json()
+    token = data['token']
+    name_first = data['name_first']
+    name_last = data['name_last']
+    user.user_profile_setname(token, name_first, name_last)
+    return dumps({})
+
+@APP.route("/user/profile/setemail", methods=['PUT'])
+def user_profile_setemails():
+    data = request.get_json()
+    token = data['token']
+    email = data['email']
+    user.user_profile_setemail(token, email)
+    return dumps({})
+
+@APP.route("/user/profile/sethandle", methods=['PUT'])
+def user_profile_sethandles():
+    data = request.get_json()
+    token = data['token']
+    handle_str = data['handle_str']
+    user.user_profile_sethandle(token, handle_str)
+    return dumps({})
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
     token = request.args.get('token')
     list_of_users = other.users_all(token)
-    return dumps(list_of_users)  
+    return dumps(list_of_users)
 
 @APP.route("/admin/userpermission/change", methods=['POST'])
 def change_user_permission():
