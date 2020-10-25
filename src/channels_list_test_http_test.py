@@ -97,4 +97,23 @@ def test_several_success_http(url):
     payload = response.json()
     channel_id2 = payload['channel_id']
 
-    
+    data_in = {
+        'token': token,
+    }
+
+    response = requests.get(url + 'channels/list', json = data_in)
+    payload = response.json()
+    assert(payload == {
+        'channels': [
+            {
+                'channel_id': channel_id,
+                'name': 'Channel1',
+            },
+            {
+                'channel_id': channel_id2,
+                'name': 'Channel2',
+            }
+        ]
+    })
+    requests.delete(url + 'clear')
+

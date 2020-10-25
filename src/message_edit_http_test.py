@@ -77,7 +77,7 @@ def test_user_not_owner_http(url):
         'message': 'New Message!',
     }
     
-    response = requests.put(url + 'message/edit', params = data_in)
+    response = requests.put(url + 'message/edit', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
