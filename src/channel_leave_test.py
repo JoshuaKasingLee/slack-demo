@@ -5,6 +5,20 @@ import channels
 import auth
 from error import InputError, AccessError
 
+def test_multiple_leave():
+    clear()
+    user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    user_2 = auth.auth_register("email2@gmail.com", "password", "John", "Smith")
+    token_2 = user_2['token']
+    channel_id = channels.channels_create(token, "Channel1", True)['channel_id']
+    channel_join(token_2, channel_id)
+    channel_leave(token_2, channel_id)
+    channel_leave(token, channel_id)
+    with pytest.raises(InputError):
+        channel_details(token, channel_id)['all_members']
+    clear()
+
 def test_leave():
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")

@@ -269,46 +269,31 @@ def channel_remove_member(channel_id, u_id):
     ''' remove member from channel '''
     # search public channels
     # update found after private search too, else return input error
-    for channel in public_channels:
-        owner_exists = 0
-        # check if owner
-        for owner in channels_and_members[channel_id][0]:
-            if owner['u_id'] == u_id:
-                owner_exists = 1
-        if owner_exists == 1:
-            # remove from owners 
-            for user in channels_and_members[channel_id][0]:
-                if user['u_id'] == u_id:
-                    channels_and_members[channel_id][0].remove(user)
-        #remove from all members 
-        for user in channels_and_members[channel_id][1]:
+    owner_exists = 0
+    # check if owner
+    for owner in channels_and_members[channel_id][0]:
+        if owner['u_id'] == u_id:
+            owner_exists = 1
+    if owner_exists == 1:
+        # remove from owners 
+        for user in channels_and_members[channel_id][0]:
             if user['u_id'] == u_id:
-                channels_and_members[channel_id][1].remove(user)
-            if len(channels_and_members[channel_id][1]) == 0 :
-                del channels_and_members[channel_id]
-                del public_channels[channel_id]
-                del channels[channel_id]
-    
-    # if channel/user could be in private channel
-    for channel in private_channels:   
-        owner_exists = 0
-        # check if owner
-        for owner in channels_and_members[channel_id][0]:
-            if owner['u_id'] == u_id:
-                owner_exists = 1
-        if owner_exists == 1:
-            # remove from owners 
-            for user in channels_and_members[channel_id][0]:
-                if user['u_id'] == u_id:
-                    channels_and_members[channel_id][0].remove(user)
-        # remove from all members 
-        for user in channels_and_members[channel_id][1]:               
-            if user['u_id'] == u_id:
-                channels_and_members[channel_id][1].remove(user)
-            if len(channels_and_members[channel_id][1]) == 0 :
-                del channels_and_members[channel_id]
-                del private_channels[channel_id]
-                del channels[channel_id]
+                channels_and_members[channel_id][0].remove(user)
+    #remove from all members 
+    for user in channels_and_members[channel_id][1]:
+        if user['u_id'] == u_id:
+            channels_and_members[channel_id][1].remove(user)
+        if len(channels_and_members[channel_id][1]) == 0 :
+            del channels_and_members[channel_id]
+            for channel in public_channels:
+                if channel["channel_id"] == channel_id:
+                    public_channels.remove(channel)
+            for channel in private_channels:
+                if channel["channel_id"] == channel_id:
+                    private_channels.remove(channel)
+            for channel in channels:
+                if channel["channel_id"] == channel_id:
+                    channels.remove(channel)
 
 def channel_add_member(channel_id, u_id): # made changes i don't get
     ''' add member to channel '''
@@ -498,7 +483,6 @@ def message_user_exists(token):
     u_id_exists = False
     for user in master_users:
         if user['token'] == token:
-            u_id = user['u_id']
             u_id_exists = True
     # If u_id does not exist, the user does not exist
     return u_id_exists
