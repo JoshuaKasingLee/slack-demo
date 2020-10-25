@@ -140,7 +140,7 @@ def channel_creates():
     name = data['name']
     is_public = data['is_public']
     created = channels.channels_create(token, name, is_public)
-    return dumps(created)  
+    return dumps(created)
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
