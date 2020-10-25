@@ -28,6 +28,59 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
+def test_working_edit(url):
+    requests.delete(url + 'clear')
+    data_in = {
+        'email': "user@gmail.com",
+        'password': "password",
+        'name_first': "John",
+        'name_last': "Smith",
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    payload = response.json()
+    token = payload['token']
+    
+    data_in = {
+        'token': token,
+        'name': "Test channel",
+        'is_public': True,   
+    }
+    
+    response = requests.post(url + 'channels/create', json = data_in)
+    payload = response.json()
+    channel_id = payload['channel_id']
+
+    data_in = {
+        'token': token,
+        'channel_id': channel_id,
+        'message': 'Hi!',
+    }
+
+    response = requests.post(url + 'message/send', json = data_in)
+    payload = response.json()
+    message_id = payload['message_id']
+
+    data_in = {
+        'email': "user2@gmail.com",
+        'password': "password",
+        'name_first': "Sam",
+        'name_last': "Smith",
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    payload = response.json()
+    
+    data_in = {
+        'token': token,
+        'message_id': message_id,
+        'message': 'New Message!',
+    }
+    
+    response = requests.put(url + 'message/edit', json = data_in)
+    payload = response.json()
+    assert payload == {}
+    requests.delete(url + 'clear')
+
+
 # Test that an Access Error is raised when user is not a channel owner
 def test_user_not_owner_http(url):
     requests.delete(url + 'clear')
@@ -77,7 +130,7 @@ def test_user_not_owner_http(url):
         'message': 'New Message!',
     }
     
-    response = requests.put(url + 'message/edit', params = data_in)
+    response = requests.put(url + 'message/edit', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 

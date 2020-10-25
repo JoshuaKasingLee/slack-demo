@@ -225,8 +225,8 @@ def edit_message():
     data = request.get_json()
     token = data['token']
     message_id = data['message_id']
-    message = data['message']
-    edit = message.message_edit(token, message_id, message)
+    message_ = data['message']
+    edit = message.message_edit(token, message_id, message_)
     return dumps(edit)
 
 
