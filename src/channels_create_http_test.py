@@ -29,7 +29,7 @@ def url():
         raise Exception("Couldn't get URL from local server")
 
 # Successfully create a channel
-def test_first_channel_http():
+def test_first_channel_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'user1@example.com',
@@ -54,7 +54,7 @@ def test_first_channel_http():
     requests.delete(url + 'clear')
 
 # Successfully create two channels
-def test_second_channel_http():
+def test_second_channel_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'user1@example.com',
@@ -86,7 +86,7 @@ def test_second_channel_http():
     requests.delete(url + 'clear')
 
 # Testing a repeated channel name
-def test_repeat_name_http():
+def test_repeat_name_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'user1@example.com',
@@ -128,7 +128,7 @@ def test_repeat_name_http():
     requests.delete(url + 'clear')
 
 # Test error given an invalid token
-def test_invalid_token_http():
+def test_invalid_token_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'token': 'bad token',
@@ -140,7 +140,7 @@ def test_invalid_token_http():
     requests.delete(url + 'clear')
 
 # Test user does not exist
-def test_user_missing_http():
+def test_user_missing_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'token': 996,
@@ -152,7 +152,7 @@ def test_user_missing_http():
     requests.delete(url + 'clear')
 
 # Test error when name is too long
-def test_invalid_name_long_http():
+def test_invalid_name_long_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'user1@example.com',
@@ -174,7 +174,7 @@ def test_invalid_name_long_http():
     requests.delete(url + 'clear')
 
 # Test invalid when a name is of length 0 characters
-def test_invalid_name_empty_http():
+def test_invalid_name_empty_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'user1@example.com',

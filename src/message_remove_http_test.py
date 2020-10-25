@@ -1,10 +1,10 @@
-import json
 import pytest
 import re
 from subprocess import Popen, PIPE
 import signal
 from time import sleep
 import requests
+import json
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
@@ -29,7 +29,7 @@ def url():
         raise Exception("Couldn't get URL from local server")
 
 # Test message no longer exists
-def test_message_already_deleted_http():
+def test_message_already_deleted_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -66,13 +66,13 @@ def test_message_already_deleted_http():
         'message_id': message_id,
     }
 
-    response = requests.post(url + 'message/remove', json = data_in)
-    response = requests.post(url + 'message/remove', json = data_in)
+    response = requests.delete(url + 'message/remove', json = data_in)
+    response = requests.delete(url + 'message/remove', json = data_in)
     assert(response.status_code == 400)
     requests.delete(url + 'clear')
 
 # Test message never existed
-def test_message_never_existed_http():
+def test_message_never_existed_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -103,7 +103,7 @@ def test_message_never_existed_http():
     assert(response.status_code == 400)
     requests.delete(url + 'clear')
 
-def test_user_not_owner_http():
+def test_user_not_owner_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",

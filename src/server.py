@@ -212,6 +212,23 @@ def send_message():
     message_id = message.message_send(token, channel_id, message_to_send)
     return dumps(message_id)
 
+@APP.route("/message/remove", methods=['DELETE'])
+def remove_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = data['message_id']
+    remove = message.message_remove(token, message_id)
+    return dumps(remove)
+
+@APP.route("/message/edit", methods=['PUT'])
+def edit_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = data['message_id']
+    message = data['message']
+    edit = message.message_edit(token, message_id, message)
+    return dumps(edit)
+
 
 if __name__ == "__main__":
     APP.run(port=0) # Do not edit this port
