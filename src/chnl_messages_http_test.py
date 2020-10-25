@@ -6,7 +6,12 @@ from time import sleep
 import requests
 import json
 
-
+data_in_1 = {
+        'email' : "jonathon@gmail.com",
+        'password' : "password",
+        'name_first' : "John",
+        'name_last' : "Smith"
+    }
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
@@ -145,4 +150,47 @@ def test_negative_index(url): # invalid index - InputError
 
     response = requests.get(url + 'channel/messages', params = data_in) # 99 is an arbitrary nonexistent token
     assert(response.status_code == 400)
+    requests.delete(url + 'clear')
+
+def test_message_chronology(url):
+    requests.delete(url + 'clear')
+    response = requests.post(url + 'auth/register', json = data_in_1)
+    payload = response.json()
+    token = payload['token']
+    u_id = payload['u_id']
+    data_in = {
+        'token' : token,
+        'name' : "Channel1",
+        'is_public' : True
+    }
+    response = requests.post(url + 'channels/create', json = data_in)
+    channel_id = response.json()
+
+    message_input = {
+        'token' : token,
+        'channel_id' : channel_id['channel_id'],
+        'message' : "first",
+    }
+    response = requests.post(url + 'message/send', json = message_input)
+    payload = response.json()
+
+    message_input = {
+        'token' : token,
+        'channel_id' : channel_id['channel_id'],
+        'message' : "sec0nd",
+    }
+    response = requests.post(url + 'message/send', json = message_input)
+    payload = response.json()
+
+    info = {
+        'token' : token,
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time1 = messages[0]['time_created']
+    time2 = messages[1]['time_created']
+    assert (time1 > time2)
     requests.delete(url + 'clear')

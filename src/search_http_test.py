@@ -191,15 +191,6 @@ def test_two_messages_two_match(url) :
     msg_id_1 = response.json()
     info = {
         'token' : token['token'],
-        'channel_id' : channel_id['channel_id'],
-        'start' : 0,
-    }
-    response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time1 = messages[0]['time_created']
-    info = {
-        'token' : token['token'],
         'query_str' : "World",
     }
     message_input = {
@@ -215,9 +206,9 @@ def test_two_messages_two_match(url) :
         'start' : 0,
     }
     response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time2 = messages[1]['time_created']
+    messages = response.json()['messages']
+    time1 = messages[1]['time_created']
+    time2 = messages[0]['time_created']
     info = {
         'token' : token['token'],
         'query_str' : "World",
@@ -256,7 +247,6 @@ def test_three_messages_two_match(url) :
         'name' : "Channel1",
         'is_public' : True
     }
-
     response = requests.post(url + 'channels/create', json = data_in)
     channel_id = response.json()
     message_input = {
@@ -274,15 +264,6 @@ def test_three_messages_two_match(url) :
     msg_id_1 = response.json()
     info = {
         'token' : token['token'],
-        'channel_id' : channel_id['channel_id'],
-        'start' : 0,
-    }
-    response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time1 = messages[1]['time_created']
-    info = {
-        'token' : token['token'],
         'query_str' : "World",
     }
     message_input = {
@@ -298,9 +279,9 @@ def test_three_messages_two_match(url) :
         'start' : 0,
     }
     response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time2 = messages[2]['time_created']
+    messages = response.json()['messages']
+    time1 = messages[1]['time_created']
+    time2 = messages[0]['time_created']
     info = {
         'token' : token['token'],
         'query_str' : "World",
@@ -429,19 +410,6 @@ def test_matching_letter(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()['message_id']
-    info = {
-        'token' : token['token'],
-        'channel_id' : channel_id['channel_id'],
-        'start' : 0,
-    }
-    response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time1 = messages[0]['time_created']
-    info = {
-        'token' : token['token'],
-        'query_str' : "World",
-    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id['channel_id'],
@@ -461,13 +429,9 @@ def test_matching_letter(url) :
         'start' : 0,
     }
     response = requests.get(url + 'channel/messages', info)
-    messages = response.json()
-    messages = messages['messages']
-    time2 = messages[2]['time_created']
-    info = {
-        'token' : token['token'],
-        'query_str' : "World",
-    }
+    messages = response.json()['messages']
+    time1 = messages[2]['time_created']
+    time2 = messages[0]['time_created']
     info = {
         'token' : token['token'],
         'query_str' : "o",
@@ -546,4 +510,3 @@ def test_invalid_token(url): # wrong user token - accesserror
     response = requests.get(url + 'search', info)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
-

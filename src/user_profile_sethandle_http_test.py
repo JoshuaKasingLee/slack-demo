@@ -168,7 +168,6 @@ def test_change_handle_taken_http(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
-    user1 = response.json()
     data_in = {
         'email' : "joshualee@gmail.com", 
         'password' : "cats<3",
@@ -198,7 +197,6 @@ def test_invalid_token_http(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
-    payload = response.json()
     # change user handle
     data_in = {
         'token': 'badtoken',

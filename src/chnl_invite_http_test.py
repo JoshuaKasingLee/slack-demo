@@ -4,9 +4,6 @@ from subprocess import Popen, PIPE
 import signal
 from time import sleep
 import requests
-import json
-
-
 
 
 # Use this fixture to get the URL of the server. It starts the server for you,
@@ -51,7 +48,6 @@ def test_add_member_http(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
-    token_2 = payload['token']
     u_id_2 = payload['u_id']
 
     data_in = {

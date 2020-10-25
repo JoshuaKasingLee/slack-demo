@@ -1,15 +1,18 @@
 import sys
 from json import dumps
+
 from flask import Flask, request
 from flask_cors import CORS
-from error import InputError
 
-import channel 
-import channels 
 import auth
+import channel
+import channels
+import message
 import other
 import message
 import user
+from error import InputError
+
 
 def defaultHandler(err):
     response = err.get_response()
@@ -225,8 +228,8 @@ def edit_message():
     data = request.get_json()
     token = data['token']
     message_id = data['message_id']
-    message = data['message']
-    edit = message.message_edit(token, message_id, message)
+    message_ = data['message']
+    edit = message.message_edit(token, message_id, message_)
     return dumps(edit)
 
 

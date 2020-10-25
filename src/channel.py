@@ -68,6 +68,9 @@ def channel_messages(token, channel_id, start):
             messages_list.append(single_message)
             single_message = {}
 
+    # it's supposed to return most recent first
+    messages_list.reverse()
+
     ## check 'start' isn't greater than total # of messages OR negative
     message_max = len(messages_list) - 1
     if start > message_max or start < 0:

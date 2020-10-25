@@ -6,6 +6,16 @@ from error import AccessError
 from error import InputError
 from other import clear
 
+def test_working_edit():
+    user_token = auth.auth_register("user@gmail.com", "password", "John", "Smith")['token']
+    channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
+    message_to_send = 'Hi!'
+    message_id = message_send(user_token, channel_id, message_to_send)['message_id']
+    auth.auth_register("user2@gmail.com", "password", "Sam", "Smith")['token']
+    message_to_send = 'New Message!'
+    assert message_edit(user_token, message_id, message_to_send) == {}
+    clear()
+    
 # Test that an Access Error is raised when user is not a channel owner
 def test_user_not_owner():
     user_token = auth.auth_register("user@gmail.com", "password", "John", "Smith")['token']
@@ -45,6 +55,6 @@ def test_message_success():
     user_token = auth.auth_register("user@gmail.com", "password", "John", "Smith")['token']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
-    message_id = message_send(user_token, channel_id, message_to_send)['message_id']
+    message_send(user_token, channel_id, message_to_send)['message_id']
     message_to_send = 'New Message!'
     clear()

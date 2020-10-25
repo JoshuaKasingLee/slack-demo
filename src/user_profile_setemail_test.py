@@ -55,7 +55,7 @@ def test_no_email():
 
 def test_taken_email():
     clear()
-    user1 = auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
+    auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
     user2 = auth_register("joshualee@gmail.com", "password", "Joshua", "Lee")
     with pytest.raises(InputError):
         user_profile_setemail(user2["token"], "kellyzhou@gmail.com")
