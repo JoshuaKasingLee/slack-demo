@@ -29,7 +29,7 @@ def url():
         raise Exception("Couldn't get URL from local server")
 
 # Test that an Access Error is raised when user is not a channel owner
-def test_user_not_owner_http():
+def test_user_not_owner_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -70,19 +70,19 @@ def test_user_not_owner_http():
     response = requests.post(url + 'auth/register', json = data_in)
     payload = response.json()
     token = payload['token']
-
+    
     data_in = {
         'token': token,
         'message_id': message_id,
         'message': 'New Message!',
     }
-
-    response = requests.put(url + 'message/edit', json = data_in)
+    
+    response = requests.put(url + 'message/edit', params = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
 # Test that an Input Error is raised when the message does not exist
-def test_message_never_existed_http():
+def test_message_never_existed_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -114,7 +114,7 @@ def test_message_never_existed_http():
     requests.delete(url + 'clear')
 
 # Test that an Input Error is raised when the message was deleted
-def test_message_already_deleted_http():
+def test_message_already_deleted_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
