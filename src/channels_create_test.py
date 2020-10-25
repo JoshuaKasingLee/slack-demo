@@ -8,7 +8,7 @@ from other import clear
 
 ## channels_create
 
-# first channel
+# Successfully create a channel
 def test_first_channel():
     clear()
     user1_token = auth.auth_register('user1@example.com', 'password', 'user1', 'name')['token']
