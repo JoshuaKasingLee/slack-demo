@@ -1,15 +1,18 @@
 import sys
 from json import dumps
+
 from flask import Flask, request
 from flask_cors import CORS
-from error import InputError
 
-import channel 
-import channels 
 import auth
+import channel
+import channels
+import message
 import other
 import message
 import user
+from error import InputError
+
 
 def defaultHandler(err):
     response = err.get_response()

@@ -498,7 +498,6 @@ def message_user_exists(token):
     u_id_exists = False
     for user in master_users:
         if user['token'] == token:
-            u_id = user['u_id']
             u_id_exists = True
     # If u_id does not exist, the user does not exist
     return u_id_exists
