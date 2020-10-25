@@ -44,7 +44,7 @@ def test_change_no_handle():
 
 def test_change_handle_taken():
     clear()
-    user1 = auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
+    auth_register("kellyzhou@gmail.com", "password", "Kelly", "Zhou")
     user2 = auth_register("joshualee@gmail.com", "password", "Joshua", "Lee")
     with pytest.raises(InputError):
         user_profile_sethandle(user2["token"], "kellyzhou")

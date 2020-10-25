@@ -325,7 +325,6 @@ def test_invalid_token_http(url):
     }
     response = requests.post(url + 'auth/register', json = data_in)
     assert (response.status_code == 200)
-    payload = response.json()
     # change user name
     data_in = {
         'token': 'badtoken',

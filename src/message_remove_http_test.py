@@ -4,7 +4,6 @@ from subprocess import Popen, PIPE
 import signal
 from time import sleep
 import requests
-import json
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
@@ -92,8 +91,6 @@ def test_message_never_existed_http(url):
     
     response = requests.post(url + 'channels/create', json = data_in)
     payload = response.json()
-    channel_id = payload['channel_id']
-
     data_in = {
         'token': token,
         'message_id': 15,

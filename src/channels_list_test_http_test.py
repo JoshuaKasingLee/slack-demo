@@ -86,7 +86,6 @@ def test_several_success_http(url):
     }
     response = requests.post(url + 'channels/create', json = data_in)
     payload = response.json()
-    channel_id = payload['channel_id']
 
     data_in = {
         'token': token,
@@ -95,6 +94,5 @@ def test_several_success_http(url):
     }
     response = requests.post(url + 'channels/create', json = data_in)
     payload = response.json()
-    channel_id2 = payload['channel_id']
 
     

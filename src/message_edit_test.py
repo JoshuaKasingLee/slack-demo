@@ -55,6 +55,6 @@ def test_message_success():
     user_token = auth.auth_register("user@gmail.com", "password", "John", "Smith")['token']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
-    message_id = message_send(user_token, channel_id, message_to_send)['message_id']
+    message_send(user_token, channel_id, message_to_send)['message_id']
     message_to_send = 'New Message!'
     clear()
