@@ -8,6 +8,7 @@ import channel
 import channels 
 import auth
 import other
+import message
 
 def defaultHandler(err):
     response = err.get_response()
@@ -168,9 +169,14 @@ def clear_all():
     cleared = other.clear()
     return dumps(cleared)  
 
-
-
-
+@APP.route("/message/send", methods=['POST'])
+def send_message():
+    data = request.get_json()
+    token = data['token']
+    channel_id = data['channel_id']
+    message_to_send = data['message']
+    message_id = message.message_send(token, channel_id, message_to_send)
+    return dumps(message_id)
 
 
 if __name__ == "__main__":
