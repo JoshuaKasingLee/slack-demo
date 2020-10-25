@@ -29,7 +29,7 @@ def url():
         raise Exception("Couldn't get URL from local server")
 
 # Testing a successful list
-def test_success_http():
+def test_success_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'email@example.com',
@@ -67,7 +67,7 @@ def test_success_http():
     requests.delete(url + 'clear')
 
 # Test multiple channels under a user
-def test_several_success_http():
+def test_several_success_http(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': 'email@example.com',

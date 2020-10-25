@@ -73,8 +73,8 @@ def channel_detail():
 @APP.route("/channel/messages", methods=['GET'])
 def channel_message():
     token = request.args.get('token')
-    channel_id = request.args.get('channel_id')
-    start = request.args.get('start')
+    channel_id = int(request.args.get('channel_id'))
+    start = int(request.args.get('start'))
     messages = channel.channel_messages(token, channel_id, start)
     return dumps(messages)
 

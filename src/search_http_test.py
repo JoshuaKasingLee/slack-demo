@@ -86,6 +86,15 @@ def test_one(url) :
     msg_id_1 = response.json()
     info = {
         'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time = messages[0]['time_created']
+    info = {
+        'token' : token['token'],
         'query_str' : "World",
     }
     response = requests.get(url + 'search', info)
@@ -96,7 +105,7 @@ def test_one(url) :
                 'message_id': msg_id_1['message_id'],
                 'u_id': u_id,
                 'message': 'Hello World',
-                'time_created': date.today(),
+                'time_created': time,
             }
         ]
     }
@@ -113,7 +122,6 @@ def test_two_messages_one_match(url) :
         'name' : "Channel1",
         'is_public' : True
     }
-
     response = requests.post(url + 'channels/create', json = data_in)
     channel_id = response.json()
     message_input = {
@@ -123,6 +131,19 @@ def test_two_messages_one_match(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time = messages[0]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id['channel_id'],
@@ -141,7 +162,7 @@ def test_two_messages_one_match(url) :
                 'message_id': msg_id_1['message_id'],
                 'u_id': u_id,
                 'message': 'Hello World',
-                'time_created': date.today(),
+                'time_created': time,
             }
         ]
     }
@@ -168,6 +189,19 @@ def test_two_messages_two_match(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time1 = messages[0]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id['channel_id'],
@@ -175,6 +209,19 @@ def test_two_messages_two_match(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_2 = response.json()
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time2 = messages[1]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     info = {
         'token' : token['token'],
         'query_str' : "Hello",
@@ -187,12 +234,12 @@ def test_two_messages_two_match(url) :
                 'message_id': msg_id_1['message_id'],
                 'u_id': u_id,
                 'message': 'Hello World',
-                'time_created': date.today(),
+                'time_created': time1,
             }, {
                 'message_id': msg_id_2['message_id'],
                 'u_id': u_id,
                 'message': 'Hello, this is a test message',
-                'time_created': date.today(),
+                'time_created': time2,
             }
         ]
     }
@@ -225,6 +272,19 @@ def test_three_messages_two_match(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time1 = messages[1]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id['channel_id'],
@@ -232,6 +292,19 @@ def test_three_messages_two_match(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_2 = response.json()
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time2 = messages[2]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     info = {
         'token' : token['token'],
         'query_str' : "test",
@@ -244,12 +317,12 @@ def test_three_messages_two_match(url) :
                 'message_id': msg_id_1['message_id'],
                 'u_id': u_id,
                 'message': 'Hello, this is a test message',
-                'time_created': date.today(),
+                'time_created': time1,
             }, {
                 'message_id': msg_id_2['message_id'],
                 'u_id': u_id,
                 'message': 'then he said to test',
-                'time_created': date.today(),
+                'time_created': time2,
             }
         ]
     }
@@ -297,6 +370,19 @@ def test_mult_match_messages_but_diff_channels(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()['message_id']
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id_2,
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time = messages[0]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id,
@@ -316,7 +402,7 @@ def test_mult_match_messages_but_diff_channels(url) :
                 'message_id': msg_id_1,
                 'u_id': u_id,
                 'message': 'Comp1531 is fun',
-                'time_created': date.today(),
+                'time_created': time,
             }
         ]
     }
@@ -343,6 +429,19 @@ def test_matching_letter(url) :
     }
     response = requests.post(url + 'message/send', json = message_input)
     msg_id_1 = response.json()['message_id']
+    info = {
+        'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time1 = messages[0]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
     message_input = {
         'token' : token['token'],
         'channel_id' : channel_id['channel_id'],
@@ -358,6 +457,19 @@ def test_matching_letter(url) :
     msg_id_2 = response.json()['message_id']
     info = {
         'token' : token['token'],
+        'channel_id' : channel_id['channel_id'],
+        'start' : 0,
+    }
+    response = requests.get(url + 'channel/messages', info)
+    messages = response.json()
+    messages = messages['messages']
+    time2 = messages[2]['time_created']
+    info = {
+        'token' : token['token'],
+        'query_str' : "World",
+    }
+    info = {
+        'token' : token['token'],
         'query_str' : "o",
     }
     response = requests.get(url + 'search', info)
@@ -368,12 +480,12 @@ def test_matching_letter(url) :
                 'message_id': msg_id_1,
                 'u_id': u_id,
                 'message': 'Hello Comp1531',
-                'time_created': date.today(),
+                'time_created': time1,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'i do Comp1531',
-                'time_created': date.today(),
+                'time_created': time2,
             }
         ]
     }
