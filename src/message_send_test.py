@@ -9,6 +9,7 @@ from other import clear, search
 
 
 def test_message_sends():
+    clear()
     user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token = user['token']
     u_id = user['u_id']
@@ -52,6 +53,7 @@ Create a user - input: {email, password, name_first, name_last}     output: {tok
 Send Message - input: {token, channel_id, message}                  output: {AccessError}
 '''
 def test_user_in_channel():
+    clear()
     user_token = auth.auth_register("user@gmail.com", "password", "John", "Smith")['token']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'

@@ -56,8 +56,6 @@ def channel_messages(token, channel_id, start):
     # fetch messages
     messages = database.channel_fetch_messages(channel_id)
 
-    messages.pop('num_removed')
-
     messages_list = []
     single_message = {}
     for message in messages:
