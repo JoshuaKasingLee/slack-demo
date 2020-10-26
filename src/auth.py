@@ -1,112 +1,45 @@
-import re
 from error import InputError
-from database import master_users
+import database
+import hashlib
+import jwt
+import helper
+
+
+# auth functions
 
 def auth_login(email, password):
-    # check whether email is valid
-    # given regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
-
-    # check if a user is already logged on
-    # for id in master_users:
-    #     if id["log"] == True:
-    #         # Loggin in when another user is logged in should raise an input error as follows
-    #         raise InputError(f"Error, a user is already logged in")
-
-    # check whether email address is in the database and check if the password is correct
-    if len(master_users) == 0:
-        raise InputError(f"Error, {email} has not been registered")
-    exists = False
-    for user in master_users:
-        if email == user["email"]:
-            exists = True
-    if exists == False:
-        raise InputError(f"Error, {email} has not been registered")
-
-    # check if password is wrong and raise error
-    for user in master_users:
-        if email == user["email"]:
-            if password != user["password"]:
-                raise InputError(f"Error, the password is incorrect")
-                
-            else:
-                id = user["u_id"]
-                tok = user["token"]
-                user["log"] = True
-    return {
-        'u_id': id,
-        'token': tok,
-    }
+    helper.validate_email(email)
+    database.auth_check_email_login(email)
+    return database.auth_check_password(email, password)
 
 
 def auth_logout(token):
-    # check to see if token exists
-    # if the token is active, log the user out
-    for users in master_users:
-        if token == users["token"] and users["log"] == True:
-            users["log"] = False
-            return {
-            'is_success': True,
-        }
-    # else, the token is inactive, return false
-    return {
-        'is_success': False,
-    }
+    return database.auth_logout_user(token)
 
 
 def auth_register(email, password, name_first, name_last):
-    # check whether email is valid
-    # given regex function from: https://www.geeksforgeeks.org/check-if-email-address-valid-or-not-in-python/
-    regex = '^[a-z0-9]+[\._]?[a-z0-9]+[@]\w+[.]\w{2,3}$'
-    if not re.search(regex, email):
-        raise InputError(f"Error, {email} is invalid")
-
-    # check whether email address is being used by another user
-    for id in master_users:
-        if email == id["email"]:
-            raise InputError(f"Error, {email} has been taken")
+    helper.validate_email(email)
+    database.auth_check_email_register(email)
 
     # check whether password is 6 characters or greater
-    if len(password) < 6:
-        raise InputError(f"Error, password must be >= 6 characters")
+    helper.check_password_length(password)
 
     # check whether first and last name meet character requirements
-    if len(name_first) < 1 or len(name_first) > 50:
-        raise InputError(f"Error, first name must be between 1 and 50 characters")
-    if len(name_last) < 1 or len(name_last) > 50:
-        raise InputError(f"Error, last name must be between 1 and 50 characters")
+    helper.check_name_length(name_first, name_last)
 
     # assign u_id in chronological order of registration
-    id = len(master_users)
+    id = database.auth_assign_id()
 
-    # for iteration 1, let the token be the u_id
-    token = str(id)
+    # let the token be an encoded u_id dictionary
+    token = jwt.encode({"u_id": id}, database.SECRET, algorithm='HS256').decode('utf-8')
     
     # create user handle
     handle = name_first + name_last
-    handle.lower()
+    handle = handle.lower()
     if len(handle) > 20:
         handle = handle[:20]
 
-    # create variables that allow us to manipulate the handle string
-    handle_list = list(handle)
-    i = 1
-
-    # loop to ensure new user handle is new
-    for users in master_users:
-        # if new user handle exists, tweak it
-        if handle == users['handle']:
-            if i < 10:
-                handle_list[-1] = str(i)
-                handle = "".join(handle_list)
-                i = i + 1
-            elif i < 100:
-                handle_list[-2] = str(i)[0]
-                handle_list[-1] = str(i)[1]
-                handle = "".join(handle_list)
-                i = i + 1
+    handle = database.auth_assign_user_handle(handle)
     
     # create a master user profile by filling in relevant fields
     master_user = {}
@@ -114,15 +47,15 @@ def auth_register(email, password, name_first, name_last):
     master_user['email'] = email
     master_user['name_first'] = name_first
     master_user['name_last'] = name_last
-    master_user['password'] = password
+    master_user['password'] = hashlib.sha256(password.encode()).hexdigest()
     master_user['token'] = token
-    master_user['handle'] = handle
+    master_user['handle_str'] = handle
     master_user['log'] = True # assume that user is logged in after registering
     
     # add new user to the master_users database
-    master_users.append(master_user)
+    database.auth_add_user(master_user)
 
     return {
         'u_id': id,
-        'token': str(id),
+        'token': token,
     }
