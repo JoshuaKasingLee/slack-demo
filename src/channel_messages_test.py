@@ -56,3 +56,16 @@ def test_message_chronology():
     msg_time_1 = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
     assert (msg_time_2 > msg_time_1)
+
+def test_pagination():
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    i = 0
+    while i < 55:
+        message_to_send = "message " + str(i)
+        message.message_send(token, channel_id, message_to_send)
+        i += 1
+    end = channel.channel_messages(token, channel_id, 1)['end']
+    assert (end == 51)
