@@ -56,8 +56,6 @@ def channel_messages(token, channel_id, start):
     # fetch messages
     messages = database.channel_fetch_messages(channel_id)
 
-    
-
     messages_list = []
     single_message = {}
     for message in messages:
@@ -73,11 +71,15 @@ def channel_messages(token, channel_id, start):
     # it's supposed to return most recent first
     messages_list.reverse()
 
+    # if there are no messages
+    length = len(messages_list)
+    if (length == 0):
+        return { 'messages': [], 'start': 0, 'end': 0 }
+
     ## check 'start' isn't greater than total # of messages OR negative
-    if len(messages_list) != 0:
-        message_max = len(messages_list) - 1
-        if start > message_max or start < 0:
-            raise InputError
+    message_max = length - 1
+    if start > message_max or start < 0:
+        raise InputError
 
     # return the correct number of messages
     messages_return = []
@@ -91,6 +93,7 @@ def channel_messages(token, channel_id, start):
         current = -1
 
     return { 'messages': messages_return, 'start': start, 'end': current, }
+
 
 def channel_leave(token, channel_id):
     #input error if not valid channel id (channel does not exist)
