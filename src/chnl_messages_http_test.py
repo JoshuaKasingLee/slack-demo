@@ -145,6 +145,15 @@ def test_negative_index(url): # invalid index - InputError
     data_in = {
         'token' : token,
         'channel_id' : channel_id,
+        'message' : "yes awesome i like it"
+        
+    }
+
+    requests.post(url + 'message/send', json = data_in)
+
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id,
         'start' : -10
     }
 
