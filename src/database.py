@@ -510,6 +510,7 @@ def message_new_message_id():
 # Append a message to the database
 def message_append_message(message_id, message_package):
     messages[f'{message_id}'] = message_package
+    global total_messages
     total_messages += 1
     return
 
