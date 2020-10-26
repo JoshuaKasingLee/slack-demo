@@ -203,3 +203,35 @@ def test_message_chronology(url):
     time2 = messages[1]['time_created']
     assert (time1 > time2)
     requests.delete(url + 'clear')
+
+def test_pagination(url):
+    requests.delete(url + 'clear')
+    response = requests.post(url + 'auth/register', json = data_in_1)
+    payload = response.json()
+    token = payload['token']
+    data_in = {
+        'token' : token,
+        'name' : "Channel1",
+        'is_public' : True
+    }
+    response = requests.post(url + 'channels/create', json = data_in)
+    channel_id = response.json()
+    i = 0
+    while i < 55:
+        message_to_send = "message " + str(i)
+        data_in = {
+            'token' : token,
+            'channel_id' : channel_id['channel_id'],
+            'message' : message_to_send,
+        }
+        requests.post(url + 'message/send', json = data_in)
+        i += 1
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id['channel_id'],
+        'start' : 1,
+    }
+    response = requests.get(url + 'channel/messages', data_in)
+    end = response.json()['end']
+    assert (end == 51)
+    requests.delete(url + 'clear')
