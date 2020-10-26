@@ -5,7 +5,31 @@ import channel
 import channels
 from error import AccessError
 from error import InputError
-from other import clear
+from other import clear, search
+
+
+def test_message_sends():
+    user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
+    user_token = user['token']
+    u_id = user['u_id']
+    channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
+    message_to_send = 'Hi!'
+    msg_id_1 = message_send(user_token, channel_id, message_to_send)['message_id']
+    assert msg_id_1 == 0
+    msg_time_1 = channel.channel_messages(user_token, channel_id, 0)['messages'][0]['time_created']
+    assert search(user_token, "Hi!") == {
+        'messages': [
+            {
+                'message_id': msg_id_1,
+                'u_id': u_id,
+                'message': 'Hi!',
+                'time_created': msg_time_1,
+            }
+        ]
+    }
+    msg = channel.channel_messages(user_token, channel_id, 0)['messages']
+    assert msg == [{'message_id': 0, 'u_id': 0, 'message': 'Hi!', 'time_created': msg_time_1}]    
+    clear()
 
 '''
 # Check to see if a message works
