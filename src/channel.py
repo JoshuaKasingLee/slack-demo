@@ -56,6 +56,8 @@ def channel_messages(token, channel_id, start):
     # fetch messages
     messages = database.channel_fetch_messages(channel_id)
 
+    
+
     messages_list = []
     single_message = {}
     for message in messages:
@@ -72,9 +74,10 @@ def channel_messages(token, channel_id, start):
     messages_list.reverse()
 
     ## check 'start' isn't greater than total # of messages OR negative
-    message_max = len(messages_list) - 1
-    if start > message_max or start < 0:
-        raise InputError
+    if len(messages_list) != 0:
+        message_max = len(messages_list) - 1
+        if start > message_max or start < 0:
+            raise InputError
 
     # return the correct number of messages
     messages_return = []
