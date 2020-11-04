@@ -35,6 +35,8 @@ messages = {}
 #       'u_id':
 #       'message':
 #       'time_created':
+#       'reacts': [{'react_id': ?, 'u_ids': ?, 'is_this_user_reacted': ? }]
+#       'is_pinned':
 #   }
 # }
 
@@ -146,6 +148,8 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
             single_message['time_created'] = message['time_created']
+            single_message['reacts'] = message['reacts']
+            single_message['is_pinned'] = message['is_pinned']
             list_of_messages.append(single_message)
             single_message = {}
     return list_of_messages

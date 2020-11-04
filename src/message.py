@@ -39,6 +39,8 @@ def message_send(token, channel_id, message):
         'u_id': u_id,
         'message': message,
         'time_created': time.time(),
+        'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+        'is_pinned': False,
     }
     database.messages[f'{message_id}'] = message_package
 
@@ -142,3 +144,15 @@ def message_edit(token, message_id, message):
 Input error if message does not exist
 No action required if message input was the same as message in the database
 '''
+# andreea :
+def message_react(token, message_id, react_id):
+    return {}
+
+def message_unreact(token, message_id, react_id):
+    return {}
+
+def message_pin(token, message_id):
+    return {}
+
+def message_unpin(token, message_id):
+    return {}

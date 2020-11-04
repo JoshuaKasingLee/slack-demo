@@ -65,6 +65,8 @@ def channel_messages(token, channel_id, start):
             single_message['u_id'] = extract_message['u_id']
             single_message['message'] = extract_message['message']
             single_message['time_created'] = extract_message['time_created']
+            single_message['reacts'] = extract_message['reacts']
+            single_message['is_pinned'] = extract_message['is_pinned']
             messages_list.append(single_message)
             single_message = {}
 

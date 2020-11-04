@@ -29,6 +29,8 @@ def test_one() :
                 'u_id': u_id,
                 'message': 'Hello World',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
@@ -51,6 +53,8 @@ def test_two_messages_one_match() :
                 'u_id': u_id,
                 'message': 'Hello World',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
@@ -73,11 +77,15 @@ def test_two_messages_two_match() :
                 'u_id': u_id,
                 'message': 'Hello World',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'Hello, this is a test message',
                 'time_created': msg_time_2,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
@@ -101,11 +109,15 @@ def test_three_messages_two_match() :
                 'u_id': u_id,
                 'message': 'This is a test message',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'then he said to test',
                 'time_created': msg_time_2,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
@@ -132,6 +144,8 @@ def test_mult_match_messages_but_diff_channels() :
                 'u_id': u_id,
                 'message': 'Comp1531 is fun',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
@@ -155,11 +169,15 @@ def test_matching_letter() :
                 'u_id': u_id,
                 'message': 'Hello Comp1531',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'i do Comp1531',
                 'time_created': msg_time_2,
+                'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
