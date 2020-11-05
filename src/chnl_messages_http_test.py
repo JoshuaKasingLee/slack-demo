@@ -166,7 +166,6 @@ def test_message_chronology(url):
     response = requests.post(url + 'auth/register', json = data_in_1)
     payload = response.json()
     token = payload['token']
-    u_id = payload['u_id']
     data_in = {
         'token' : token,
         'name' : "Channel1",
