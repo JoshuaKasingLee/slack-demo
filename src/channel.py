@@ -79,7 +79,7 @@ def channel_messages(token, channel_id, start):
      
     ## if there are no messages return  specific thing
     length = len(messages_list)
-    if length == 0:
+    if length == 0 and start == 0:
         return {'messages': [], 'start': 0, 'end': -1}
     
     ## check 'start' isn't greater than total # of messages

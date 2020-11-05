@@ -56,6 +56,7 @@ def test_message_chronology():
     msg_time_1 = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
     assert (msg_time_2 > msg_time_1)
+    clear()
 
 def test_pagination():
     clear()
@@ -69,4 +70,14 @@ def test_pagination():
         i += 1
     end = channel.channel_messages(token, channel_id, 1)['end']
     assert (end == 51)
+    clear()
+
+def test_empty():
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    output = channel.channel_messages(token, channel_id, 0)
+    assert (output == { 'end': -1, 'messages': [], 'start': 0 })
+    clear()
 
