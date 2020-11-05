@@ -2,6 +2,7 @@ import database
 from error import InputError
 from error import AccessError
 import time
+import threading
 
 def message_send(token, channel_id, message):
     # First that the user is in the channel_id
@@ -145,14 +146,42 @@ Input error if message does not exist
 No action required if message input was the same as message in the database
 '''
 # andreea :
+def message_sendlater(token, channel_id, message, time_sent):
+    # Stub Code
+    # Verify token
+    # Use threading library to import the message using message_send
+    return {
+        #message_id,
+    }
+
+
 def message_react(token, message_id, react_id):
-    return {}
+    # Stub Code
+    # Find the message_id
+    # Change the react_id key in the message dictionary to true
+    return {
+    }
+
 
 def message_unreact(token, message_id, react_id):
-    return {}
+    # Stub Code
+    # Find the message_id
+    # Change the react_id key in the message dictionary to false
+    return {
+    }
+
 
 def message_pin(token, message_id):
-    return {}
+    # Stub Code
+    # Find the message_id
+    # Change the is_pinned field in the message dictionary to true
+    return {
+    }
+
 
 def message_unpin(token, message_id):
-    return {}
+    # Stub Code
+    # Find the message_id
+    # Change the is_pinned field in the message dictionary to false
+    return {
+    }
