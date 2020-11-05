@@ -44,6 +44,7 @@ def message_send(token, channel_id, message):
         'is_pinned': False,
     }
     database.messages[f'{message_id}'] = message_package
+    database.message_incrementing_total_messages()
 
     return {
         'message_id': message_id,

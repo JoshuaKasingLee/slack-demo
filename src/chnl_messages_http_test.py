@@ -18,7 +18,7 @@ data_in_1 = {
 @pytest.fixture
 def url():
     url_re = re.compile(r' \* Running on ([^ ]*)')
-    server = Popen(["python3", "server.py"], stderr=PIPE, stdout=PIPE)
+    server = Popen(["python3", "src/server.py"], stderr=PIPE, stdout=PIPE)
     line = server.stderr.readline()
     local_url = url_re.match(line.decode())
     if local_url:
@@ -145,6 +145,15 @@ def test_negative_index(url): # invalid index - InputError
     data_in = {
         'token' : token,
         'channel_id' : channel_id,
+        'message' : "yes awesome i like it"
+        
+    }
+
+    requests.post(url + 'message/send', json = data_in)
+
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id,
         'start' : -10
     }
 
@@ -157,7 +166,6 @@ def test_message_chronology(url):
     response = requests.post(url + 'auth/register', json = data_in_1)
     payload = response.json()
     token = payload['token']
-    u_id = payload['u_id']
     data_in = {
         'token' : token,
         'name' : "Channel1",
@@ -193,4 +201,36 @@ def test_message_chronology(url):
     time1 = messages[0]['time_created']
     time2 = messages[1]['time_created']
     assert (time1 > time2)
+    requests.delete(url + 'clear')
+
+def test_pagination(url):
+    requests.delete(url + 'clear')
+    response = requests.post(url + 'auth/register', json = data_in_1)
+    payload = response.json()
+    token = payload['token']
+    data_in = {
+        'token' : token,
+        'name' : "Channel1",
+        'is_public' : True
+    }
+    response = requests.post(url + 'channels/create', json = data_in)
+    channel_id = response.json()
+    i = 0
+    while i < 55:
+        message_to_send = "message " + str(i)
+        data_in = {
+            'token' : token,
+            'channel_id' : channel_id['channel_id'],
+            'message' : message_to_send,
+        }
+        requests.post(url + 'message/send', json = data_in)
+        i += 1
+    data_in = {
+        'token' : token,
+        'channel_id' : channel_id['channel_id'],
+        'start' : 1,
+    }
+    response = requests.get(url + 'channel/messages', data_in)
+    end = response.json()['end']
+    assert (end == 51)
     requests.delete(url + 'clear')
