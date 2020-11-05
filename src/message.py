@@ -40,7 +40,7 @@ def message_send(token, channel_id, message):
         'u_id': u_id,
         'message': message,
         'time_created': time.time(),
-        'reacts': [{'react_id': 1, 'u_ids': None, 'is_this_user_reacted': False }],
+        'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
         'is_pinned': False,
     }
     database.messages[f'{message_id}'] = message_package

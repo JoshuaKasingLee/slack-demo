@@ -13,7 +13,7 @@ def test_invalid_token(): # invalid token - AccessError
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
-    channel_id = channels.channels_create(token, "channel1", True)
+    channel_id = channels.channels_create(token, "channel1", True)['channel_id']
 
     with pytest.raises(AccessError):
         channel_messages('heyheyhey', channel_id, 1)
@@ -31,7 +31,7 @@ def test_missing_user(): # user doesn't exist - AccessError
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
-    channel_id = channels.channels_create(token, "channel1", True)
+    channel_id = channels.channels_create(token, "channel1", True)['channel_id']
 
     with pytest.raises(AccessError):
         channel_messages(99, channel_id, 1) # 99 is an arbitrary nonexistent token
@@ -41,7 +41,7 @@ def test_negative_index(): # invalid index - InputError
     clear()
     user = auth.auth_register("test1@gmail.com", "password", "John", "Smith")
     token = user['token']
-    channel_id = channels.channels_create(token, "channel1", True)
+    channel_id = channels.channels_create(token, "channel1", True)['channel_id']
     with pytest.raises(InputError):
         channel_messages(token, channel_id, -10)
     clear()

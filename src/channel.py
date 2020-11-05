@@ -77,6 +77,10 @@ def channel_messages(token, channel_id, start):
     message_max = len(messages_list) - 1
     if start > message_max or start < 0:
         raise InputError
+        
+    length = len(messages_list)
+    if length == 0:
+        return {'messages': [], 'start': 0, 'end': -1}
 
     # return the correct number of messages
     messages_return = []
@@ -88,8 +92,7 @@ def channel_messages(token, channel_id, start):
     # if we have reached the final message, return -1
     if current > message_max:
         current = -1
-
-    return { 'messages': messages_return, 'start': start, 'end': current, }
+    return { 'messages': messages_return, 'start': start, 'end': current}
 
 def channel_leave(token, channel_id):
     #input error if not valid channel id (channel does not exist)
