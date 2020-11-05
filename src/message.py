@@ -145,7 +145,7 @@ def message_edit(token, message_id, message):
 Input error if message does not exist
 No action required if message input was the same as message in the database
 '''
-# andreea :
+
 def message_sendlater(token, channel_id, message, time_sent):
     # Stub Code
     # Verify token
