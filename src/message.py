@@ -257,5 +257,26 @@ def message_unpin(token, message_id):
     # Stub Code
     # Find the message_id
     # Change the is_pinned field in the message dictionary to false
+    database.token_check(token)
+    u_id_converted = database.convert_from_tok_to_u_id(token)
+    database.channels_user_log_check(u_id_converted) 
+
+    if database.message_message_exist(message_id) == False:
+        raise InputError
+
+    channel_id = database.message_channel_id_from_message_id(message_id)
+    
+    if database.channel_check_admin(u_id_converted):
+        # if admin (flockr owner), check if channel member
+        if database.channel_check_owners(u_id_converted, channel_id) == 0:
+            raise AccessError
+    
+    if database.channel_check_admin(u_id_converted) == False:
+        # not admin, so must check if channel owner
+        if database.channel_if_owner(u_id_converted, channel_id) == 0:
+            raise AccessError
+           
+    database.unpin_message(message_id)
+    
     return {
     }
