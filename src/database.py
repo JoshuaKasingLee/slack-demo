@@ -564,6 +564,15 @@ def message_incrementing_total_messages():
     total_messages += 1
     return
 
+# Append message to messages given message id and message_package
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    return
+
+def message_num_messages():
+    return messages
+
+
 # USER FUNCTIONS #
 
 def return_token_u_id(token):

@@ -5,6 +5,7 @@ import channel
 import channels
 import time
 import threading
+import database
 from error import AccessError
 from error import InputError
 from other import clear
@@ -16,12 +17,12 @@ def test_message_delay():
     ## Insert Code
     user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token = user['token']
-    u_id = user['u_id']
+    user['u_id']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
     curr_time = time.time()
     time_sent = curr_time + 5
-    message_id = message_sendlater(user_token, channel_id, message_to_send, time_sent)
+    message_sendlater(user_token, channel_id, message_to_send, time_sent)
     assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 0)
     time.sleep(5)
     assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 1)
@@ -38,22 +39,6 @@ def test_message_to_past():
     message_to_send = 'Hi!'
     curr_time = time.time()
     time_sent = curr_time - 5
-    with pytest.raises(InputError):
-        message_sendlater(user_token, channel_id, message_to_send, time_sent)
-    clear()
-
-# Check to make sure channel_id is valid
-def test_valid_channel():
-    clear()
-    ## Insert Code
-    user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
-    user_token = user['token']
-    u_id = user['u_id']
-    channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
-    channel_id = channel_id + 1
-    message_to_send = 'Hi!'
-    curr_time = time.time()
-    time_sent = curr_time + 5
     with pytest.raises(InputError):
         message_sendlater(user_token, channel_id, message_to_send, time_sent)
     clear()
@@ -102,7 +87,8 @@ def test_message_success():
     curr_time = time.time()
     time_sent = curr_time + 5
     message_id = message_sendlater(user_token, channel_id, message_to_send, time_sent)
-    assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 0)
+    assert(len(database.messages) == 0)
+    # assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 0)
     time.sleep(5)
-    assert(channel.channel_messages(user_token, channel_id, 0)['messages'][message_id]['message'] == message_to_send)
+    assert(channel.channel_messages(user_token, channel_id, 0)['messages'][0]['message'] == message_to_send)
     clear()

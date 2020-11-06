@@ -151,8 +151,60 @@ def message_sendlater(token, channel_id, message, time_sent):
     # Stub Code
     # Verify token
     # Use threading library to import the message using message_send
+    # First that the user is in the channel_id
+    # To do this we find the u_id through the token
+    # Either call a function in the database or copy and paste this
+    # If u_id does not exist, the user does not exist
+    assert(database.message_user_exists(token) == True)
+
+    # Find u_id from token
+    u_id = database.convert_from_tok_to_u_id(token)
+
+    # Make sure a channel exists
+    assert(database.message_channel_exists() == True)
+
+    # # Now check if the user exists in the channel_id
+    u_id_is_member = database.message_user_is_member(u_id, channel_id)
+    
+    # Raise AccessError if the user is not part of the channel they are trying to post in
+    if u_id_is_member == False:
+        raise AccessError(f"Error, u_id:{u_id} cannot post in a channel they have not joined. The channel has channel_id: {channel_id}.")
+
+    # Now check that the message is not longer than 1000 characters
+    message_length = len(message)
+    if message_length > 1000:
+        raise InputError(f"Error, the message exceeds the 1000 character limit. You have input {message_length} characters.")
+
+    # Ensure the time_sent is valid (i.e. not in the past)
+    curr_time = time.time()
+
+    
+    # Determine time delay between time_sent and time_delay
+    time_delay = time_sent - curr_time
+    if time_delay < 0:
+        raise InputError(f"Error, the input time is set in the past!")
+
+    # Otherwise message is valid
+
+    # Create message_id. This is done by incrementing the number of messages in channels_and_messages.
+    message_id = database.message_new_message_id()
+
+    message_package = {
+        'message_id': message_id,
+        'channel_id': channel_id,
+        'u_id': u_id,
+        'message': message,
+        'time_created': time.time(),
+        'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
+        'is_pinned': False,
+    }
+    
+    # Send message
+    threading.Timer(time_delay, message_send, [token, channel_id, message]).start()
+    database.message_incrementing_total_messages()
+
     return {
-        #message_id,
+        message_id
     }
 
 
