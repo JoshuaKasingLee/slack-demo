@@ -511,13 +511,6 @@ def message_user_is_member(u_id, channel_id):
 def message_new_message_id():
     return total_messages
 
-# Append a message to the database
-def message_append_message(message_id, message_package):
-    messages[f'{message_id}'] = message_package
-    global total_messages
-    total_messages += 1
-    return
-
 # Given a channel, check if u_id is an owner
 def message_user_is_owner(u_id, channel_id):
     for users in channels_and_members[channel_id][0]:
@@ -564,13 +557,34 @@ def message_incrementing_total_messages():
     total_messages += 1
     return
 
+# Append a message to the database
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    global total_messages
+    total_messages += 1
+    return
+
+''' delete: ???
 # Append message to messages given message id and message_package
 def message_append_message(message_id, message_package):
     messages[f'{message_id}'] = message_package
     return
+'''
 
 def message_num_messages():
     return messages
+
+def pin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == False:
+        messages[f'{message_id}']['is_pinned'] = True
+    else: 
+        raise InputError
+
+def unpin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == True:
+        messages[f'{message_id}']['is_pinned'] = False
+    else: 
+        raise InputError
 
 
 # USER FUNCTIONS #

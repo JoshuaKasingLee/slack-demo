@@ -38,8 +38,8 @@ def test_pinning_one_but_two_messages() :
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     msg_id = message.message_send(token, channel_id, "Hello Comp1531")['message_id']
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
-    msg_time = channel.channel_messages(token, channel_id, msg_id)['messages'][0]['time_created']
-    msg_time_2 = channel.channel_messages(token, channel_id, msg_id_2)['messages'][0]['time_created']
+    msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
+    msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
     message_pin(token, msg_id)
     assert search(token, "o") == {
         'messages': [
@@ -70,8 +70,8 @@ def test_pinning_two() :
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     msg_id = message.message_send(token, channel_id, "Hello Comp1531")['message_id']
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
-    msg_time = channel.channel_messages(token, channel_id, msg_id)['messages'][0]['time_created']
-    msg_time_2 = channel.channel_messages(token, channel_id, msg_id_2)['messages'][0]['time_created']
+    msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
+    msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
     message_pin(token, msg_id)
     message_pin(token, msg_id_2)
     assert search(token, "o") == {
