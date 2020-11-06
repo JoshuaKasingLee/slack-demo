@@ -45,9 +45,9 @@ def test_remove_react_keep_one() :
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
     msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
-    message_react(token, msg_id)
+    message_react(token, msg_id, 1)
     message_unreact(token, msg_id, 1)
-    message_react(token_2, msg_id_2)
+    message_react(token_2, msg_id_2, 1)
     assert search(token, "o") == {
         'messages': [
             {
@@ -83,9 +83,9 @@ def test_two_reacts() :
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
     msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
-    message_react(token, msg_id_2)
-    message_react(token_2, msg_id_2)
-    message_unreact(token, msg_id, 1)
+    message_react(token, msg_id_2, 1)
+    message_react(token_2, msg_id_2, 1)
+    message_unreact(token, msg_id_2, 1)
     assert search(token_2, "o") == {
         'messages': [
             {

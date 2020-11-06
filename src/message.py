@@ -253,7 +253,7 @@ def message_unreact(token, message_id, react_id):
     
     is_react_id_valid(react_id)
     
-    database.react_message(u_id_converted, message_id, react_id)
+    database.unreact_message(u_id_converted, message_id, react_id)
     
     return {
     }
