@@ -117,7 +117,7 @@ def test_wrong_channel() :
     clear()
 
 
-def message_already_reacted() :
+def test_message_already_reacted() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -128,7 +128,7 @@ def message_already_reacted() :
         message_react(token,msg_id, 1)
     clear()
 
-def message_id_invalid() :
+def test_message_id_invalid() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -146,4 +146,14 @@ def test_invalid_token(): # wrong user token - accesserror
     msg_id = message.message_send(token, channel_id, "Hello Comp1531")["message_id"]
     with pytest.raises(AccessError):
         message_react(4, msg_id, 1)
+    clear()
+
+def test_react_id_invalid() :
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    msg_id = message.message_send(token, channel_id, "Hello Comp1531")['message_id']
+    with pytest.raises(InputError):
+        message_react(token, msg_id, 3)
     clear()

@@ -120,7 +120,7 @@ def test_wrong_channel() :
     clear()
 
 
-def message_id_already_pinned() :
+def test_message_id_already_pinned() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -131,7 +131,7 @@ def message_id_already_pinned() :
         message_pin(token,msg_id)
     clear()
 
-def message_id_invalid() :
+def test_message_id_invalid() :
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
