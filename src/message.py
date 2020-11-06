@@ -1,6 +1,5 @@
 import database
-from error import InputError
-from error import AccessError
+from error import InputError, AccessError
 import time
 import threading
 
@@ -212,6 +211,24 @@ def message_react(token, message_id, react_id):
     # Stub Code
     # Find the message_id
     # Change the react_id key in the message dictionary to true
+    
+    database.token_check(token)
+    u_id_converted = database.convert_from_tok_to_u_id(token)
+    database.channels_user_log_check(u_id_converted) 
+
+    if database.message_message_exist(message_id) == False:
+        raise InputError
+    channel_id = database.message_channel_id_from_message_id(message_id)    
+    if database.channel_in_check(channel_id, u_id_converted) == 0:
+        raise InputError
+    
+    #the combination of the above testing ensures the message_id is a valid
+    # message inside a channel the authorised user is a member of
+    
+    is_react_id_valid(react_id)
+    
+    database.react_message(u_id_converted, message_id, react_id)
+    
     return {
     }
 
@@ -220,6 +237,24 @@ def message_unreact(token, message_id, react_id):
     # Stub Code
     # Find the message_id
     # Change the react_id key in the message dictionary to false
+    
+    database.token_check(token)
+    u_id_converted = database.convert_from_tok_to_u_id(token)
+    database.channels_user_log_check(u_id_converted) 
+
+    if database.message_message_exist(message_id) == False:
+        raise InputError
+    channel_id = database.message_channel_id_from_message_id(message_id)    
+    if database.channel_in_check(channel_id, u_id_converted) == 0:
+        raise InputError
+    
+    #the combination of the above testing ensures the message_id is a valid
+    # message inside a channel the authorised user is a member of
+    
+    is_react_id_valid(react_id)
+    
+    database.react_message(u_id_converted, message_id, react_id)
+    
     return {
     }
 
@@ -239,7 +274,7 @@ def message_pin(token, message_id):
     
     if database.channel_check_admin(u_id_converted):
         # if admin (flockr owner), check if channel member
-        if database.channel_check_owners(u_id_converted, channel_id) == 0:
+        if database.channel_in_check(u_id_converted, channel_id) == 0:
             raise AccessError
     
     if database.channel_check_admin(u_id_converted) == False:
@@ -268,7 +303,7 @@ def message_unpin(token, message_id):
     
     if database.channel_check_admin(u_id_converted):
         # if admin (flockr owner), check if channel member
-        if database.channel_check_owners(u_id_converted, channel_id) == 0:
+        if database.channel_in_check(u_id_converted, channel_id) == 0:
             raise AccessError
     
     if database.channel_check_admin(u_id_converted) == False:
@@ -280,3 +315,12 @@ def message_unpin(token, message_id):
     
     return {
     }
+
+
+## HELPER:
+    
+def is_react_id_valid(react_id):
+    if react_id == 1:
+        return True
+    else: 
+        raise InputError

@@ -44,8 +44,8 @@ def test_someone_else_reacted() :
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
     msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
-    message_react(token, msg_id)
-    message_react(token_2, msg_id_2)
+    message_react(token, msg_id, 1)
+    message_react(token_2, msg_id_2, 1)
     assert search(token, "o") == {
         'messages': [
             {
@@ -54,7 +54,7 @@ def test_someone_else_reacted() :
                 'message': 'Hello Comp1531',
                 'time_created': msg_time,
                 'reacts': [{'react_id': 1, 'u_ids': [u_id], 'is_this_user_reacted': True }],
-                'is_pinned': True,
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
@@ -81,8 +81,8 @@ def test_two_reacts() :
     msg_id_2 = message.message_send(token, channel_id, "Helloo")['message_id']
     msg_time = channel.channel_messages(token, channel_id, 0)['messages'][1]['time_created']
     msg_time_2 = channel.channel_messages(token, channel_id, 0)['messages'][0]['time_created']
-    message_react(token, msg_id_2)
-    message_react(token_2, msg_id_2)
+    message_react(token, msg_id_2, 1)
+    message_react(token_2, msg_id_2, 1)
     assert search(token_2, "o") == {
         'messages': [
             {
@@ -91,14 +91,14 @@ def test_two_reacts() :
                 'message': 'Hello Comp1531',
                 'time_created': msg_time,
                 'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
-                'is_pinned': True,
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'Helloo',
                 'time_created': msg_time_2,
                 'reacts': [{'react_id': 1, 'u_ids': [u_id, u_id_2], 'is_this_user_reacted': True }],
-                'is_pinned': True,
+                'is_pinned': False,
             }
         ]
     }
@@ -112,7 +112,7 @@ def test_wrong_channel() :
     token_2 = user_2['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     msg_id = message.message_send(token, channel_id, "Hello Comp1531") ["message_id"]
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         message_react(token_2, msg_id, 1)
     clear()
 

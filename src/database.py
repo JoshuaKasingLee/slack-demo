@@ -150,7 +150,7 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
             single_message['time_created'] = message['time_created']
-            single_message['reacts'] = message['reacts']
+            single_message['reacts'] = react_output(u_id, message['message_id'], 1)
             single_message['is_pinned'] = message['is_pinned']
             list_of_messages.append(single_message)
             single_message = {}
@@ -585,6 +585,33 @@ def unpin_message(message_id):
         messages[f'{message_id}']['is_pinned'] = False
     else: 
         raise InputError
+
+def react_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == True:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].append(u_id)
+
+def unreact_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == False:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].remove(u_id)
+        
+def react_output(u_id, message_id, react_id):
+    react_num = react_id - 1
+    for person in messages[f'{message_id}']['reacts'][react_num]["u_ids"]:
+        if person == u_id:
+            return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+                     'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+                     'is_this_user_reacted': True }]
+    return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+             'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+             'is_this_user_reacted': False }]
 
 
 # USER FUNCTIONS #

@@ -56,7 +56,7 @@ def test_remove_react_keep_one() :
                 'message': 'Hello Comp1531',
                 'time_created': msg_time,
                 'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
-                'is_pinned': True,
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
@@ -94,14 +94,14 @@ def test_two_reacts() :
                 'message': 'Hello Comp1531',
                 'time_created': msg_time,
                 'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
-                'is_pinned': True,
+                'is_pinned': False,
             }, {
                 'message_id': msg_id_2,
                 'u_id': u_id,
                 'message': 'Helloo',
                 'time_created': msg_time_2,
                 'reacts': [{'react_id': 1, 'u_ids': [u_id_2], 'is_this_user_reacted': True }],
-                'is_pinned': True,
+                'is_pinned': False,
             }
         ]
     }
@@ -118,7 +118,7 @@ def test_wrong_channel() :
     msg_id = message.message_send(token, channel_id, "Hello Comp1531") ["message_id"]
     message_react(token_2, msg_id, 1)
     channel.channel_leave(token_2,channel_id)
-    with pytest.raises(AccessError):
+    with pytest.raises(InputError):
         message_unreact(token_2, msg_id, 1)
     clear()
 
