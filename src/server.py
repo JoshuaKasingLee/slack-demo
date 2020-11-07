@@ -234,7 +234,13 @@ def edit_message():
 
 @APP.route("/message/sendlater", methods=['POST'])
 def sendlater_message():
-    return
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    message_to_send = data['message']
+    time_sent = data['time_sent']
+    message_id = message.message_sendlater(token, channel_id, message_to_send, time_sent)
+    return dumps(message_id)
 
 @APP.route("/message/react", methods=['POST'])
 def react_message():
