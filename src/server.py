@@ -232,6 +232,26 @@ def edit_message():
     edit = message.message_edit(token, message_id, message_)
     return dumps(edit)
 
+@APP.route("/message/sendlater", methods=['POST'])
+def sendlater_message():
+    return
+
+@APP.route("/message/react", methods=['POST'])
+def react_message():
+    return
+
+@APP.route("/message/unreact", methods=['POST'])
+def unreact_message():
+    return
+
+@APP.route("/message/pin", methods=['POST'])
+def pin_message():
+    return
+
+@APP.route("/message/unpin", methods=['POST'])
+def unpin_message():
+    return
+
 
 if __name__ == "__main__":
     APP.run(port=0) # Do not edit this port

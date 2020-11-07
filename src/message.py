@@ -49,10 +49,6 @@ def message_send(token, channel_id, message):
         'message_id': message_id,
     }
 
-# Assumptions for message_send
-'''
-I assume that checking whether the channel_id is valid first has a higher priority than message length
-'''
 
 def message_remove(token, message_id):
     # Conditions to prevent Access Error:
@@ -94,10 +90,6 @@ def message_remove(token, message_id):
 
     return {
     }
-
-'''
-[NOPE] AccessError is of higher priority than Input Error
-'''
 
 
 def message_edit(token, message_id, message):
@@ -141,15 +133,8 @@ def message_edit(token, message_id, message):
     }
 
 
-'''
-Input error if message does not exist
-No action required if message input was the same as message in the database
-'''
-
 def message_sendlater(token, channel_id, message, time_sent):
-    # Stub Code
     # Verify token
-    # Use threading library to import the message using message_send
     # First that the user is in the channel_id
     # To do this we find the u_id through the token
     # Either call a function in the database or copy and paste this
@@ -176,7 +161,6 @@ def message_sendlater(token, channel_id, message, time_sent):
 
     # Ensure the time_sent is valid (i.e. not in the past)
     curr_time = time.time()
-
     
     # Determine time delay between time_sent and time_delay
     time_delay = time_sent - curr_time
@@ -187,18 +171,9 @@ def message_sendlater(token, channel_id, message, time_sent):
 
     # Create message_id. This is done by incrementing the number of messages in channels_and_messages.
     message_id = database.message_new_message_id()
-
-    message_package = {
-        'message_id': message_id,
-        'channel_id': channel_id,
-        'u_id': u_id,
-        'message': message,
-        'time_created': time.time(),
-        'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
-        'is_pinned': False,
-    }
     
     # Send message
+    # Use threading library to delay the message_send function
     threading.Timer(time_delay, message_send, [token, channel_id, message]).start()
     database.message_incrementing_total_messages()
 

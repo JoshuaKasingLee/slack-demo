@@ -4,20 +4,17 @@ import auth
 import channel
 import channels
 import time
-import threading
 import database
 from error import AccessError
 from error import InputError
 from other import clear
 
 # Test to make sure that message is sent with the time delay
-# class threading.Timer(interval, function, args=None, kwargs=None)
 def test_message_delay():
     clear()
     ## Insert Code
     user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token = user['token']
-    user['u_id']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
     curr_time = time.time()
@@ -34,7 +31,6 @@ def test_message_to_past():
     ## Insert Code
     user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token = user['token']
-    u_id = user['u_id']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
     curr_time = time.time()
@@ -62,12 +58,10 @@ def test_user_in_channel():
     ## Insert Code
     user_1 = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token_1 = user_1['token']
-    u_id_1 = user_1['u_id']
     channel_id_1 = channels.channels_create(user_token_1, "Test Channel", True)['channel_id']
     user_2 = auth.auth_register("user1@gmail.com", "password", "John", "Smith")
     user_token_2 = user_2['token']
-    u_id_2 = user_2['u_id']
-    channel_id_2 = channels.channels_create(user_token_2, "Test2 Channel", True)['channel_id']
+    channels.channels_create(user_token_2, "Test2 Channel", True)['channel_id']
     message_to_send = 'Hi!'
     curr_time = time.time()
     time_sent = curr_time + 5
@@ -81,12 +75,11 @@ def test_message_success():
     ## Insert Code
     user = auth.auth_register("user@gmail.com", "password", "John", "Smith")
     user_token = user['token']
-    u_id = user['u_id']
     channel_id = channels.channels_create(user_token, "Test Channel", True)['channel_id']
     message_to_send = 'Hi!'
     curr_time = time.time()
     time_sent = curr_time + 5
-    message_id = message_sendlater(user_token, channel_id, message_to_send, time_sent)
+    message_sendlater(user_token, channel_id, message_to_send, time_sent)
     assert(len(database.messages) == 0)
     # assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 0)
     time.sleep(5)
