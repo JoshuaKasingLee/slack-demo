@@ -28,7 +28,7 @@ def test_invalid_channel():
     channel_id = 999
     length = 60
     with pytest.raises(InputError):
-        time_finish = standup.standup_start(token, channel_id, length)
+        standup.standup_start(token, channel_id, length)
     clear()
 
 def test_standup_already_exists():
@@ -37,9 +37,9 @@ def test_standup_already_exists():
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 60
-    time_finish = standup.standup_start(token, channel_id, length)
+    standup.standup_start(token, channel_id, length)
     with pytest.raises(InputError):
-        time_finish = standup.standup_start(token, channel_id, length)
+        standup.standup_start(token, channel_id, length)
     clear()
 
 def test_standup_ended():
@@ -48,7 +48,7 @@ def test_standup_ended():
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 1
-    time_finish = standup.standup_start(token, channel_id, length)
+    standup.standup_start(token, channel_id, length)
     time.sleep(4)
     standup_status = standup.standup_active(token, channel_id)
     
@@ -62,7 +62,7 @@ def test_standup_mulitple():
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 1
-    time_finish = standup.standup_start(token, channel_id, length)
+    standup.standup_start(token, channel_id, length)
     time.sleep(4)
     standup_status = standup.standup_active(token, channel_id)
     
