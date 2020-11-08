@@ -8,8 +8,10 @@ from other import clear
 import standup
 from datetime import datetime
 from datetime import timedelta
+import time
 
-def test_active_standup():
+
+def test_standup_active_single():
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
@@ -17,8 +19,32 @@ def test_active_standup():
     length = 60
     time_finish = standup.standup_start(token, channel_id, length)
     standup_status = standup.standup_active(token, channel_id)
-    assumed_end_time = datetime.now() + timedelta(seconds=length)
-    assert (standup_status == {True, assumed_end_time})
+    assert (standup_status == {'is_active': True, 'time_finish': time_finish['time_finish']})
+
+def test_standup_active_single_time_passed():
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    length = 60
+    time_finish = standup.standup_start(token, channel_id, length)
+    time.sleep(2)
+    standup_status = standup.standup_active(token, channel_id)
+    assert (standup_status == {'is_active': True, 'time_finish': time_finish['time_finish']})
+
+def test_standup_active_mulitple():
+    clear()
+    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+    token = user['token']
+    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+    channel_id_2 = channels.channels_create(token, "Channel2", True)["channel_id"]
+    length = 60
+    time_finish = standup.standup_start(token, channel_id, length)
+    time_finish_2 = standup.standup_start(token, channel_id_2, length)
+    standup_status = standup.standup_active(token, channel_id)
+    standup_status_2 = standup.standup_active(token, channel_id_2)
+    assert (standup_status == {'is_active': True, 'time_finish': time_finish['time_finish']})
+    assert (standup_status_2 == {'is_active': True, 'time_finish': time_finish_2['time_finish']})
 
 def test_no_standup():
     clear()
@@ -27,7 +53,7 @@ def test_no_standup():
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 60
     standup_status = standup.standup_active(token, channel_id)
-    assert (standup_status == {False, None})
+    assert (standup_status == {'is_active': False, 'time_finish': None})
 
 def test_invalid_channel():
     clear()
@@ -39,16 +65,16 @@ def test_invalid_channel():
     clear()
 
 
-def test_inactive_standup(): # unsure how to test
-    clear()
-    user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
-    token = user['token']
-    channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-    length = 60
-    time_finish = standup.standup_start(token, channel_id, length)
-    assumed_end_time = datetime.now() + timedelta(seconds=length)   
-    datetime.now() = datetime.now() + timedelta(seconds=90) # not valid but how to pass time
-    standup_status = standup.standup_active(token, channel_id)
-    datetime.now() = datetime.now() - timedelta(seconds=90) #similar 
-    assert (standup_status == {False, assumed_end_time})
-    clear()
+# def test_inactive_standup(): # unsure how to test
+#     clear()
+#     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
+#     token = user['token']
+#     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
+#     length = 60
+#     time_finish = standup.standup_start(token, channel_id, length)
+#     assumed_end_time = datetime.now() + timedelta(seconds=length)   
+#     datetime.now() = datetime.now() + timedelta(seconds=90) # not valid but how to pass time
+#     standup_status = standup.standup_active(token, channel_id)
+#     datetime.now() = datetime.now() - timedelta(seconds=90) #similar 
+#     assert (standup_status == {False, assumed_end_time})
+#     clear()
