@@ -41,6 +41,9 @@ messages = {}
 # Total messages sent
 total_messages = 0
 
+#channels that have standup active and time it ends
+channel_standup_active = []
+
 '''
 probably needs to be deleted:
 # messages in channels
@@ -95,6 +98,8 @@ def clear():
     messages = {}
     global total_messages
     total_messages = 0
+    global channel_standup_active
+    channel_standup_active = []
 
     
 def make_admin(u_id):
@@ -607,3 +612,30 @@ def check_handle(handle_str):
     for user in master_users:
         if handle_str == user["handle_str"]:
             raise InputError(f"Error, {handle_str} handle has been taken")
+
+
+def add_standup(channel_id, end_time):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            raise InputError
+    
+    active_standup = {}
+    active_standup['channel_id'] = channel_id
+    active_standup['time_finish'] = end_time
+    channel_standup_active.append(active_standup)
+
+def standup_removal(channel_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            channel_standup_active.remove(channel)
+
+def active_check(channel_id):
+    status = {}
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            status['is_active'] = True
+            status['time_finish'] = channel['time_finish']
+            return status
+    status['is_active'] = False
+    status['time_finish'] = None
+    return status
