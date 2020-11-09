@@ -3,6 +3,7 @@ from json import dumps
 
 from flask import Flask, request
 from flask_cors import CORS
+from flask_mail import Mail, Message
 
 import auth
 import channel
@@ -11,6 +12,7 @@ import message
 import other
 import message
 import user
+from database import master_users, create_reset_code
 from error import InputError
 
 
@@ -65,6 +67,38 @@ def auth_logouts():
     token = data['token']
     logout = auth.auth_logout(token)
     return dumps(logout) 
+
+# taken from: https://pythonbasics.org/flask-mail/
+# configure server parameters
+APP.config['MAIL_SERVER']='smtp.gmail.com'
+APP.config['MAIL_PORT'] = 465 # ???
+APP.config['MAIL_USERNAME'] = 'compcoursetesting@gmail.com'
+APP.config['MAIL_PASSWORD'] = 'COMP1521'
+APP.config['MAIL_USE_TLS'] = False
+APP.config['MAIL_USE_SSL'] = True
+mail = Mail(APP)
+
+@APP.route("/auth/passwordreset/request", methods=['POST'])
+def auth_passwordreset_request():
+    data = request.get_json()
+    email = data['email']
+
+    email_exists = False
+    for user in master_users:
+        if email == user["email"]:
+            email_exists = True
+            found_user = user
+            break
+    
+    if email_exists == True:
+        # send the email
+        receiver = found_user['email']
+        message = Message('Password reset request', sender = 'compcoursetesting@gmail.com', \
+        recipients = [receiver])
+        reset_code = create_reset_code(email)
+        message.body = f"""Your password reset code is: {reset_code}"""
+        mail.send(message)
+    return dumps({})
 
 @APP.route("/channel/details", methods=['GET'])
 def channel_detail():
