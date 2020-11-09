@@ -51,7 +51,6 @@ def test_no_standup():
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-    length = 60
     standup_status = standup.standup_active(token, channel_id)
     assert (standup_status == {'is_active': False, 'time_finish': None})
 
@@ -61,20 +60,5 @@ def test_invalid_channel():
     token = user['token']
     channel_id = 999
     with pytest.raises(InputError):
-        standup_status = standup.standup_active(token, channel_id)
+        standup.standup_active(token, channel_id)
     clear()
-
-
-# def test_inactive_standup(): # unsure how to test
-#     clear()
-#     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
-#     token = user['token']
-#     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-#     length = 60
-#     time_finish = standup.standup_start(token, channel_id, length)
-#     assumed_end_time = datetime.now() + timedelta(seconds=length)   
-#     datetime.now() = datetime.now() + timedelta(seconds=90) # not valid but how to pass time
-#     standup_status = standup.standup_active(token, channel_id)
-#     datetime.now() = datetime.now() - timedelta(seconds=90) #similar 
-#     assert (standup_status == {False, assumed_end_time})
-#     clear()

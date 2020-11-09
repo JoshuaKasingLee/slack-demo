@@ -26,7 +26,6 @@ def standup_active(token, channel_id):
     database.channels_user_log_check(u_id)
 
     database.channel_valid_channel(channel_id)
-    
     active_status = database.active_check(channel_id)
     return active_status
 
