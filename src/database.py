@@ -2,6 +2,7 @@ from error import InputError
 from error import AccessError
 import hashlib
 import jwt
+import helper
 # To be put into iteration 1
 
 
@@ -52,6 +53,7 @@ probably needs to be deleted:
 # # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
 # secret token encoder
 SECRET = 'kellycyrusandreeajoshnick'
+RESET_SECRET = 'shhhh!!!'
 
 # FUNCTIONS USED IN ALL FILES #
 
@@ -234,6 +236,35 @@ def auth_add_user(master_user):
     ''' add new user to the master_users database '''
     master_users.append(master_user)
 
+# given a valid email address, create a reset code and put it into the database
+def create_reset_code(email):
+    code = jwt.encode({"email": email}, RESET_SECRET, algorithm='HS256').decode('utf-8')
+    for user in master_users:
+        if email == user["email"]:
+            user['reset_code'] = code
+    return code 
+
+def auth_passwordreset_return(email):
+    email_exists = False
+    for user in master_users:
+        if email == user["email"]:
+            email_exists = True
+            found_user = user
+            break
+    
+    if email_exists == True:
+        # send the email
+        reset_code = create_reset_code(email)
+        return reset_code
+    
+
+def reset_password(reset_code, new_password):
+    for user in master_users:
+        if reset_code == user['reset_code']:
+            helper.check_password_length(new_password)
+            user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
+            user['reset_code'] = None
+            break
 
 # CHANNELS FUNCTIONS #
     

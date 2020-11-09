@@ -3,6 +3,8 @@ import database
 import hashlib
 import jwt
 import helper
+from database import master_users
+
 
 
 # auth functions
@@ -51,6 +53,7 @@ def auth_register(email, password, name_first, name_last):
     master_user['token'] = token
     master_user['handle_str'] = handle
     master_user['log'] = True # assume that user is logged in after registering
+    master_user['reset_code'] = None
     
     # add new user to the master_users database
     database.auth_add_user(master_user)
@@ -59,3 +62,7 @@ def auth_register(email, password, name_first, name_last):
         'u_id': id,
         'token': token,
     }
+
+def auth_passwordreset_reset(reset_code, new_password):
+    database.reset_password(reset_code, new_password)
+    return {}
