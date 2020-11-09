@@ -16,7 +16,7 @@ def test_standup_start():
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-    length = 60
+    length = 2
     time_finish = standup.standup_start(token, channel_id, length)
     standup_status = standup.standup_active(token, channel_id)
     assert (standup_status == {'is_active': True, 'time_finish': time_finish['time_finish']})
@@ -26,7 +26,7 @@ def test_invalid_channel():
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = 999
-    length = 60
+    length = 2
     with pytest.raises(InputError):
         time_finish = standup.standup_start(token, channel_id, length)
     clear()
@@ -36,7 +36,7 @@ def test_standup_already_exists():
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-    length = 60
+    length = 2
     time_finish = standup.standup_start(token, channel_id, length)
     with pytest.raises(InputError):
         time_finish = standup.standup_start(token, channel_id, length)
@@ -49,7 +49,7 @@ def test_standup_ended():
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 1
     time_finish = standup.standup_start(token, channel_id, length)
-    time.sleep(4)
+    time.sleep(2)
     standup_status = standup.standup_active(token, channel_id)
     
     assert (standup_status == {'is_active': False, 'time_finish': None})
@@ -63,7 +63,7 @@ def test_standup_mulitple():
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
     length = 1
     time_finish = standup.standup_start(token, channel_id, length)
-    time.sleep(4)
+    time.sleep(2)
     standup_status = standup.standup_active(token, channel_id)
     
     assert (standup_status == {'is_active': False, 'time_finish': None})

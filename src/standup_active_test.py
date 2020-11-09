@@ -6,8 +6,8 @@ import channel
 import auth
 from other import clear
 import standup
-from datetime import datetime
-from datetime import timedelta
+#from datetime import datetime
+#from datetime import timedelta
 import time
 
 

@@ -614,7 +614,7 @@ def check_handle(handle_str):
             raise InputError(f"Error, {handle_str} handle has been taken")
 
 
-def add_standup(channel_id, end_time):
+def add_standup(channel_id, end_time, u_id):
     for channel in channel_standup_active:
         if channel['channel_id'] == channel_id:
             raise InputError
@@ -622,11 +622,25 @@ def add_standup(channel_id, end_time):
     active_standup = {}
     active_standup['channel_id'] = channel_id
     active_standup['time_finish'] = end_time
+    active_standup['message'] = ''
+    active_standup['u_id'] = u_id
     channel_standup_active.append(active_standup)
 
 def standup_removal(channel_id):
     for channel in channel_standup_active:
         if channel['channel_id'] == channel_id:
+
+            message_id = message_new_message_id()
+            message_package = {
+                'message_id': message_id,
+                'channel_id': channel_id,
+                'u_id': channel['u_id'],
+                'message': channel['message'],
+                'time_created': channel['time_finish'],
+            }
+            messages[f'{message_id}'] = message_package
+            message_incrementing_total_messages()
+
             channel_standup_active.remove(channel)
 
 def active_check(channel_id):
@@ -639,3 +653,19 @@ def active_check(channel_id):
     status['is_active'] = False
     status['time_finish'] = None
     return status
+
+def standup_message_add(channel_id, standup_message):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            channel['message'] += standup_message
+            return
+    raise InputError # no current standup in channel
+
+def standup_fetch_message(channel_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            return channel['message']
+    raise InputError # no current standup in channel
+
+def fetch_first_name(u_id):
+    return master_users[u_id]['name_first']
