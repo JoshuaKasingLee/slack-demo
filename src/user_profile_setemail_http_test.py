@@ -50,7 +50,7 @@ def test_change_valid_email_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["email"] == "numbersalphabet@gmail.com")
     assert(profile["user"]["name_first"] == "Alphabet")
@@ -95,7 +95,7 @@ def test_change_multiple_emails_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["email"] == "last1iswear@gmail.com")
     

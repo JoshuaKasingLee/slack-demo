@@ -148,9 +148,11 @@ def channel_creates():
 
 @APP.route("/user/profile", methods=['GET'])
 def user_profiles():
-    data = request.get_json()
-    u_id = int(data['u_id'])
-    token = data['token']
+  #  data = request.get_json()
+  #  u_id = int(data['u_id'])
+  #  token = data['token']
+    u_id = int(request.args.get('u_id'))
+    token = request.args.get('token')
     profile = user.user_profile(token, u_id)
     return dumps(profile)
 
@@ -219,7 +221,7 @@ def send_message():
 def remove_message():
     data = request.get_json()
     token = data['token']
-    message_id = data['message_id']
+    message_id = int(data['message_id'])
     remove = message.message_remove(token, message_id)
     return dumps(remove)
 
@@ -227,7 +229,7 @@ def remove_message():
 def edit_message():
     data = request.get_json()
     token = data['token']
-    message_id = data['message_id']
+    message_id = int(data['message_id'])
     message_ = data['message']
     edit = message.message_edit(token, message_id, message_)
     return dumps(edit)
@@ -244,19 +246,37 @@ def sendlater_message():
 
 @APP.route("/message/react", methods=['POST'])
 def react_message():
-    return
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    react_id = int(data['react_id'])
+    react = message.message_react(token, message_id, react_id)
+    return react
 
 @APP.route("/message/unreact", methods=['POST'])
 def unreact_message():
-    return
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    react_id = int(data['react_id'])
+    unreact = message.message_unreact(token, message_id, react_id)
+    return unreact
 
 @APP.route("/message/pin", methods=['POST'])
 def pin_message():
-    return
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    pinned = message.message_pin(token, message_id)
+    return pinned
 
 @APP.route("/message/unpin", methods=['POST'])
 def unpin_message():
-    return
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    unpinned = message.message_unpin(token, message_id)
+    return unpinned
 
 
 if __name__ == "__main__":

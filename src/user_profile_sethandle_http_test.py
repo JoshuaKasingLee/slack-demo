@@ -50,7 +50,7 @@ def test_change_valid_handles_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["handle_str"] == "numbersalphabet")
     # change 2
@@ -63,7 +63,7 @@ def test_change_valid_handles_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["handle_str"] == "NuMBersAlPhAbeT")
     # change 3
@@ -76,7 +76,7 @@ def test_change_valid_handles_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["handle_str"] == "123456asdfghjkl")
     # change 4
@@ -89,7 +89,7 @@ def test_change_valid_handles_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["handle_str"] == "!!  &d# Cn!")
     requests.delete(url + 'clear')

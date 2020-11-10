@@ -21,7 +21,7 @@ def test_message_delay():
     time_sent = curr_time + 5
     message_sendlater(user_token, channel_id, message_to_send, time_sent)
     assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 0)
-    time.sleep(5)
+    time.sleep(6)
     assert(len(channel.channel_messages(user_token, channel_id, 0)['messages']) == 1)
     clear()
 
@@ -81,6 +81,6 @@ def test_message_success():
     time_sent = curr_time + 5
     message_sendlater(user_token, channel_id, message_to_send, time_sent)
     assert(len(database.messages) == 0)
-    time.sleep(5)
+    time.sleep(6)
     assert(channel.channel_messages(user_token, channel_id, 0)['messages'][0]['message'] == message_to_send)
     clear()
