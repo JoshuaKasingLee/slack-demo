@@ -100,6 +100,13 @@ def auth_passwordreset_request():
         mail.send(message)
     return dumps({})
 
+@APP.route("/auth/passwordreset/reset", methods=['POST'])
+def auth_passwordreset_request():
+    reset_code = request.args.get('reset_code')
+    new_password = request.args.get('new_password')
+    reset = auth.auth_passwordreset_reset
+    return dumps({})
+
 @APP.route("/channel/details", methods=['GET'])
 def channel_detail():
     token = request.args.get('token')
