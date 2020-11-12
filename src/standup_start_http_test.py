@@ -117,14 +117,14 @@ def test_standup_already_exists_http(url):
     data_in = {
         'token': token,
         'channel_id': channel_id,
-        'length': 60,
+        'length': 3,
     }
     requests.post(url + 'standup/start', json = data_in)
 
     data_in = {
         'token': token,
         'channel_id': channel_id,
-        'length': 60,
+        'length': 3,
     }
     response = requests.post(url + 'standup/start', json = data_in)
 

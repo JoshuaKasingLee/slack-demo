@@ -36,7 +36,7 @@ def test_standup_already_exists():
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]
-    length = 60
+    length = 3
     standup.standup_start(token, channel_id, length)
     with pytest.raises(InputError):
         standup.standup_start(token, channel_id, length)

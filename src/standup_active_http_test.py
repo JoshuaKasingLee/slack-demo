@@ -61,7 +61,7 @@ def test_standup_active_single_http(url):
     data_in = {
         'token': token,
         'channel_id': channel_id,
-        'length': 60,
+        'length': 3,
     }
     response = requests.post(url + 'standup/start', json = data_in)
     payload = response.json()
