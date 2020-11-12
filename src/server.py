@@ -9,7 +9,6 @@ import channel
 import channels
 import message
 import other
-import message
 import user
 import standup
 from error import InputError
@@ -37,7 +36,7 @@ APP.register_error_handler(Exception, defaultHandler)
 def echo():
     data = request.args.get('data')
     if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
+        raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
     })
@@ -241,9 +240,9 @@ def sendlater_message():
     token = data['token']
     channel_id = int(data['channel_id'])
     message_to_send = data['message']
-    time_sent = data['time_sent']
+    time_sent = int(data['time_sent'])
     message_id = message.message_sendlater(token, channel_id, message_to_send, time_sent)
-    return dumps(message_id)
+    return message_id
 
 @APP.route("/message/react", methods=['POST'])
 def react_message():
@@ -292,8 +291,8 @@ def send_standup():
     data = request.get_json()
     token = data['token']
     channel_id = int(data['channel_id'])
-    message = data['message']
-    send = standup.standup_send(token, channel_id, message)
+    message_send = data['message']
+    send = standup.standup_send(token, channel_id, message_send)
     return send
 
 @APP.route("/standup/start", methods=['POST'])

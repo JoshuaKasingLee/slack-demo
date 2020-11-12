@@ -156,7 +156,6 @@ def test_two_not_owner_http(url):
     }
     response = requests.post(url + 'channels/create', json = data_in)
     payload = response.json()
-
     data_in = {
         'token': token,
     }

@@ -13,8 +13,8 @@ def user_profile(token, u_id):
         	'email': found_user["email"],
         	'name_first': found_user["name_first"],
         	'name_last': found_user["name_last"],
-        	'handle_str': found_user["handle_str"],
-        },
+        	'handle_str': found_user["handle_str"]
+        }
     }
 
 def user_profile_setname(token, name_first, name_last):

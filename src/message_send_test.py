@@ -25,11 +25,20 @@ def test_message_sends():
                 'u_id': u_id,
                 'message': 'Hi!',
                 'time_created': msg_time_1,
+                'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
+                'is_pinned': False,
             }
         ]
     }
     msg = channel.channel_messages(user_token, channel_id, 0)['messages']
-    assert msg == [{'message_id': 0, 'u_id': 0, 'message': 'Hi!', 'time_created': msg_time_1}]    
+    assert msg == [
+            {'message_id': 0, 
+              'u_id': 0, 
+              'message': 'Hi!', 
+              'time_created': msg_time_1, 
+              'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
+              'is_pinned': False}
+    ]    
     clear()
 
 '''
