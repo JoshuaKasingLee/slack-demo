@@ -81,5 +81,6 @@ def test_successful_upload():
     clear()
     user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
     pic = "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl"
-    assert(user_profile_uploadphoto(user_details['token'], pic, 0, 0, 500, 500) == {})
+    correct_img = str(user_details['u_id']) + ".jpg"
+    assert(user_profile_uploadphoto(user_details['token'], pic, 0, 0, 500, 500) == correct_img)
     clear()

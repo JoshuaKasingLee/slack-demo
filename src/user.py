@@ -85,6 +85,12 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     if x_start > x_end or y_start > y_end:
         raise InputError("Crop co-ordinates must be directed from upper left to lower right")
     width, height = profile_picture.size
+    width = int(width)
+    height = int(height)
+    x_start = int(x_start)
+    y_start = int(y_start)
+    x_end = int(x_end)
+    y_end = int(y_end)
     #print(width, height)
     if x_start > width or x_start < 0 or x_end > width or x_end < 0:
         raise InputError("x crop co-ordinates are not within image range")
@@ -93,11 +99,13 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # crop and save the image
     cropped_profile = profile_picture.crop((x_start, y_start, x_end, y_end))
     image_name = str(id) + ".jpg"
-    cropped_profile.save("static/" + image_name)
-    #master_users['profile_img_url'] = flask.request.host_url() + image_name
+    cropped_profile.save("src/static/" + image_name)
+    for user in master_users:
+        if user['u_id'] == id:
+            user['profile_img_url'] = 'src/static/' + image_name
     return image_name
 
-user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
-user_profile_uploadphoto(user_details['token'], "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl", 1, 1, 100, 100)
+#user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
+#user_profile_uploadphoto(user_details['token'], "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl", 1, 1, 100, 100)
 #user_profile_uploadphoto("x", "http://invalidurl", 1, 2, 2, 2)
 #user_profile_uploadphoto("x", "http://www.pngall.com/wp-content/uploads/2016/06/Light-Free-Download-PNG.png", 1, 1, 100, 100)
