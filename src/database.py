@@ -36,6 +36,8 @@ messages = {}
 #       'u_id':
 #       'message':
 #       'time_created':
+#       'reacts': [{'react_id': ?, 'u_ids': ?, 'is_this_user_reacted': ? }]
+#       'is_pinned':
 #   }
 # }
 
@@ -150,6 +152,8 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
             single_message['time_created'] = message['time_created']
+            single_message['reacts'] = react_output(u_id, message['message_id'], 1)
+            single_message['is_pinned'] = message['is_pinned']
             list_of_messages.append(single_message)
             single_message = {}
     return list_of_messages
@@ -538,13 +542,6 @@ def message_user_is_member(u_id, channel_id):
 def message_new_message_id():
     return total_messages
 
-# Append a message to the database
-def message_append_message(message_id, message_package):
-    messages[f'{message_id}'] = message_package
-    global total_messages
-    total_messages += 1
-    return
-
 # Given a channel, check if u_id is an owner
 def message_user_is_owner(u_id, channel_id):
     for users in channels_and_members[channel_id][0]:
@@ -590,6 +587,63 @@ def message_incrementing_total_messages():
     global total_messages
     total_messages += 1
     return
+
+# Append a message to the database
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    global total_messages
+    total_messages += 1
+    return
+
+''' delete: ???
+# Append message to messages given message id and message_package
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    return
+'''
+
+def message_num_messages():
+    return messages
+
+def pin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == False:
+        messages[f'{message_id}']['is_pinned'] = True
+    else: 
+        raise InputError
+
+def unpin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == True:
+        messages[f'{message_id}']['is_pinned'] = False
+    else: 
+        raise InputError
+
+def react_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == True:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].append(u_id)
+
+def unreact_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == False:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].remove(u_id)
+        
+def react_output(u_id, message_id, react_id):
+    react_num = react_id - 1
+    for person in messages[f'{message_id}']['reacts'][react_num]["u_ids"]:
+        if person == u_id:
+            return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+                     'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+                     'is_this_user_reacted': True }]
+    return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+             'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+             'is_this_user_reacted': False }]
+
 
 # USER FUNCTIONS #
 

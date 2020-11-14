@@ -126,7 +126,7 @@ def channel_message():
 def channel_leaves():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
+    channel_id = int(data['channel_id'])
     leave = channel.channel_leave(token, channel_id)
     return dumps(leave)
 
@@ -134,7 +134,7 @@ def channel_leaves():
 def channel_joins():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
+    channel_id = int(data['channel_id'])
     join = channel.channel_join(token, channel_id)
     return dumps(join)
 
@@ -142,8 +142,8 @@ def channel_joins():
 def channel_invites():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
-    u_id = data['u_id']
+    channel_id = int(data['channel_id'])
+    u_id = int(data['u_id'])
     invite = channel.channel_invite(token, channel_id, u_id)
     return dumps(invite)
 
@@ -151,8 +151,8 @@ def channel_invites():
 def channel_addowners():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
-    u_id = data['u_id']
+    channel_id = int(data['channel_id'])
+    u_id = int(data['u_id'])
     add_owner = channel.channel_addowner(token, channel_id, u_id)
     return dumps(add_owner)
 
@@ -160,8 +160,8 @@ def channel_addowners():
 def channel_removeowners():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
-    u_id = data['u_id']
+    channel_id = int(data['channel_id'])
+    u_id = int(data['u_id'])
     remove_owner = channel.channel_removeowner(token, channel_id, u_id)
     return dumps(remove_owner)
 
@@ -189,9 +189,11 @@ def channel_creates():
 
 @APP.route("/user/profile", methods=['GET'])
 def user_profiles():
-    data = request.get_json()
-    u_id = data['u_id']
-    token = data['token']
+  #  data = request.get_json()
+  #  u_id = int(data['u_id'])
+  #  token = data['token']
+    u_id = int(request.args.get('u_id'))
+    token = request.args.get('token')
     profile = user.user_profile(token, u_id)
     return dumps(profile)
 
@@ -230,7 +232,7 @@ def display_users_all():
 def change_user_permission():
     data = request.get_json()
     token = data['token']
-    u_id = data['u_id']
+    u_id = int(data['u_id'])
     permission_id = data['permission_id']
     change = other.admin_userpermission_change(token, u_id, permission_id)
     return dumps(change)  
@@ -251,7 +253,7 @@ def clear_all():
 def send_message():
     data = request.get_json()
     token = data['token']
-    channel_id = data['channel_id']
+    channel_id = int(data['channel_id'])
     message_to_send = data['message']
     message_id = message.message_send(token, channel_id, message_to_send)
     return dumps(message_id)
@@ -260,7 +262,7 @@ def send_message():
 def remove_message():
     data = request.get_json()
     token = data['token']
-    message_id = data['message_id']
+    message_id = int(data['message_id'])
     remove = message.message_remove(token, message_id)
     return dumps(remove)
 
@@ -268,10 +270,54 @@ def remove_message():
 def edit_message():
     data = request.get_json()
     token = data['token']
-    message_id = data['message_id']
+    message_id = int(data['message_id'])
     message_ = data['message']
     edit = message.message_edit(token, message_id, message_)
     return dumps(edit)
+
+@APP.route("/message/sendlater", methods=['POST'])
+def sendlater_message():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    message_to_send = data['message']
+    time_sent = data['time_sent']
+    message_id = message.message_sendlater(token, channel_id, message_to_send, time_sent)
+    return dumps(message_id)
+
+@APP.route("/message/react", methods=['POST'])
+def react_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    react_id = int(data['react_id'])
+    react = message.message_react(token, message_id, react_id)
+    return react
+
+@APP.route("/message/unreact", methods=['POST'])
+def unreact_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    react_id = int(data['react_id'])
+    unreact = message.message_unreact(token, message_id, react_id)
+    return unreact
+
+@APP.route("/message/pin", methods=['POST'])
+def pin_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    pinned = message.message_pin(token, message_id)
+    return pinned
+
+@APP.route("/message/unpin", methods=['POST'])
+def unpin_message():
+    data = request.get_json()
+    token = data['token']
+    message_id = int(data['message_id'])
+    unpinned = message.message_unpin(token, message_id)
+    return unpinned
 
 
 if __name__ == "__main__":
