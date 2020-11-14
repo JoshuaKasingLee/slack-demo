@@ -9,7 +9,7 @@ def test_valid_user():
     user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
     profile = user_profile(user_details['token'], user_details['u_id'])
     correct_profile = {"user": {"u_id": user_details['u_id'], "email": "kellyczhou@gmail.com", \
-        "name_first": "Kelly", "name_last": "Zhou", "handle_str": "kellyzhou"}}
+        "name_first": "Kelly", "name_last": "Zhou", "handle_str": "kellyzhou", "profile_img_url": None}}
     assert(profile == correct_profile)
     clear()
 
@@ -23,9 +23,9 @@ def test_valid_users():
     profile1 = user_profile(user1['token'], user1['u_id'])
     profile2 = user_profile(user2['token'], user2['u_id'])
     correct_profile1 = {"user": {"u_id" : user1['u_id'], "email" : "cyruschow@gmail.com", \
-        "name_first": "Cyrus", "name_last": "Chow", "handle_str": "cyruschow"}}
+        "name_first": "Cyrus", "name_last": "Chow", "handle_str": "cyruschow", "profile_img_url": None}}
     correct_profile2 = {"user": {"u_id" : user2['u_id'], "email" : "andreeavissarion@hotmail.com", \
-        "name_first": "Andreea", "name_last": "Vissarion", "handle_str": "andreeavissarion"}}
+        "name_first": "Andreea", "name_last": "Vissarion", "handle_str": "andreeavissarion", "profile_img_url": None}}
     assert(profile1 == correct_profile1)
     assert(profile2 == correct_profile2)
     clear()

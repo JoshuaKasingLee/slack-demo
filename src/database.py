@@ -314,6 +314,7 @@ def channel_add_member(channel_id, u_id): # made changes i don't get
                     member['u_id'] = u_id
                     member['name_first'] = user['name_first']
                     member['name_last'] = user['name_last']
+                    member['profile_img_url'] = user['profile_img_url']
             # join to all_members:
             channels_and_members[channel_id][1].append(member)
             joined = True
@@ -337,6 +338,7 @@ def channel_add_member_private(channel_id, u_id):
             member['u_id'] = u_id
             member['name_first'] = master_users[0]['name_first']
             member['name_last'] = master_users[0]['name_last']
+            member['profile_img_url'] = master_users[0]['profile_img_url']
             # join to all_members:
             channels_and_members[channel_id][1].append(member)
 
@@ -360,6 +362,7 @@ def channel_check_valid_user(u_id):
             new_owner['u_id'] = u_id
             new_owner['name_first'] = user['name_first']
             new_owner['name_last'] = user['name_last']
+            new_owner['profile_img_url'] = user['profile_img_url']
             valid_user = 1
     return valid_user, new_owner
 
@@ -424,10 +427,12 @@ def channels_add_to_database(u_id, name, channel_id, is_public):
     ## user details
     name_first = master_users[u_id]['name_first']
     name_last = master_users[u_id]['name_last']
+    profile_img_url = master_users[u_id]['profile_img_url']
     member = {}
     member['u_id'] = u_id
     member['name_first'] = name_first
     member['name_last'] = name_last
+    member['profile_img_url'] = profile_img_url
     channels_and_members[channel_id] = [[member], [member]]
     channels.append(channel)
     if is_public == True:
