@@ -7,6 +7,7 @@ import urllib.request
 from PIL import Image
 from database import master_users
 from auth import auth_register
+import flask
 #import flask
 
 def user_profile(token, u_id):
@@ -78,20 +79,12 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     profile_picture = Image.open("profile_pic.jpg")
     # check whether image is a jpg
     image_type = profile_picture.format
-    #print(image_type)
     if image_type != "JPEG":
         raise InputError("Image is not of JPEG type")
     # check for crop co-ordinate errors
     if x_start > x_end or y_start > y_end:
         raise InputError("Crop co-ordinates must be directed from upper left to lower right")
     width, height = profile_picture.size
-    width = int(width)
-    height = int(height)
-    x_start = int(x_start)
-    y_start = int(y_start)
-    x_end = int(x_end)
-    y_end = int(y_end)
-    #print(width, height)
     if x_start > width or x_start < 0 or x_end > width or x_end < 0:
         raise InputError("x crop co-ordinates are not within image range")
     if y_start > height or y_start < 0 or y_end > height or y_end < 0:
@@ -102,7 +95,7 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     cropped_profile.save("src/static/" + image_name)
     for user in master_users:
         if user['u_id'] == id:
-            user['profile_img_url'] = 'src/static/' + image_name
+            user['profile_img_url'] = flask.request.host_url + 'static/' + image_name
     return image_name
 
 #user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
