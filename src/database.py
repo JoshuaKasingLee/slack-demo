@@ -130,6 +130,7 @@ def add_all_users_to_list(list_of_users):
         single_user['name_first'] = user['name_first']
         single_user['name_last'] = user['name_last']
         single_user['handle_str'] = user['handle_str']
+        single_user['profile_img_url'] = user['profile_img_url']
         list_of_users.append(single_user)
         single_user = {}
     return list_of_users
@@ -249,6 +250,7 @@ def channel_find_user(u_id):
             member['u_id'] = u_id
             member['name_first'] = user['name_first']
             member['name_last'] = user['name_last']
+            member['profile_img_url'] = user['profile_img_url']
             break
     return member
 

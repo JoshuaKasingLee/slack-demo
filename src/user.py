@@ -5,6 +5,9 @@ import helper
 import sys
 import urllib.request
 from PIL import Image
+from database import master_users
+from auth import auth_register
+#import flask
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
@@ -16,7 +19,8 @@ def user_profile(token, u_id):
         	'email': found_user["email"],
         	'name_first': found_user["name_first"],
         	'name_last': found_user["name_last"],
-        	'handle_str': found_user["handle_str"]
+        	'handle_str': found_user["handle_str"],
+            'profile_img_url': found_user["profile_img_url"]
         }
     }
 
@@ -69,28 +73,31 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     except:
         raise InputError("Image URL is invalid")
     # download the photo locally
-    urllib.request.urlretrieve(img_url, "profile_pic")
+    urllib.request.urlretrieve(img_url, "profile_pic.jpg")
     # open the image
-    profile_picture = Image.open("profile_pic")
+    profile_picture = Image.open("profile_pic.jpg")
     # check whether image is a jpg
     image_type = profile_picture.format
-    print(image_type)
+    #print(image_type)
     if image_type != "JPEG":
         raise InputError("Image is not of JPEG type")
     # check for crop co-ordinate errors
     if x_start > x_end or y_start > y_end:
         raise InputError("Crop co-ordinates must be directed from upper left to lower right")
     width, height = profile_picture.size
-    print(width, height)
+    #print(width, height)
     if x_start > width or x_start < 0 or x_end > width or x_end < 0:
         raise InputError("x crop co-ordinates are not within image range")
     if y_start > height or y_start < 0 or y_end > height or y_end < 0:
         raise InputError("y crop co-ordinates are not within image range")
     # crop and save the image
     cropped_profile = profile_picture.crop((x_start, y_start, x_end, y_end))
-    cropped_profile.save("profile_pic.jpg")
-    return {}
+    image_name = str(id) + ".jpg"
+    cropped_profile.save("static/" + image_name)
+    #master_users['profile_img_url'] = flask.request.host_url() + image_name
+    return image_name
 
-#user_profile_uploadphoto("x", "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl", 1, 1, 100, 100)
+user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
+user_profile_uploadphoto(user_details['token'], "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl", 1, 1, 100, 100)
 #user_profile_uploadphoto("x", "http://invalidurl", 1, 2, 2, 2)
 #user_profile_uploadphoto("x", "http://www.pngall.com/wp-content/uploads/2016/06/Light-Free-Download-PNG.png", 1, 1, 100, 100)
