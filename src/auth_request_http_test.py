@@ -44,10 +44,11 @@ def test_valid_email_http(url):
     u_id = payload['u_id']
     token = payload['token']
     data_in = {
-        'token': token,
-        'u_id': u_id
+        'token': payload['token'],
+        'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
+    assert (response.status_code == 200)
     payload = response.json()
     email = payload['user']['email']
     # log the user out
@@ -83,7 +84,7 @@ def test_invalid_email_http(url):
         'token': token,
         'u_id': u_id
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     payload = response.json()
     email = payload['user']['email']
     # log the user out
