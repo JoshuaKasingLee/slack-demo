@@ -1,7 +1,7 @@
 import sys
 from json import dumps
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 
 import auth
@@ -12,6 +12,7 @@ import other
 import message
 import user
 from error import InputError
+from database import master_users, return_token_u_id
 
 
 def defaultHandler(err):
@@ -180,6 +181,25 @@ def user_profile_sethandles():
     handle_str = data['handle_str']
     user.user_profile_sethandle(token, handle_str)
     return dumps({})
+
+# @APP.route("/static/<path:path>")
+# def fetch_image(path):
+#     return send_from_directory('/static/', path)
+
+@APP.route("/user/profile/uploadphoto", methods=['POST'])
+def user_profile_uploadphotos():
+    data = request.get_json()
+    token = data['token']
+    img_url = data['img_url']
+    x_start = int(data['x_start'])
+    y_start = int(data['y_start'])
+    x_end = int(data['x_end'])
+    y_end = int(data['y_end'])
+    # fetch and crop the image
+    image_name = user.user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
+    #fetch_image(image_name)
+    return dumps({})
+
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
