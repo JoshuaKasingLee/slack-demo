@@ -45,8 +45,8 @@ def test_valid_email_http(url):
     u_id = payload['u_id']
     token = payload['token']
     data_in = {
-        'token': payload['token'],
-        'u_id': payload['u_id']
+        'token': token,
+        'u_id': u_id
     }
     response = requests.get(url + 'user/profile', data_in)
     assert (response.status_code == 200)

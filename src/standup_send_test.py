@@ -79,8 +79,10 @@ def test_standup_send_inactive_test():
 def test_standup_send_long_test():
     clear()
     string = 'lmao'
-    for i in range(100):
+    i = 0
+    while i < 100:
         string += '0123456789'
+        i = i + 1
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
     channel_id = channels.channels_create(token, "Channel1", True)["channel_id"]

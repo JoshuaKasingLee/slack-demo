@@ -257,7 +257,6 @@ def auth_passwordreset_return(email):
     for user in master_users:
         if email == user["email"]:
             email_exists = True
-            found_user = user
             break
     
     if email_exists == True:
@@ -706,7 +705,7 @@ def update_handle(u_id, handle_str):
 
 def check_valid_img_url(img_url):
     try:
-        response = urllib.request.urlopen(img_url)
+        urllib.request.urlopen(img_url)
     except:
         raise InputError("Image URL is invalid")
 
