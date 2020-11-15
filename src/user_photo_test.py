@@ -70,7 +70,7 @@ def test_invalid_coordinates_4(): # co-ordinates out of range
 # check for invalid token
 def test_invalid_token():
     clear()
-    user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
+    auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
     pic = "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl"
     with pytest.raises(AccessError):
         user_profile_uploadphoto("badtoken", pic, 100, 100, 800, 800)

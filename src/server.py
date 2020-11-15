@@ -251,7 +251,7 @@ def user_profile_uploadphotos():
     x_end = int(data['x_end'])
     y_end = int(data['y_end'])
     # fetch and crop the image
-    image_name = user.user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
+    user.user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
     return dumps({})
 
 
