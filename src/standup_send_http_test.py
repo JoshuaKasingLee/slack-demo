@@ -299,8 +299,10 @@ def test_standup_send_long_http(url):
     requests.post(url + 'standup/start', json = data_in)
 
     string = 'lmao'
-    for i in range(100):
+    i = 0
+    while i < 100:
         string += '0123456789'
+        i = i + 1
 
     data_in = {
         'token': token,
