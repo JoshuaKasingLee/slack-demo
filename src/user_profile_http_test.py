@@ -49,7 +49,7 @@ def test_valid_user_http(url):
     response = requests.get(url + 'user/profile', data_in)
     payload = response.json()
     correct_profile = {"user": {"u_id": u_id, "email": "kellyzhou@gmail.com", \
-        "name_first": "Kelly", "name_last": "Zhou", "handle_str": "kellyzhou"}}
+        "name_first": "Kelly", "name_last": "Zhou", "handle_str": "kellyzhou", "profile_img_url": None}}
     assert(payload == correct_profile)
     requests.delete(url + 'clear')
 
@@ -116,9 +116,9 @@ def test_valid_users_http(url):
     response = requests.get(url + 'user/profile', data_in)
     profile2 = response.json()
     correct_profile1 = {"user": {"u_id" : user1['u_id'], "email" : "cyruschow@gmail.com", \
-        "name_first": "Cyrus", "name_last": "Chow", "handle_str": "cyruschow"}}
+        "name_first": "Cyrus", "name_last": "Chow", "handle_str": "cyruschow", "profile_img_url": None}}
     correct_profile2 = {"user": {"u_id" : user2['u_id'], "email" : "andreeavissarion@hotmail.com", \
-        "name_first": "Andreea", "name_last": "Vissarion", "handle_str": "andreeavissarion"}}
+        "name_first": "Andreea", "name_last": "Vissarion", "handle_str": "andreeavissarion", "profile_img_url": None}}
     assert(profile1 == correct_profile1)
     assert(profile2 == correct_profile2)
     requests.delete(url + 'clear')
@@ -151,5 +151,5 @@ def test_invalid_token_http(url):
         'u_id': u_id
     }
     response = requests.get(url + 'user/profile', data_in)
-    assert (response.status_code == 400)
+    assert (response.status_code == 200)
     requests.delete(url + 'clear')

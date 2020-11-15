@@ -72,12 +72,14 @@ def test_owner_http(url):
             'u_id': u_id, 
             'name_first': 'John',
             'name_last': 'Smith',
+            'profile_img_url': None
         }],
         'all_members': [
             {
                 'u_id': u_id, 
                 'name_first': 'John',
                 'name_last': 'Smith',
+                'profile_img_url': None
             }
         ],
     })
@@ -140,6 +142,7 @@ def test_one_owner_two_members_http(url):
                 'u_id': u_id_1,
                 'name_first': 'Andreea',
                 'name_last': 'Vissarion',
+                'profile_img_url': None
             }
         ],
         'all_members': [
@@ -147,11 +150,13 @@ def test_one_owner_two_members_http(url):
                 'u_id': u_id_1,
                 'name_first': 'Andreea',
                 'name_last': 'Vissarion',
+                'profile_img_url': None
             },
             {
                 'u_id': u_id_2,
                 'name_first': 'John',
                 'name_last': 'Smith',
+                'profile_img_url': None
             }
         ],
     })

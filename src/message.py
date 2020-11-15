@@ -2,6 +2,8 @@ import database
 from error import InputError, AccessError
 import time
 import threading
+import standup
+import block
 
 def message_send(token, channel_id, message):
     # First that the user is in the channel_id
@@ -29,6 +31,26 @@ def message_send(token, channel_id, message):
         raise InputError(f"Error, the message exceeds the 1000 character limit. You have input {message_length} characters.")
 
     # Otherwise message is valid
+
+    # check if standup active
+    if standup.standup_active(token, channel_id)['is_active']:
+        standup.standup_send(token, channel_id, message)
+        return
+
+    # check for special messages
+
+    if message.startswith('/standup '):
+        standup_length = int(message.split(' ', 1)[1])
+        standup.standup_start(token, channel_id, standup_length)
+        return
+
+    if message.startswith('/block '):
+        block.process_block(message, u_id)
+        return
+    
+    if message.startswith('/unblock '):
+        block.process_unblock(message, u_id)
+        return
 
     # Create message_id. This is done by incrementing the number of messages in channels_and_messages.
     message_id = database.message_new_message_id()
@@ -160,10 +182,10 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise InputError(f"Error, the message exceeds the 1000 character limit. You have input {message_length} characters.")
 
     # Ensure the time_sent is valid (i.e. not in the past)
-    curr_time = time.time()
+    curr_time = int(time.time())
     
     # Determine time delay between time_sent and time_delay
-    time_delay = time_sent - curr_time
+    time_delay = int(time_sent) - curr_time
     if time_delay < 0:
         raise InputError(f"Error, the input time is set in the past!")
 
@@ -178,7 +200,7 @@ def message_sendlater(token, channel_id, message, time_sent):
     database.message_incrementing_total_messages()
 
     return {
-        message_id
+        'message_id': message_id,
     }
 
 

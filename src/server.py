@@ -1,7 +1,7 @@
 import sys
 from json import dumps
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 from flask_mail import Mail, Message
 
@@ -10,10 +10,11 @@ import channel
 import channels
 import message
 import other
-import message
 import user
 from database import master_users, create_reset_code
+import standup
 from error import InputError
+from database import master_users
 
 
 def defaultHandler(err):
@@ -31,14 +32,24 @@ APP = Flask(__name__)
 CORS(APP)
 
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 APP.register_error_handler(Exception, defaultHandler)
+
+# No caching at all for API endpoints.
+@APP.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 
 # Example
 @APP.route("/echo", methods=['GET'])
 def echo():
     data = request.args.get('data')
     if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
+        raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
     })
@@ -188,6 +199,10 @@ def channel_creates():
     created = channels.channels_create(token, name, is_public)
     return dumps(created)
 
+@APP.route("/static/<path:path>")
+def fetch_image(path):
+    return send_from_directory('/static/', path)
+
 @APP.route("/user/profile", methods=['GET'])
 def user_profiles():
   #  data = request.get_json()
@@ -196,7 +211,10 @@ def user_profiles():
     u_id = int(request.args.get('u_id'))
     token = request.args.get('token')
     profile = user.user_profile(token, u_id)
-    return dumps(profile)
+    # if profile['user']['profile_img_url'] is not None:
+        # path = str(id) + ".jpg"
+        # profile['user']['profile_img_url'] = fetch_image(path)
+    return dumps(profile) 
 
 @APP.route("/user/profile/setname", methods=['PUT'])
 def user_profile_setnames():
@@ -222,6 +240,20 @@ def user_profile_sethandles():
     handle_str = data['handle_str']
     user.user_profile_sethandle(token, handle_str)
     return dumps({})
+
+@APP.route("/user/profile/uploadphoto", methods=['POST'])
+def user_profile_uploadphotos():
+    data = request.get_json()
+    token = data['token']
+    img_url = data['img_url']
+    x_start = int(data['x_start'])
+    y_start = int(data['y_start'])
+    x_end = int(data['x_end'])
+    y_end = int(data['y_end'])
+    # fetch and crop the image
+    image_name = user.user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
+    return dumps({})
+
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
@@ -282,9 +314,9 @@ def sendlater_message():
     token = data['token']
     channel_id = int(data['channel_id'])
     message_to_send = data['message']
-    time_sent = data['time_sent']
+    time_sent = int(data['time_sent'])
     message_id = message.message_sendlater(token, channel_id, message_to_send, time_sent)
-    return dumps(message_id)
+    return message_id
 
 @APP.route("/message/react", methods=['POST'])
 def react_message():
@@ -320,6 +352,31 @@ def unpin_message():
     unpinned = message.message_unpin(token, message_id)
     return unpinned
 
+@APP.route("/standup/active", methods=['GET'])
+def active_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    active = standup.standup_active(token, channel_id)
+    return active
+
+@APP.route("/standup/send", methods=['POST'])
+def send_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    message_send = data['message']
+    send = standup.standup_send(token, channel_id, message_send)
+    return send
+
+@APP.route("/standup/start", methods=['POST'])
+def start_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    length = int(data['length'])
+    start = standup.standup_start(token, channel_id, length)
+    return start
 
 if __name__ == "__main__":
     APP.run(port=0) # Do not edit this port

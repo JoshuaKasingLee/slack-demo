@@ -57,6 +57,7 @@ def test_one(url) :
                 'name_first': 'John',
                 'name_last': 'Smith',
                 'handle_str': 'johnsmith',
+                'profile_img_url': None
             },
         ],
     }
@@ -81,6 +82,7 @@ def test_two(url) :
                 'name_first': 'John',
                 'name_last': 'Smith',
                 'handle_str': 'johnsmith',
+                'profile_img_url': None
             },
             {
                 'u_id': u_id_2,
@@ -88,6 +90,7 @@ def test_two(url) :
                 'name_first': 'Sally',
                 'name_last': 'Champion',
                 'handle_str': 'sallychampion',
+                'profile_img_url': None
             },
         ],                
     }
