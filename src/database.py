@@ -634,7 +634,7 @@ def return_token_u_id(token):
         raise AccessError("Token passed in is not a valid token.")
     return found_i
 
-def check_token_u_id_match(token, u_id):
+def check_u_id_exists(u_id):
     '''check if the u_id and token exist and match up, if so, return user'''
     # check if u_id exists in database - if not, return InputError
     user_exists = False
@@ -646,9 +646,9 @@ def check_token_u_id_match(token, u_id):
     if user_exists == False:
         raise InputError(f"User with u_id {u_id} is not a valid user")
 
-    # check if input token is valid - if not, return AccessError
-    if not (token == found_user["token"] and found_user["log"] == True):
-        raise AccessError("Token passed in is not a valid token.")
+    # # check if input token is valid - if not, return AccessError
+    # if not (token == found_user["token"] and found_user["log"] == True):
+    #     raise AccessError("Token passed in is not a valid token.")
     
     return found_user
 

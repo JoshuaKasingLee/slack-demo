@@ -13,7 +13,7 @@ import os
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
-    found_user = database.check_token_u_id_match(token, u_id)
+    found_user = database.check_u_id_exists(u_id)
     # if u_id exists and input token is valid, return as required
     return {
         'user': {
