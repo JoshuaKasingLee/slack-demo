@@ -27,52 +27,52 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def test_password_short_1_http(url):
-    requests.delete(url + 'clear')
-    # register user
-    data_in = {
-        'email' : "cyruschow@gmail.com", 
-        'password' : "ilikecookies",
-        'name_first' : "Cyrus",
-        'name_last' : "Chow"
-    }
-    response = requests.post(url + 'auth/register', json = data_in)
-    assert (response.status_code == 200)
-    # return valid user information
-    payload = response.json()
-    u_id = payload['u_id']
-    token = payload['token']
-    data_in = {
-        'token': token,
-        'u_id': u_id
-    }
-    response = requests.get(url + 'user/profile', json = data_in)
-    payload = response.json()
-    email = payload['user']['email']
-    # log the user out
-    data_in = {'token': token}
-    response = requests.post(url + 'auth/logout', json = data_in)
-    payload = response.json()
-    assert(payload == {"is_success": True})
-    # attempt to reset password
-    data_in = {'email': email}
-    response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
-    code = response.json()
-    data_in = {
-        'reset_code': code,
-        'new_password': '123'
-    }
-    response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
-    assert (response.status_code == 400)
+# def test_password_short_1_http(url):
+#     requests.delete(url + 'clear')
+#     # register user
+#     data_in = {
+#         'email' : "cyruschow@gmail.com", 
+#         'password' : "ilikecookies",
+#         'name_first' : "Cyrus",
+#         'name_last' : "Chow"
+#     }
+#     response = requests.post(url + 'auth/register', json = data_in)
+#     assert (response.status_code == 200)
+#     # return valid user information
+#     payload = response.json()
+#     u_id = payload['u_id']
+#     token = payload['token']
+#     data_in = {
+#         'token': token,
+#         'u_id': u_id
+#     }
+#     response = requests.get(url + 'user/profile', data_in)
+#     payload = response.json()
+#     email = payload['user']['email']
+#     # log the user out
+#     data_in = {'token': token}
+#     response = requests.post(url + 'auth/logout', json = data_in)
+#     payload = response.json()
+#     assert(payload == {"is_success": True})
+#     # attempt to reset password
+#     data_in = {'email': email}
+#     response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
+#     code = response.json()
+#     data_in = {
+#         'reset_code': code,
+#         'new_password': '123'
+#     }
+#     response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
+#     assert (response.status_code == 400)
 
 
-    # user = auth_register("cyruschow@gmail.com", "ilikecookies", "Cyrus", "Chow")
-    # profile = user_profile(user['token'], user['u_id'])
-    # auth_logout(user['token'])
-    # code = database.auth_passwordreset_return(profile['user']['email'])
-    # with pytest.raises(InputError):
-    #     auth_passwordreset_reset(code, "123")
-    requests.delete(url + 'clear')
+#     # user = auth_register("cyruschow@gmail.com", "ilikecookies", "Cyrus", "Chow")
+#     # profile = user_profile(user['token'], user['u_id'])
+#     # auth_logout(user['token'])
+#     # code = database.auth_passwordreset_return(profile['user']['email'])
+#     # with pytest.raises(InputError):
+#     #     auth_passwordreset_reset(code, "123")
+#     requests.delete(url + 'clear')
 
 # def test_password_short_2():
 #     clear()
@@ -94,17 +94,53 @@ def test_password_short_1_http(url):
 #         auth_passwordreset_reset(code, "")
 #     clear()
 
-# def test_password_reset_success():
-#     clear()
-#     user = auth_register("cyruschow@gmail.com", "ilikecookies", "Cyrus", "Chow")
-#     profile = user_profile(user['token'], user['u_id'])
-#     auth_logout(user['token'])
-#     code = database.auth_passwordreset_return(profile['user']['email'])
-#     auth_passwordreset_reset(code, "password123")
-#     auth_login("cyruschow@gmail.com", "password123")
-#     #profile = user_profile(user['token'], user['u_id'])
-#     #assert(profile['user']['password'] == 'password123')
-#     clear()
+def test_password_reset_success_http(url):
+    requests.delete(url + 'clear')
+    # register user
+    data_in = {
+        'email' : "cyruschow@gmail.com", 
+        'password' : "ilikecookies",
+        'name_first' : "Cyrus",
+        'name_last' : "Chow"
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    assert (response.status_code == 200)
+    # return valid user information
+    payload = response.json()
+    u_id = payload['u_id']
+    token = payload['token']
+    data_in = {
+        'token': payload['token'],
+        'u_id': payload['u_id']
+    }
+    response = requests.get(url + 'user/profile', data_in)
+    assert (response.status_code == 200)
+    payload = response.json()
+    email = payload['user']['email']
+    # log the user out
+    data_in = {'token': token}
+    response = requests.post(url + 'auth/logout', json = data_in)
+    payload = response.json()
+    assert(payload == {"is_success": True})
+    # request forgotten password
+    data_in = {'email' : email}
+    response = requests.post(url + 'auth/passwordreset/request', json = data_in)
+    assert (response.status_code == 200)
+    payload = response.json()
+    assert(payload == {})
+    # reset password
+    data_in = {
+        'reset_code': "code",
+        'new_password': "password123"
+    }
+    response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
+    assert (response.status_code == 200)
+    requests.delete(url + 'clear')
+
+
+    # auth_passwordreset_reset(code, "password123")
+    # auth_login("cyruschow@gmail.com", "password123")
+    # clear()
     
 # def test_multiple_reset_success():
 #     clear()

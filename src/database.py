@@ -269,6 +269,8 @@ def reset_password(reset_code, new_password):
             user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
             user['reset_code'] = None
             break
+        # else:
+        #     user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
 
 # CHANNELS FUNCTIONS #
     

@@ -79,7 +79,7 @@ APP.config['MAIL_USE_SSL'] = True
 mail = Mail(APP)
 
 @APP.route("/auth/passwordreset/request", methods=['POST'])
-def auth_passwordreset_request():
+def auth_passwordreset_requests():
     data = request.get_json()
     email = data['email']
 
@@ -101,10 +101,10 @@ def auth_passwordreset_request():
     return dumps({})
 
 @APP.route("/auth/passwordreset/reset", methods=['POST'])
-def auth_passwordreset_request():
+def auth_passwordreset_resets():
     reset_code = request.args.get('reset_code')
     new_password = request.args.get('new_password')
-    reset = auth.auth_passwordreset_reset
+    auth.auth_passwordreset_reset(reset_code, new_password)
     return dumps({})
 
 @APP.route("/channel/details", methods=['GET'])
