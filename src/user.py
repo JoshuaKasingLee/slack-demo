@@ -13,7 +13,7 @@ import os
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
-    found_user = database.check_u_id_exists(u_id)
+    found_user = database.check_user_exists(u_id)
     # if u_id exists and input token is valid, return as required
     return {
         'user': {
@@ -28,7 +28,7 @@ def user_profile(token, u_id):
 
 def user_profile_setname(token, name_first, name_last):
     # check if input token and name lengths are valid
-    id = database.return_token_u_id(token)
+    id = database.token_check(token)
     helper.check_name_length(name_first, name_last)
 
     # if names are valid, change name in database
@@ -39,7 +39,7 @@ def user_profile_setname(token, name_first, name_last):
 
 def user_profile_setemail(token, email):
     # check if input token and email is valid
-    id = database.return_token_u_id(token)
+    id = database.token_check(token)
     helper.validate_email(email)
     database.auth_check_email_register(email)  
 
@@ -50,7 +50,7 @@ def user_profile_setemail(token, email):
 
 def user_profile_sethandle(token, handle_str):
      # check if input token is valid - if not, return AccessError
-    id = database.return_token_u_id(token)
+    id = database.token_check(token)
 
     # check whether handle is too long or short
     helper.check_handle_length(handle_str)

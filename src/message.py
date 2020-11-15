@@ -160,10 +160,10 @@ def message_sendlater(token, channel_id, message, time_sent):
         raise InputError(f"Error, the message exceeds the 1000 character limit. You have input {message_length} characters.")
 
     # Ensure the time_sent is valid (i.e. not in the past)
-    curr_time = time.time()
+    curr_time = int(time.time())
     
     # Determine time delay between time_sent and time_delay
-    time_delay = time_sent - curr_time
+    time_delay = int(time_sent) - curr_time
     if time_delay < 0:
         raise InputError(f"Error, the input time is set in the past!")
 
@@ -178,7 +178,7 @@ def message_sendlater(token, channel_id, message, time_sent):
     database.message_incrementing_total_messages()
 
     return {
-        message_id
+        'message_id': message_id,
     }
 
 

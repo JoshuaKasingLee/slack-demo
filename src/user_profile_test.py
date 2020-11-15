@@ -32,8 +32,9 @@ def test_valid_users():
 
 def test_invalid_u_id():
     clear()
+    token = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")['token']
     with pytest.raises(InputError):
-        user_profile('404', 404)
+        user_profile(token, 404)
     clear()
 
 def test_invalid_token():

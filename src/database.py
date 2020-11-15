@@ -43,6 +43,9 @@ messages = {}
 # Total messages sent
 total_messages = 0
 
+#channels that have standup active and time it ends
+channel_standup_active = []
+
 '''
 probably needs to be deleted:
 # messages in channels
@@ -97,15 +100,17 @@ def clear():
     messages = {}
     global total_messages
     total_messages = 0
+    global channel_standup_active
+    channel_standup_active = []
 
     
 def make_admin(u_id):
     global admin_users
-    admin_users['u_id'] = True
+    admin_users[f'{u_id}'] = True
 
 def remove_admin(u_id):
     global admin_users
-    admin_users.pop('u_id', None)
+    admin_users.pop(f'{u_id}', None)
     '''
     or
     try:
@@ -325,7 +330,7 @@ def channel_check_admin(u_id):
     if master_users[0]['u_id'] == u_id:
         return True
     try:
-        if admin_users['u_id'] == True:
+        if admin_users[f'{u_id}'] == True:
             return True
     except:
         return False
@@ -634,8 +639,8 @@ def return_token_u_id(token):
         raise AccessError("Token passed in is not a valid token.")
     return found_i
 
-def check_u_id_exists(u_id):
-    '''check if the u_id and token exist and match up, if so, return user'''
+def check_user_exists(u_id):
+    '''check if the u_id exists, if so, return user'''
     # check if u_id exists in database - if not, return InputError
     user_exists = False
     for user in master_users:
@@ -645,11 +650,6 @@ def check_u_id_exists(u_id):
             break
     if user_exists == False:
         raise InputError(f"User with u_id {u_id} is not a valid user")
-
-    # # check if input token is valid - if not, return AccessError
-    # if not (token == found_user["token"] and found_user["log"] == True):
-    #     raise AccessError("Token passed in is not a valid token.")
-    
     return found_user
 
 def update_first_name(u_id, name_first):
@@ -668,3 +668,62 @@ def check_handle(handle_str):
     for user in master_users:
         if handle_str == user["handle_str"]:
             raise InputError(f"Error, {handle_str} handle has been taken")
+
+
+def add_standup(channel_id, end_time, u_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            raise InputError
+    
+    active_standup = {}
+    active_standup['channel_id'] = channel_id
+    active_standup['time_finish'] = end_time
+    active_standup['message'] = ''
+    active_standup['u_id'] = u_id
+    channel_standup_active.append(active_standup)
+
+def standup_removal(channel_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+
+            message_id = message_new_message_id()
+            message_package = {
+                'message_id': message_id,
+                'channel_id': channel_id,
+                'u_id': channel['u_id'],
+                'message': channel['message'],
+                'time_created': channel['time_finish'],
+                'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
+                'is_pinned': False,
+            }
+            messages[f'{message_id}'] = message_package
+            message_incrementing_total_messages()
+
+            channel_standup_active.remove(channel)
+
+def active_check(channel_id):
+    status = {}
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            status['is_active'] = True
+            status['time_finish'] = channel['time_finish']
+            return status
+    status['is_active'] = False
+    status['time_finish'] = None
+    return status
+
+def standup_message_add(channel_id, standup_message):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            channel['message'] += standup_message
+            return
+    raise InputError # no current standup in channel
+
+def standup_fetch_message(channel_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            return channel['message']
+    raise InputError # no current standup in channel
+
+def fetch_first_name(u_id):
+    return master_users[u_id]['name_first']
