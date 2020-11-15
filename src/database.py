@@ -263,14 +263,16 @@ def auth_passwordreset_return(email):
     
 
 def reset_password(reset_code, new_password):
+    reset = False
     for user in master_users:
         if reset_code == user['reset_code']:
+            reset = True
             helper.check_password_length(new_password)
             user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
             user['reset_code'] = None
             break
-        # else:
-        #     user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
+    if reset == False:
+        raise InputError("Reset code is incorrect")
 
 # CHANNELS FUNCTIONS #
     

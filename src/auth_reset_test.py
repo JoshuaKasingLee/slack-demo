@@ -44,6 +44,15 @@ def test_password_short_3():
         auth_passwordreset_reset(code, "")
     clear()
 
+def test_incorrect_reset_code():
+    clear()
+    user = auth_register("nickdodd@gmail.com", "doddthegod", "Nick", "Dodd")
+    profile = user_profile(user['token'], user['u_id'])
+    auth_logout(user['token'])
+    with pytest.raises(InputError):
+        auth_passwordreset_reset("badcode", "password123")
+    clear()
+
 def test_password_reset_success():
     clear()
     user = auth_register("cyruschow@gmail.com", "ilikecookies", "Cyrus", "Chow")
