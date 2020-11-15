@@ -30,7 +30,7 @@ def test_pinning_one() :
     }
     clear()
 
-def test_pinning_one_but_two_messages() :
+def test_pinning_one_but_two_messages():
     clear()
     user = auth.auth_register("jonathon@gmail.com", "password", "John", "Smith")
     token = user['token']
