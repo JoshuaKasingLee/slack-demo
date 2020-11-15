@@ -53,6 +53,7 @@ def auth_register(email, password, name_first, name_last):
     master_user['log'] = True # assume that user is logged in after registering
     
     # add new user to the master_users database
+    database.add_blocklist(id)
     database.auth_add_user(master_user)
 
     return {

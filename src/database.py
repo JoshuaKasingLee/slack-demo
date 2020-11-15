@@ -46,6 +46,10 @@ total_messages = 0
 #channels that have standup active and time it ends
 channel_standup_active = []
 
+# blocked users: key = u_id, value = list of blocked users. 
+# cannot block urself
+blocked_users = {}
+
 '''
 probably needs to be deleted:
 # messages in channels
@@ -652,7 +656,6 @@ def check_handle(handle_str):
         if handle_str == user["handle_str"]:
             raise InputError(f"Error, {handle_str} handle has been taken")
 
-
 def add_standup(channel_id, end_time, u_id):
     for channel in channel_standup_active:
         if channel['channel_id'] == channel_id:
@@ -666,23 +669,22 @@ def add_standup(channel_id, end_time, u_id):
     channel_standup_active.append(active_standup)
 
 def standup_removal(channel_id):
-    for channel in channel_standup_active:
-        if channel['channel_id'] == channel_id:
-
+    for active_standup in channel_standup_active:
+        if active_standup['channel_id'] == channel_id:
             message_id = message_new_message_id()
             message_package = {
                 'message_id': message_id,
                 'channel_id': channel_id,
-                'u_id': channel['u_id'],
-                'message': channel['message'],
-                'time_created': channel['time_finish'],
+                'u_id': active_standup['u_id'],
+                'message': active_standup['message'],
+                'time_created': active_standup['time_finish'],
                 'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
                 'is_pinned': False,
             }
-            messages[f'{message_id}'] = message_package
-            message_incrementing_total_messages()
-
-            channel_standup_active.remove(channel)
+            if active_standup['message'] != '':
+                messages[f'{message_id}'] = message_package
+                message_incrementing_total_messages()
+            channel_standup_active.remove(active_standup)
 
 def active_check(channel_id):
     status = {}
@@ -710,3 +712,39 @@ def standup_fetch_message(channel_id):
 
 def fetch_first_name(u_id):
     return master_users[u_id]['name_first']
+
+def fetch_handle(u_id):
+    return master_users[u_id]['handle_str']
+
+def block_user(u_id, u_block):
+    if u_id == u_block:
+        raise InputError('You cannot block yourself.')
+    if is_blocked(u_id, u_block):
+        raise InputError(f'User {fetch_handle_from_u_id(u_block)} is already blocked.')
+    blocked_users[f'{u_id}'].append(u_block)
+
+def unblock_user(u_id, u_unblock):
+    if not is_blocked(u_id, u_unblock):
+        raise InputError(f'User {fetch_handle_from_u_id(u_unblock)} is not blocked.')
+    blocked_users[f'{u_id}'].remove(u_unblock)
+
+def is_blocked(u_id, u_block):
+    if blocked_users[f'{u_id}'].count(u_block):
+        return True
+    return False
+
+def add_blocklist(u_id):
+    blocked_users[f'{u_id}'] = []
+
+def fetch_u_id_from_handle(handle):
+    u_id = -1
+    for user in master_users:
+        if user['handle_str'] == handle:
+            u_id = user['u_id']
+    return u_id
+
+def fetch_handle_from_u_id(u_id):
+    for user in master_users:
+        if user['u_id'] == u_id:
+            return user['handle_str']
+    
