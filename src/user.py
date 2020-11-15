@@ -8,6 +8,7 @@ from PIL import Image
 from database import master_users
 from auth import auth_register
 import flask
+import os
 #import flask
 
 def user_profile(token, u_id):
@@ -92,6 +93,10 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # crop and save the image
     cropped_profile = profile_picture.crop((x_start, y_start, x_end, y_end))
     image_name = str(id) + ".jpg"
+    try:
+        os.remove("src/static/" + image_name)
+    except OSError:
+        pass
     cropped_profile.save("src/static/" + image_name)
     for user in master_users:
         if user['u_id'] == id:
