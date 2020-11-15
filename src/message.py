@@ -4,6 +4,7 @@ import time
 import threading
 import standup
 import block
+import hangman
 
 def message_send(token, channel_id, message):
     # First that the user is in the channel_id
@@ -42,7 +43,14 @@ def message_send(token, channel_id, message):
     if message.startswith('/standup '):
         standup_length = int(message.split(' ', 1)[1])
         standup.standup_start(token, channel_id, standup_length)
-        return
+
+    if message == '/hangman':
+        hangman.hangman(channel_id)
+        message = hangman.print_hangman(channel_id, 0, message)
+    if message.startswith('/guess '):
+        stage = hangman.guess(channel_id, message)
+        message = hangman.print_hangman(channel_id, stage, message)
+        message += hangman.check_game_end(channel_id, stage)
 
     if message.startswith('/block '):
         block.process_block(message, u_id)

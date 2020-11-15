@@ -47,6 +47,9 @@ total_messages = 0
 #channels that have standup active and time it ends
 channel_standup_active = []
 
+# hangman
+channel_hangman_active = []
+
 # blocked users: key = u_id, value = list of blocked users. 
 # cannot block urself
 blocked_users = {}
@@ -747,4 +750,65 @@ def fetch_handle_from_u_id(u_id):
     for user in master_users:
         if user['u_id'] == u_id:
             return user['handle_str']
-    
+
+def start_hangman(channel_id, word):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            raise InputError
+    active_hangman = {}
+    active_hangman['channel_id'] = channel_id
+    active_hangman['word'] = word
+    active_hangman['fails'] = 0
+    active_hangman['found'] = []
+    channel_hangman_active.append(active_hangman)
+
+def end_hangman(channel_id):
+    for active_hangman in channel_hangman_active:
+        if active_hangman['channel_id'] == channel_id:
+            channel_hangman_active.remove(active_hangman)
+
+def hangman_active_check(channel_id):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            return True
+    return False
+
+def hangman_guess(channel_id, guess):
+    found = False
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['found']:
+                if char == guess:
+                    raise InputError('Letter already found.')
+            for char in channel['word']:
+                if char == guess:
+                    channel['found'].append(guess)
+                    found = True
+            if not found:
+                channel['fails'] += 1
+            return channel['fails']
+
+def print_hangman_progress(channel_id):
+    progress = ''
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['word']:
+                if channel['found'].count(char) > 0:
+                    progress += f'{char} '
+                else:
+                    progress += '_ '
+    return progress
+
+def check_hangman_victory(channel_id):
+    finished = True
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['word']:
+                if channel['found'].count(char) == 0:
+                    finished = False
+    return finished
+
+def fetch_hangman_word(channel_id):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            return channel['word']
