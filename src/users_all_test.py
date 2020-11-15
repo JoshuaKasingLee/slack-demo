@@ -16,6 +16,7 @@ def test_one() :
                 'name_first': 'John',
                 'name_last': 'Smith',
                 'handle_str': 'johnsmith',
+                "profile_img_url": None
             },
         ],
     }
@@ -36,6 +37,7 @@ def test_two() :
                 'name_first': 'John',
                 'name_last': 'Smith',
                 'handle_str': 'johnsmith',
+                "profile_img_url": None
             },
             {
                 'u_id': u_id2,
@@ -43,6 +45,7 @@ def test_two() :
                 'name_first': 'Sally',
                 'name_last': 'Champion',
                 'handle_str': 'sallychampion',
+                "profile_img_url": None
             },
         ],                
     }

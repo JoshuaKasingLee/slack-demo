@@ -331,35 +331,40 @@ def test_valid_rego_http(url):
                 'email' : "cyruschow@gmail.com", 
                 'name_first' : "Cyrus",
                 'name_last' : "Chow",
-                'handle_str': "cyruschow"
+                'handle_str': "cyruschow",
+                'profile_img_url': None
             },
             {
                 'u_id': u_id2,
                 'email' : "kellyzhou@gmail.com", 
                 'name_first' : "Kelly",
                 'name_last' : "Zhou",
-                'handle_str': "kellyzhou"
+                'handle_str': "kellyzhou",
+                'profile_img_url': None
             },
             {
                 'u_id': u_id3,
                 'email' : "andreeavissarion@hotmail.com", 
                 'name_first' : "Andreea",
                 'name_last' : "Vissarion",
-                'handle_str': "andreeavissarion"
+                'handle_str': "andreeavissarion",
+                'profile_img_url': None
             },
             {
                 'u_id': u_id4,
                 'email' : "joshualee@icloud.org", 
                 'name_first' : "Josh",
                 'name_last' : "Lee",
-                'handle_str': "joshlee"
+                'handle_str': "joshlee",
+                'profile_img_url': None
             },
             {
                 'u_id': u_id5,
                 'email' : "nickdodd@gmail.com", 
                 'name_first' : "Nick",
                 'name_last' : "Dodd",
-                'handle_str': "nickdodd"
+                'handle_str': "nickdodd",
+                'profile_img_url': None
             }
         ],                
     }

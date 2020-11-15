@@ -2,11 +2,14 @@ from error import InputError, AccessError
 import database
 import re
 import helper
+import sys
+import urllib.request
+from PIL import Image
+from database import master_users
+from auth import auth_register
+import os
 
 def user_profile(token, u_id):
-    # check valid login
-    id = database.token_check(token)
-    database.channels_user_log_check(id)
     # check if u_id exists in database - if not, return InputError
     found_user = database.check_user_exists(u_id)
     # if u_id exists and input token is valid, return as required
@@ -16,7 +19,8 @@ def user_profile(token, u_id):
         	'email': found_user["email"],
         	'name_first': found_user["name_first"],
         	'name_last': found_user["name_last"],
-        	'handle_str': found_user["handle_str"]
+        	'handle_str': found_user["handle_str"],
+            'profile_img_url': found_user["profile_img_url"]
         }
     }
 
@@ -57,3 +61,40 @@ def user_profile_sethandle(token, handle_str):
 
     return {
     }
+
+# saves photo to local server and crops it
+# see server.py for serving the image
+def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
+    # check whether token is valid
+    id = database.return_token_u_id(token)
+    # check whether img_url is valid
+    try:
+        response = urllib.request.urlopen(img_url)
+    except:
+        raise InputError("Image URL is invalid")
+    # download the photo locally
+    urllib.request.urlretrieve(img_url, "profile_pic.jpg")
+    # open the image
+    profile_picture = Image.open("profile_pic.jpg")
+    # check whether image is a jpg
+    image_type = profile_picture.format
+    if image_type != "JPEG":
+        raise InputError("Image is not of JPEG type")
+    # check for crop co-ordinate errors
+    if x_start > x_end or y_start > y_end:
+        raise InputError("Crop co-ordinates must be directed from upper left to lower right")
+    width, height = profile_picture.size
+    if x_start > width or x_start < 0 or x_end > width or x_end < 0:
+        raise InputError("x crop co-ordinates are not within image range")
+    if y_start > height or y_start < 0 or y_end > height or y_end < 0:
+        raise InputError("y crop co-ordinates are not within image range")
+    # crop and save the image
+    cropped_profile = profile_picture.crop((x_start, y_start, x_end, y_end))
+    image_name = str(id) + ".jpg"
+    try:
+        os.remove("src/static/" + image_name)
+    except OSError:
+        pass
+    cropped_profile.save("src/static/" + image_name)
+    database.update_profile_img_url(id, image_name)
+    return image_name

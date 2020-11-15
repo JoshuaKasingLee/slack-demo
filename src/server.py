@@ -1,7 +1,7 @@
 import sys
 from json import dumps
 
-from flask import Flask, request
+from flask import Flask, request, send_from_directory
 from flask_cors import CORS
 
 import auth
@@ -12,6 +12,7 @@ import other
 import user
 import standup
 from error import InputError
+from database import master_users
 
 
 def defaultHandler(err):
@@ -29,7 +30,17 @@ APP = Flask(__name__)
 CORS(APP)
 
 APP.config['TRAP_HTTP_EXCEPTIONS'] = True
+APP.config['SEND_FILE_MAX_AGE_DEFAULT'] = 0
 APP.register_error_handler(Exception, defaultHandler)
+
+# No caching at all for API endpoints.
+@APP.after_request
+def add_header(response):
+    # response.cache_control.no_store = True
+    response.headers['Cache-Control'] = 'no-store, no-cache, must-revalidate, post-check=0, pre-check=0, max-age=0'
+    response.headers['Pragma'] = 'no-cache'
+    response.headers['Expires'] = '-1'
+    return response
 
 # Example
 @APP.route("/echo", methods=['GET'])
@@ -146,6 +157,10 @@ def channel_creates():
     created = channels.channels_create(token, name, is_public)
     return dumps(created)
 
+@APP.route("/static/<path:path>")
+def fetch_image(path):
+    return send_from_directory('/static/', path)
+
 @APP.route("/user/profile", methods=['GET'])
 def user_profiles():
   #  data = request.get_json()
@@ -154,7 +169,10 @@ def user_profiles():
     u_id = int(request.args.get('u_id'))
     token = request.args.get('token')
     profile = user.user_profile(token, u_id)
-    return dumps(profile)
+    # if profile['user']['profile_img_url'] is not None:
+        # path = str(id) + ".jpg"
+        # profile['user']['profile_img_url'] = fetch_image(path)
+    return dumps(profile) 
 
 @APP.route("/user/profile/setname", methods=['PUT'])
 def user_profile_setnames():
@@ -180,6 +198,20 @@ def user_profile_sethandles():
     handle_str = data['handle_str']
     user.user_profile_sethandle(token, handle_str)
     return dumps({})
+
+@APP.route("/user/profile/uploadphoto", methods=['POST'])
+def user_profile_uploadphotos():
+    data = request.get_json()
+    token = data['token']
+    img_url = data['img_url']
+    x_start = int(data['x_start'])
+    y_start = int(data['y_start'])
+    x_end = int(data['x_end'])
+    y_end = int(data['y_end'])
+    # fetch and crop the image
+    image_name = user.user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end)
+    return dumps({})
+
 
 @APP.route("/users/all", methods=['GET'])
 def display_users_all():
