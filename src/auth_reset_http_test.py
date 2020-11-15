@@ -4,6 +4,7 @@ from subprocess import Popen, PIPE
 import signal
 from time import sleep
 import requests
+import email
 
 # Use this fixture to get the URL of the server. It starts the server for you,
 # so you don't need to.
@@ -135,17 +136,15 @@ def test_password_reset_success_http(url):
         'new_password': "password123"
     }
     response = requests.post(url + 'auth/passwordreset/reset', json = data_in)
-    assert (response.status_code == 200)
+    assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
     data_in = {
         'email' : "cyruschow@gmail.com",
         'password' : "password123"
     }
-
     requests.post(url + 'auth/login', json = data_in)
-
-    # auth_passwordreset_reset(code, "password123")
+    requests.delete(url + 'clear')
     # clear()
     
 # def test_multiple_reset_success():
