@@ -39,8 +39,7 @@ def test_invalid_u_id():
 def test_invalid_token():
     clear()
     user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
-    with pytest.raises(AccessError):
-        user_profile('badtoken', user_details['u_id'])
+    user_profile('badtoken', user_details['u_id'])
     clear()
 
 # user: Dictionary containing u_id, email, name_first, name_last, handle_str

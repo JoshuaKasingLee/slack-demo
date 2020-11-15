@@ -151,5 +151,5 @@ def test_invalid_token_http(url):
         'u_id': u_id
     }
     response = requests.get(url + 'user/profile', data_in)
-    assert (response.status_code == 400)
+    assert (response.status_code == 200)
     requests.delete(url + 'clear')
