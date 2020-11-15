@@ -2,6 +2,7 @@ from error import InputError
 from error import AccessError
 import hashlib
 import jwt
+import flask
 # To be put into iteration 1
 
 
@@ -46,13 +47,6 @@ total_messages = 0
 #channels that have standup active and time it ends
 channel_standup_active = []
 
-'''
-probably needs to be deleted:
-# messages in channels
-#channels_and_messages = { channel_id: messages, channel_id2: messages2, ... }
-#channels_and_messages = { 1: [ { 'message_id': 1, 'u_id': 1, 'message' = 'whtever the fuck', 'time_created' = 1111111111 }, { 'message_id': 2, ... } ... ], 2: ... }
-#channels_and_messages = {}
-'''
 
 # # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
 # secret token encoder
@@ -111,13 +105,6 @@ def make_admin(u_id):
 def remove_admin(u_id):
     global admin_users
     admin_users.pop(f'{u_id}', None)
-    '''
-    or
-    try:
-        del admin_users['u_id']
-    except KeyError:
-        pass
-    '''
     
 def is_str_in_msg(query_str, message):
     return (query_str in message)
@@ -192,7 +179,6 @@ def auth_check_password(email, password): # in context: return auth_check_passwo
         'token': tok,
     }
 
-
 def auth_logout_user(token):
     ''' log active user out '''
     # check if token exists
@@ -208,18 +194,15 @@ def auth_logout_user(token):
         'is_success': False,
     }
 
-
 def auth_check_email_register(email):
     ''' check whether email address is being used by another user '''
     for id in master_users:
         if email == id["email"]:
             raise InputError(f"Error, {email} has been taken")
 
-
 def auth_assign_id(): # in context: id = auth_assign_id():
     ''' assign u_id in chronological order of registration '''
     return len(master_users)
-
 
 def auth_assign_user_handle(handle): # in context: handle = auth_check_user_handle(handle):
     ''' loop to ensure new user handle is new '''
@@ -238,7 +221,6 @@ def auth_assign_user_handle(handle): # in context: handle = auth_check_user_hand
             handle = "".join(handle_list)
             i = i + 1
     return handle
-
 
 def auth_add_user(master_user):
     ''' add new user to the master_users database '''
@@ -325,7 +307,6 @@ def channel_add_member(channel_id, u_id): # made changes i don't get
             joined = True
     return joined
             
-
 def channel_check_admin(u_id):
     if master_users[0]['u_id'] == u_id:
         return True
@@ -410,18 +391,15 @@ def channels_return_membership(u_id):
         'channels': user_channels,
     }
 
-
 def channels_return_all():
     '''return all channels'''
     return {
             'channels': channels
         }
 
-
 def channels_assign_id():
     ''' assign a new channel id '''
     return len(channels)
-
 
 def channels_add_to_database(u_id, name, channel_id, is_public):
     '''add channel to database'''
@@ -445,7 +423,6 @@ def channels_add_to_database(u_id, name, channel_id, is_public):
     elif is_public == False:
         private_channels.append(channel)
 
-
 def channels_user_log_check(u_id):
     ''' check if a user exists for the given u_id'''
     valid_user = 0
@@ -454,7 +431,6 @@ def channels_user_log_check(u_id):
             valid_user = 1 # 'log' == True if logged in
     if valid_user != 1:
         raise AccessError
-
 
 # CHANNEL FUNCTIONS #
 
@@ -576,13 +552,6 @@ def message_append_message(message_id, message_package):
     total_messages += 1
     return
 
-''' delete: ???
-# Append message to messages given message id and message_package
-def message_append_message(message_id, message_package):
-    messages[f'{message_id}'] = message_package
-    return
-'''
-
 def message_num_messages():
     return messages
 
@@ -664,11 +633,17 @@ def update_email(u_id, email):
 def update_handle(u_id, handle_str):
     master_users[u_id]['handle_str'] = handle_str
 
+def update_profile_img_url(u_id, image_name):
+    for user in master_users:
+        if user['u_id'] == id:
+            user['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+
 def check_handle(handle_str):
     for user in master_users:
         if handle_str == user["handle_str"]:
             raise InputError(f"Error, {handle_str} handle has been taken")
 
+# STANDUP FUNCTIONS #
 
 def add_standup(channel_id, end_time, u_id):
     for channel in channel_standup_active:

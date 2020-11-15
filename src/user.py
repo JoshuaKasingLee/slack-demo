@@ -7,9 +7,7 @@ import urllib.request
 from PIL import Image
 from database import master_users
 from auth import auth_register
-import flask
 import os
-#import flask
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
@@ -98,12 +96,5 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     except OSError:
         pass
     cropped_profile.save("src/static/" + image_name)
-    for user in master_users:
-        if user['u_id'] == id:
-            user['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+    database.update_profile_img_url(id, image_name)
     return image_name
-
-#user_details = auth_register("kellyczhou@gmail.com", "cats<3", "Kelly", "Zhou")
-#user_profile_uploadphoto(user_details['token'], "https://www.ikea.com/au/en/images/products/smycka-artificial-flower-rose-pink__0902935_PE596772_S5.JPG?f=xl", 1, 1, 100, 100)
-#user_profile_uploadphoto("x", "http://invalidurl", 1, 2, 2, 2)
-#user_profile_uploadphoto("x", "http://www.pngall.com/wp-content/uploads/2016/06/Light-Free-Download-PNG.png", 1, 1, 100, 100)
