@@ -678,6 +678,7 @@ def update_first_name(u_id, name_first):
             for users in members:
                 if users['u_id'] == u_id:
                     users['name_first'] = name_first
+                    channel
 
 def update_last_name(u_id, name_last):
     master_users[u_id]['name_last'] = name_last
@@ -686,6 +687,7 @@ def update_last_name(u_id, name_last):
             for users in members:
                 if users['u_id'] == u_id:
                     users['name_last'] = name_last
+                    channel
 
 def update_email(u_id, email):
     master_users[u_id]['email'] = email
@@ -694,6 +696,7 @@ def update_email(u_id, email):
             for users in members:
                 if users['u_id'] == u_id:
                     users['email'] = email
+                    channel
 
 def update_handle(u_id, handle_str):
     master_users[u_id]['handle_str'] = handle_str
@@ -702,6 +705,7 @@ def update_handle(u_id, handle_str):
             for users in members:
                 if users['u_id'] == u_id:
                     users['handle_str'] = handle_str
+                    channel
 
 def check_valid_img_url(img_url):
     try:
@@ -736,6 +740,7 @@ def update_user_profile_img_url(u_id, image_name):
             for users in members:
                 if users['u_id'] == u_id:
                     users['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+                    channel
 
 def check_handle(handle_str):
     for user in master_users:
