@@ -48,11 +48,11 @@ def test_change_many_names():
     profile2 = user_profile(user2["token"], user2["u_id"])
     profile3 = user_profile(user3["token"], user3["u_id"])
     correct_profile1 = {"user": {"u_id" : user1['u_id'], "email" : "cyruschow@gmail.com", \
-        "name_first": "Cyrus Yu Seng", "name_last": "Chow", "handle_str": "cyruschow"}}
+        "name_first": "Cyrus Yu Seng", "name_last": "Chow", "handle_str": "cyruschow", "profile_img_url": None}}
     correct_profile2 = {"user": {"u_id" : user2['u_id'], "email" : "kellyzhou@gmail.com", \
-        "name_first": "Kel", "name_last": "Zhou", "handle_str": "kellyzhou"}}
+        "name_first": "Kel", "name_last": "Zhou", "handle_str": "kellyzhou", "profile_img_url": None}}
     correct_profile3 = {"user": {"u_id" : user3['u_id'], "email" : "andreeavissarion@hotmail.com", \
-        "name_first": "Andreea", "name_last": "Viss", "handle_str": "andreeavissarion"}}
+        "name_first": "Andreea", "name_last": "Viss", "handle_str": "andreeavissarion", "profile_img_url": None}}
     assert(profile1 == correct_profile1)
     assert(profile2 == correct_profile2)
     assert(profile3 == correct_profile3)

@@ -52,7 +52,7 @@ def test_change_first_name_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["name_first"] == "Frankenstein")
     assert(profile["user"]["name_last"] == "Fort")
@@ -83,7 +83,7 @@ def test_change_last_name_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["name_first"] == "Frankie")
     assert(profile["user"]["name_last"] == "Fantastic")
@@ -115,7 +115,7 @@ def test_change_name_http(url):
         'token': payload['token'],
         'u_id': payload['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile = response.json()
     assert(profile["user"]["name_first"] == "Cinderella")
     assert(profile["user"]["name_last"] == "Princess")
@@ -178,26 +178,26 @@ def test_change_many_names_http(url):
         'token': user1['token'],
         'u_id': user1['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile1 = response.json()
     data_in = {
         'token': user2['token'],
         'u_id': user2['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile2 = response.json()
     data_in = {
         'token': user3['token'],
         'u_id': user3['u_id']
     }
-    response = requests.get(url + 'user/profile', json = data_in)
+    response = requests.get(url + 'user/profile', data_in)
     profile3 = response.json()
     correct_profile1 = {"user": {"u_id" : user1['u_id'], "email" : "cyruschow@gmail.com", \
-        "name_first": "Cyrus Yu Seng", "name_last": "Chow", "handle_str": "cyruschow"}}
+        "name_first": "Cyrus Yu Seng", "name_last": "Chow", "handle_str": "cyruschow", "profile_img_url": None}}
     correct_profile2 = {"user": {"u_id" : user2['u_id'], "email" : "kellyzhou@gmail.com", \
-        "name_first": "Kel", "name_last": "Zhou", "handle_str": "kellyzhou"}}
+        "name_first": "Kel", "name_last": "Zhou", "handle_str": "kellyzhou", "profile_img_url": None}}
     correct_profile3 = {"user": {"u_id" : user3['u_id'], "email" : "andreeavissarion@hotmail.com", \
-        "name_first": "Andy", "name_last": "Viss", "handle_str": "andreeavissarion"}}
+        "name_first": "Andy", "name_last": "Viss", "handle_str": "andreeavissarion", "profile_img_url": None}}
     assert(profile1 == correct_profile1)
     assert(profile2 == correct_profile2)
     assert(profile3 == correct_profile3)

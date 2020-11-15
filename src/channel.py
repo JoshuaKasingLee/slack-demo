@@ -61,24 +61,35 @@ def channel_messages(token, channel_id, start):
     for message in messages:
         extract_message = messages[message]
         if (extract_message['channel_id'] == channel_id):
+            sender_id = extract_message['u_id']
             single_message['message_id'] = extract_message['message_id']
-            single_message['u_id'] = extract_message['u_id']
+            single_message['u_id'] = sender_id
             single_message['message'] = extract_message['message']
             single_message['time_created'] = extract_message['time_created']
+            single_message['reacts'] = database.react_output(u_id, extract_message['message_id'], 1)
+            single_message['is_pinned'] = extract_message['is_pinned']
+            if database.is_blocked(u_id, sender_id):
+                single_message['message'] = f'Message from blocked user hidden. </unblock {database.fetch_handle_from_u_id(sender_id)}> to reveal.'
             messages_list.append(single_message)
             single_message = {}
 
     # it's supposed to return most recent first
     messages_list.reverse()
 
-    # if there are no messages
+    ## check 'start' isn't negative
+    if start < 0:
+        raise InputError
+     
+    ## if there are no messages return  specific thing
     length = len(messages_list)
-    if (length == 0):
-        return { 'messages': [], 'start': 0, 'end': 0 }
-
-    ## check 'start' isn't greater than total # of messages OR negative
-    message_max = length - 1
-    if start > message_max or start < 0:
+    if length == 0 and start == 0:
+        return {'messages': [], 'start': 0, 'end': -1}
+    
+    ## check 'start' isn't greater than total # of messages
+    ## must be done after len check because start is 0 for one message and for
+    #  zero messages
+    message_max = len(messages_list) - 1
+    if start > message_max :
         raise InputError
 
     # return the correct number of messages
@@ -91,8 +102,7 @@ def channel_messages(token, channel_id, start):
     # if we have reached the final message, return -1
     if current > message_max:
         current = -1
-
-    return { 'messages': messages_return, 'start': start, 'end': current, }
+    return { 'messages': messages_return, 'start': start, 'end': current}
 
 
 def channel_leave(token, channel_id):

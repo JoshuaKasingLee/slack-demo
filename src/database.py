@@ -2,6 +2,10 @@ from error import InputError
 from error import AccessError
 import hashlib
 import jwt
+import helper
+import flask
+import urllib.request
+import os
 # To be put into iteration 1
 
 
@@ -35,11 +39,23 @@ messages = {}
 #       'u_id':
 #       'message':
 #       'time_created':
+#       'reacts': [{'react_id': ?, 'u_ids': ?, 'is_this_user_reacted': ? }]
+#       'is_pinned':
 #   }
 # }
 
 # Total messages sent
 total_messages = 0
+
+#channels that have standup active and time it ends
+channel_standup_active = []
+
+# hangman
+channel_hangman_active = []
+
+# blocked users: key = u_id, value = list of blocked users. 
+# cannot block urself
+blocked_users = {}
 
 '''
 probably needs to be deleted:
@@ -52,6 +68,7 @@ probably needs to be deleted:
 # # # FUNCTIONS THAT ALTER THE VARIABLES ABOVE # # #
 # secret token encoder
 SECRET = 'kellycyrusandreeajoshnick'
+RESET_SECRET = 'shhhh!!!'
 
 # FUNCTIONS USED IN ALL FILES #
 
@@ -95,22 +112,17 @@ def clear():
     messages = {}
     global total_messages
     total_messages = 0
+    global channel_standup_active
+    channel_standup_active = []
 
     
 def make_admin(u_id):
     global admin_users
-    admin_users['u_id'] = True
+    admin_users[f'{u_id}'] = True
 
 def remove_admin(u_id):
     global admin_users
-    admin_users.pop('u_id', None)
-    '''
-    or
-    try:
-        del admin_users['u_id']
-    except KeyError:
-        pass
-    '''
+    admin_users.pop(f'{u_id}', None)
     
 def is_str_in_msg(query_str, message):
     return (query_str in message)
@@ -128,6 +140,7 @@ def add_all_users_to_list(list_of_users):
         single_user['name_first'] = user['name_first']
         single_user['name_last'] = user['name_last']
         single_user['handle_str'] = user['handle_str']
+        single_user['profile_img_url'] = user['profile_img_url']
         list_of_users.append(single_user)
         single_user = {}
     return list_of_users
@@ -148,6 +161,8 @@ def add_selected_messages_to_list(query_str, token, list_of_messages):
             single_message['u_id'] = message['u_id']
             single_message['message'] = message['message']
             single_message['time_created'] = message['time_created']
+            single_message['reacts'] = react_output(u_id, message['message_id'], 1)
+            single_message['is_pinned'] = message['is_pinned']
             list_of_messages.append(single_message)
             single_message = {}
     return list_of_messages
@@ -182,7 +197,6 @@ def auth_check_password(email, password): # in context: return auth_check_passwo
         'token': tok,
     }
 
-
 def auth_logout_user(token):
     ''' log active user out '''
     # check if token exists
@@ -198,18 +212,15 @@ def auth_logout_user(token):
         'is_success': False,
     }
 
-
 def auth_check_email_register(email):
     ''' check whether email address is being used by another user '''
     for id in master_users:
         if email == id["email"]:
             raise InputError(f"Error, {email} has been taken")
 
-
 def auth_assign_id(): # in context: id = auth_assign_id():
     ''' assign u_id in chronological order of registration '''
     return len(master_users)
-
 
 def auth_assign_user_handle(handle): # in context: handle = auth_check_user_handle(handle):
     ''' loop to ensure new user handle is new '''
@@ -229,11 +240,43 @@ def auth_assign_user_handle(handle): # in context: handle = auth_check_user_hand
             i = i + 1
     return handle
 
-
 def auth_add_user(master_user):
     ''' add new user to the master_users database '''
     master_users.append(master_user)
 
+# given a valid email address, create a reset code and put it into the database
+def create_reset_code(email):
+    code = jwt.encode({"email": email}, RESET_SECRET, algorithm='HS256').decode('utf-8')
+    for user in master_users:
+        if email == user["email"]:
+            user['reset_code'] = code
+    return code 
+
+def auth_passwordreset_return(email):
+    email_exists = False
+    for user in master_users:
+        if email == user["email"]:
+            email_exists = True
+            found_user = user
+            break
+    
+    if email_exists == True:
+        # send the email
+        reset_code = create_reset_code(email)
+        return reset_code
+    
+
+def reset_password(reset_code, new_password):
+    reset = False
+    for user in master_users:
+        if reset_code == user['reset_code']:
+            reset = True
+            helper.check_password_length(new_password)
+            user['password'] = hashlib.sha256(new_password.encode()).hexdigest()
+            user['reset_code'] = None
+            break
+    if reset == False:
+        raise InputError("Reset code is incorrect")
 
 # CHANNELS FUNCTIONS #
     
@@ -245,6 +288,7 @@ def channel_find_user(u_id):
             member['u_id'] = u_id
             member['name_first'] = user['name_first']
             member['name_last'] = user['name_last']
+            member['profile_img_url'] = user['profile_img_url']
             break
     return member
 
@@ -308,17 +352,17 @@ def channel_add_member(channel_id, u_id): # made changes i don't get
                     member['u_id'] = u_id
                     member['name_first'] = user['name_first']
                     member['name_last'] = user['name_last']
+                    member['profile_img_url'] = user['profile_img_url']
             # join to all_members:
             channels_and_members[channel_id][1].append(member)
             joined = True
     return joined
             
-
 def channel_check_admin(u_id):
     if master_users[0]['u_id'] == u_id:
         return True
     try:
-        if admin_users['u_id'] == True:
+        if admin_users[f'{u_id}'] == True:
             return True
     except:
         return False
@@ -331,6 +375,7 @@ def channel_add_member_private(channel_id, u_id):
             member['u_id'] = u_id
             member['name_first'] = master_users[0]['name_first']
             member['name_last'] = master_users[0]['name_last']
+            member['profile_img_url'] = master_users[0]['profile_img_url']
             # join to all_members:
             channels_and_members[channel_id][1].append(member)
 
@@ -354,6 +399,7 @@ def channel_check_valid_user(u_id):
             new_owner['u_id'] = u_id
             new_owner['name_first'] = user['name_first']
             new_owner['name_last'] = user['name_last']
+            new_owner['profile_img_url'] = user['profile_img_url']
             valid_user = 1
     return valid_user, new_owner
 
@@ -396,18 +442,15 @@ def channels_return_membership(u_id):
         'channels': user_channels,
     }
 
-
 def channels_return_all():
     '''return all channels'''
     return {
             'channels': channels
         }
 
-
 def channels_assign_id():
     ''' assign a new channel id '''
     return len(channels)
-
 
 def channels_add_to_database(u_id, name, channel_id, is_public):
     '''add channel to database'''
@@ -418,17 +461,18 @@ def channels_add_to_database(u_id, name, channel_id, is_public):
     ## user details
     name_first = master_users[u_id]['name_first']
     name_last = master_users[u_id]['name_last']
+    profile_img_url = master_users[u_id]['profile_img_url']
     member = {}
     member['u_id'] = u_id
     member['name_first'] = name_first
     member['name_last'] = name_last
+    member['profile_img_url'] = profile_img_url
     channels_and_members[channel_id] = [[member], [member]]
     channels.append(channel)
     if is_public == True:
         public_channels.append(channel)
     elif is_public == False:
         private_channels.append(channel)
-
 
 def channels_user_log_check(u_id):
     ''' check if a user exists for the given u_id'''
@@ -438,7 +482,6 @@ def channels_user_log_check(u_id):
             valid_user = 1 # 'log' == True if logged in
     if valid_user != 1:
         raise AccessError
-
 
 # CHANNEL FUNCTIONS #
 
@@ -507,13 +550,6 @@ def message_user_is_member(u_id, channel_id):
 def message_new_message_id():
     return total_messages
 
-# Append a message to the database
-def message_append_message(message_id, message_package):
-    messages[f'{message_id}'] = message_package
-    global total_messages
-    total_messages += 1
-    return
-
 # Given a channel, check if u_id is an owner
 def message_user_is_owner(u_id, channel_id):
     for users in channels_and_members[channel_id][0]:
@@ -560,6 +596,56 @@ def message_incrementing_total_messages():
     total_messages += 1
     return
 
+# Append a message to the database
+def message_append_message(message_id, message_package):
+    messages[f'{message_id}'] = message_package
+    global total_messages
+    total_messages += 1
+    return
+
+def message_num_messages():
+    return messages
+
+def pin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == False:
+        messages[f'{message_id}']['is_pinned'] = True
+    else: 
+        raise InputError
+
+def unpin_message(message_id):
+    if messages[f'{message_id}']['is_pinned'] == True:
+        messages[f'{message_id}']['is_pinned'] = False
+    else: 
+        raise InputError
+
+def react_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == True:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].append(u_id)
+
+def unreact_message(u_id, message_id, react_id):
+    react_num = react_id - 1
+    reaccs = react_output(u_id,message_id, react_id)
+    if reaccs[react_num]['is_this_user_reacted'] == False:
+        raise InputError
+    else:
+        messages[f'{message_id}']['reacts'][react_num]["u_ids"].remove(u_id)
+        
+def react_output(u_id, message_id, react_id):
+    react_num = react_id - 1
+    for person in messages[f'{message_id}']['reacts'][react_num]["u_ids"]:
+        if person == u_id:
+            return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+                     'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+                     'is_this_user_reacted': True }]
+    return [{'react_id': messages[f'{message_id}']['reacts'][react_num]['react_id'],
+             'u_ids': messages[f'{message_id}']['reacts'][react_num]['u_ids'],
+             'is_this_user_reacted': False }]
+
+
 # USER FUNCTIONS #
 
 def return_token_u_id(token):
@@ -573,8 +659,8 @@ def return_token_u_id(token):
         raise AccessError("Token passed in is not a valid token.")
     return found_i
 
-def check_token_u_id_match(token, u_id):
-    '''check if the u_id and token exist and match up, if so, return user'''
+def check_user_exists(u_id):
+    '''check if the u_id exists, if so, return user'''
     # check if u_id exists in database - if not, return InputError
     user_exists = False
     for user in master_users:
@@ -584,26 +670,231 @@ def check_token_u_id_match(token, u_id):
             break
     if user_exists == False:
         raise InputError(f"User with u_id {u_id} is not a valid user")
-
-    # check if input token is valid - if not, return AccessError
-    if not (token == found_user["token"] and found_user["log"] == True):
-        raise AccessError("Token passed in is not a valid token.")
-    
     return found_user
 
 def update_first_name(u_id, name_first):
     master_users[u_id]['name_first'] = name_first
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['name_first'] = name_first
 
 def update_last_name(u_id, name_last):
     master_users[u_id]['name_last'] = name_last
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['name_last'] = name_last
 
 def update_email(u_id, email):
     master_users[u_id]['email'] = email
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['email'] = email
 
 def update_handle(u_id, handle_str):
     master_users[u_id]['handle_str'] = handle_str
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['handle_str'] = handle_str
+
+def check_valid_img_url(img_url):
+    try:
+        response = urllib.request.urlopen(img_url)
+    except:
+        raise InputError("Image URL is invalid")
+
+def check_jpg_format(image_type):
+    if image_type != "JPEG":
+        raise InputError("Image is not of JPEG type")
+
+def check_valid_crop_coordinates(x_start, x_end, y_start, y_end, width, height):
+    if x_start > x_end or y_start > y_end:
+        raise InputError("Crop co-ordinates must be directed from upper left to lower right")
+    if x_start > width or x_start < 0 or x_end > width or x_end < 0:
+        raise InputError("x crop co-ordinates are not within image range")
+    if y_start > height or y_start < 0 or y_end > height or y_end < 0:
+        raise InputError("y crop co-ordinates are not within image range")
+
+def check_file_already_exists(image_name):
+    try:
+        os.remove("src/static/" + image_name)
+    except OSError:
+        pass
+
+def update_profile_img_url(u_id, image_name):
+    master_users[u_id]['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+
+def update_user_profile_img_url(u_id, image_name):
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['profile_img_url'] = flask.request.host_url + 'static/' + image_name
 
 def check_handle(handle_str):
     for user in master_users:
         if handle_str == user["handle_str"]:
             raise InputError(f"Error, {handle_str} handle has been taken")
+
+# STANDUP FUNCTIONS #
+
+def add_standup(channel_id, end_time, u_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            raise InputError
+    
+    active_standup = {}
+    active_standup['channel_id'] = channel_id
+    active_standup['time_finish'] = end_time
+    active_standup['message'] = ''
+    active_standup['u_id'] = u_id
+    channel_standup_active.append(active_standup)
+
+def standup_removal(channel_id):
+    for active_standup in channel_standup_active:
+        if active_standup['channel_id'] == channel_id:
+            message_id = message_new_message_id()
+            message_package = {
+                'message_id': message_id,
+                'channel_id': channel_id,
+                'u_id': active_standup['u_id'],
+                'message': active_standup['message'],
+                'time_created': active_standup['time_finish'],
+                'reacts': [{'react_id': 1, 'u_ids': [], 'is_this_user_reacted': False }],
+                'is_pinned': False,
+            }
+            if active_standup['message'] != '':
+                messages[f'{message_id}'] = message_package
+                message_incrementing_total_messages()
+            channel_standup_active.remove(active_standup)
+
+def active_check(channel_id):
+    status = {}
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            status['is_active'] = True
+            status['time_finish'] = channel['time_finish']
+            return status
+    status['is_active'] = False
+    status['time_finish'] = None
+    return status
+
+def standup_message_add(channel_id, standup_message):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            channel['message'] += standup_message
+            return
+    raise InputError # no current standup in channel
+
+def standup_fetch_message(channel_id):
+    for channel in channel_standup_active:
+        if channel['channel_id'] == channel_id:
+            return channel['message']
+    raise InputError # no current standup in channel
+
+def fetch_first_name(u_id):
+    return master_users[u_id]['name_first']
+
+def fetch_handle(u_id):
+    return master_users[u_id]['handle_str']
+
+def block_user(u_id, u_block):
+    if u_id == u_block:
+        raise InputError('You cannot block yourself.')
+    if is_blocked(u_id, u_block):
+        raise InputError(f'User {fetch_handle_from_u_id(u_block)} is already blocked.')
+    blocked_users[f'{u_id}'].append(u_block)
+
+def unblock_user(u_id, u_unblock):
+    if not is_blocked(u_id, u_unblock):
+        raise InputError(f'User {fetch_handle_from_u_id(u_unblock)} is not blocked.')
+    blocked_users[f'{u_id}'].remove(u_unblock)
+
+def is_blocked(u_id, u_block):
+    if blocked_users[f'{u_id}'].count(u_block):
+        return True
+    return False
+
+def add_blocklist(u_id):
+    blocked_users[f'{u_id}'] = []
+
+def fetch_u_id_from_handle(handle):
+    u_id = -1
+    for user in master_users:
+        if user['handle_str'] == handle:
+            u_id = user['u_id']
+    return u_id
+
+def fetch_handle_from_u_id(u_id):
+    for user in master_users:
+        if user['u_id'] == u_id:
+            return user['handle_str']
+
+def start_hangman(channel_id, word):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            raise InputError
+    active_hangman = {}
+    active_hangman['channel_id'] = channel_id
+    active_hangman['word'] = word
+    active_hangman['fails'] = 0
+    active_hangman['found'] = []
+    channel_hangman_active.append(active_hangman)
+
+def end_hangman(channel_id):
+    for active_hangman in channel_hangman_active:
+        if active_hangman['channel_id'] == channel_id:
+            channel_hangman_active.remove(active_hangman)
+
+def hangman_active_check(channel_id):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            return True
+    return False
+
+def hangman_guess(channel_id, guess):
+    found = False
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['found']:
+                if char == guess:
+                    raise InputError('Letter already found.')
+            for char in channel['word']:
+                if char == guess:
+                    channel['found'].append(guess)
+                    found = True
+            if not found:
+                channel['fails'] += 1
+            return channel['fails']
+
+def print_hangman_progress(channel_id):
+    progress = ''
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['word']:
+                if channel['found'].count(char) > 0:
+                    progress += f'{char} '
+                else:
+                    progress += '_ '
+    return progress
+
+def check_hangman_victory(channel_id):
+    finished = True
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            for char in channel['word']:
+                if channel['found'].count(char) == 0:
+                    finished = False
+    return finished
+
+def fetch_hangman_word(channel_id):
+    for channel in channel_hangman_active:
+        if channel['channel_id'] == channel_id:
+            return channel['word']
