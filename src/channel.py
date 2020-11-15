@@ -61,12 +61,15 @@ def channel_messages(token, channel_id, start):
     for message in messages:
         extract_message = messages[message]
         if (extract_message['channel_id'] == channel_id):
+            sender_id = extract_message['u_id']
             single_message['message_id'] = extract_message['message_id']
-            single_message['u_id'] = extract_message['u_id']
+            single_message['u_id'] = sender_id
             single_message['message'] = extract_message['message']
             single_message['time_created'] = extract_message['time_created']
             single_message['reacts'] = database.react_output(u_id, extract_message['message_id'], 1)
             single_message['is_pinned'] = extract_message['is_pinned']
+            if database.is_blocked(u_id, sender_id):
+                single_message['message'] = f'Message from blocked user hidden. </unblock {database.fetch_handle_from_u_id(sender_id)}> to reveal.'
             messages_list.append(single_message)
             single_message = {}
 
