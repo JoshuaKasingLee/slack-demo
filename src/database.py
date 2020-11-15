@@ -3,6 +3,8 @@ from error import AccessError
 import hashlib
 import jwt
 import flask
+import urllib.request
+import os
 # To be put into iteration 1
 
 
@@ -623,20 +625,69 @@ def check_user_exists(u_id):
 
 def update_first_name(u_id, name_first):
     master_users[u_id]['name_first'] = name_first
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['name_first'] = name_first
 
 def update_last_name(u_id, name_last):
     master_users[u_id]['name_last'] = name_last
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['name_last'] = name_last
 
 def update_email(u_id, email):
     master_users[u_id]['email'] = email
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['email'] = email
 
 def update_handle(u_id, handle_str):
     master_users[u_id]['handle_str'] = handle_str
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['handle_str'] = handle_str
+
+def check_valid_img_url(img_url):
+    try:
+        response = urllib.request.urlopen(img_url)
+    except:
+        raise InputError("Image URL is invalid")
+
+def check_jpg_format(image_type):
+    if image_type != "JPEG":
+        raise InputError("Image is not of JPEG type")
+
+def check_valid_crop_coordinates(x_start, x_end, y_start, y_end, width, height):
+    if x_start > x_end or y_start > y_end:
+        raise InputError("Crop co-ordinates must be directed from upper left to lower right")
+    if x_start > width or x_start < 0 or x_end > width or x_end < 0:
+        raise InputError("x crop co-ordinates are not within image range")
+    if y_start > height or y_start < 0 or y_end > height or y_end < 0:
+        raise InputError("y crop co-ordinates are not within image range")
+
+def check_file_already_exists(image_name):
+    try:
+        os.remove("src/static/" + image_name)
+    except OSError:
+        pass
 
 def update_profile_img_url(u_id, image_name):
-    for user in master_users:
-        if user['u_id'] == id:
-            user['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+    master_users[u_id]['profile_img_url'] = flask.request.host_url + 'static/' + image_name
+
+def update_user_profile_img_url(u_id, image_name):
+    for channel, member_lists in channels_and_members.items():
+        for members in member_lists:
+            for users in members:
+                if users['u_id'] == u_id:
+                    users['profile_img_url'] = flask.request.host_url + 'static/' + image_name
 
 def check_handle(handle_str):
     for user in master_users:

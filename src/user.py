@@ -5,9 +5,7 @@ import helper
 import sys
 import urllib.request
 from PIL import Image
-from database import master_users
 from auth import auth_register
-import os
 
 def user_profile(token, u_id):
     # check if u_id exists in database - if not, return InputError
@@ -68,33 +66,23 @@ def user_profile_uploadphoto(token, img_url, x_start, y_start, x_end, y_end):
     # check whether token is valid
     id = database.return_token_u_id(token)
     # check whether img_url is valid
-    try:
-        response = urllib.request.urlopen(img_url)
-    except:
-        raise InputError("Image URL is invalid")
-    # download the photo locally
+    database.check_valid_img_url(img_url)
+    # download and open the photo locally
     urllib.request.urlretrieve(img_url, "profile_pic.jpg")
-    # open the image
     profile_picture = Image.open("profile_pic.jpg")
     # check whether image is a jpg
-    image_type = profile_picture.format
-    if image_type != "JPEG":
-        raise InputError("Image is not of JPEG type")
-    # check for crop co-ordinate errors
-    if x_start > x_end or y_start > y_end:
-        raise InputError("Crop co-ordinates must be directed from upper left to lower right")
+    database.check_jpg_format(profile_picture.format)
+    
+    # crop the image
     width, height = profile_picture.size
-    if x_start > width or x_start < 0 or x_end > width or x_end < 0:
-        raise InputError("x crop co-ordinates are not within image range")
-    if y_start > height or y_start < 0 or y_end > height or y_end < 0:
-        raise InputError("y crop co-ordinates are not within image range")
-    # crop and save the image
+    database.check_valid_crop_coordinates(x_start, x_end, y_start, y_end, width, height)
     cropped_profile = profile_picture.crop((x_start, y_start, x_end, y_end))
+
+    # save the image
     image_name = str(id) + ".jpg"
-    try:
-        os.remove("src/static/" + image_name)
-    except OSError:
-        pass
+    database.check_file_already_exists(image_name)
     cropped_profile.save("src/static/" + image_name)
     database.update_profile_img_url(id, image_name)
+    database.update_user_profile_img_url(id, image_name)
     return image_name
+
