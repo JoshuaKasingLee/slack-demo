@@ -27,7 +27,7 @@ def url():
         server.kill()
         raise Exception("Couldn't get URL from local server")
 
-def test_pinning_one(url):
+def test_unpinning_one(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -64,10 +64,17 @@ def test_pinning_one(url):
     }
     response = requests.post(url + 'message/pin', json = data_in)
     payload = response.json()
+    
+    data_in = {
+        'token': token,
+        'message_id': message_id,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
+    payload = response.json()
     assert payload == {}
     requests.delete(url + 'clear')
 
-def test_pinning_one_but_two_messages(url):
+def test_unpinning_one_but_two_messages(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -112,10 +119,16 @@ def test_pinning_one_but_two_messages(url):
     }
     response = requests.post(url + 'message/pin', json = data_in)
     payload = response.json()
+    data_in = {
+        'token': token,
+        'message_id': message_id_2,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
+    payload = response.json()
     assert payload == {}
     requests.delete(url + 'clear')
 
-def test_pinning_two(url):
+def test_unpinning_two(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -162,12 +175,28 @@ def test_pinning_two(url):
     response = requests.post(url + 'message/pin', json = data_in)
     payload = response.json()
     assert payload == {}
-    
+       
     data_in = {
         'token': token,
         'message_id': message_id_2,
     }
     response = requests.post(url + 'message/pin', json = data_in)
+    payload = response.json()
+    assert payload == {}
+    
+    data_in = {
+        'token': token,
+        'message_id': message_id_2,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
+    payload = response.json()
+    assert payload == {}
+    
+    data_in = {
+        'token': token,
+        'message_id': message_id,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
     payload = response.json()
     assert payload == {}
     requests.delete(url + 'clear')
@@ -222,11 +251,18 @@ def test_not_owner(url):
     requests.post(url + 'channel/join', json = data_in)
     
     data_in = {
-        'token': token_2,
+        'token': token,
         'message_id': message_id,
     }
     
     response = requests.post(url + 'message/pin', json = data_in)
+    
+    data_in = {
+        'token': token_2,
+        'message_id': message_id,
+    }
+    
+    response = requests.post(url + 'message/unpin', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
@@ -273,15 +309,60 @@ def test_wrong_channel(url):
     token_2 = payload['token']
     
     data_in = {
-        'token': token_2,
+        'token': token,
         'message_id': message_id,
     }
     
     response = requests.post(url + 'message/pin', json = data_in)
+    data_in = {
+        'token': token_2,
+        'message_id': message_id,
+    }
+    
+    response = requests.post(url + 'message/unpin', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
 
-def test_already_pinned(url):
+def test_already_unpinned(url):
+    requests.delete(url + 'clear')
+    data_in = {
+        'email': "user@gmail.com",
+        'password': "password",
+        'name_first': "John",
+        'name_last': "Smith",
+    }
+    response = requests.post(url + 'auth/register', json = data_in)
+    payload = response.json()
+    token = payload['token']
+    
+    data_in = {
+        'token': token,
+        'name': "Test channel",
+        'is_public': True,   
+    }
+    
+    response = requests.post(url + 'channels/create', json = data_in)
+    payload = response.json()
+    channel_id = payload['channel_id']
+
+    data_in = {
+        'token': token,
+        'channel_id': channel_id,
+        'message': 'Hi!',
+    }
+
+    response = requests.post(url + 'message/send', json = data_in)
+    payload = response.json()
+    message_id = payload['message_id']
+    data_in = {
+        'token': token,
+        'message_id': message_id,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
+    assert (response.status_code == 400)
+    requests.delete(url + 'clear')
+
+def test_message_id_invalid(url):
     requests.delete(url + 'clear')
     data_in = {
         'email': "user@gmail.com",
@@ -317,51 +398,11 @@ def test_already_pinned(url):
         'message_id': message_id,
     }
     response = requests.post(url + 'message/pin', json = data_in)
-    payload = response.json()
-    data_in = {
-        'token': token,
-        'message_id': message_id,
-    }
-    response = requests.post(url + 'message/pin', json = data_in)
-    payload = response.json()
-    assert (response.status_code == 400)
-    requests.delete(url + 'clear')
-
-def test_message_id_invalid(url):
-    requests.delete(url + 'clear')
-    data_in = {
-        'email': "user@gmail.com",
-        'password': "password",
-        'name_first': "John",
-        'name_last': "Smith",
-    }
-    response = requests.post(url + 'auth/register', json = data_in)
-    payload = response.json()
-    token = payload['token']
-    
-    data_in = {
-        'token': token,
-        'name': "Test channel",
-        'is_public': True,   
-    }
-    
-    response = requests.post(url + 'channels/create', json = data_in)
-    payload = response.json()
-    channel_id = payload['channel_id']
-
-    data_in = {
-        'token': token,
-        'channel_id': channel_id,
-        'message': 'Hi!',
-    }
-
-    response = requests.post(url + 'message/send', json = data_in)
-    payload = response.json()
     data_in = {
         'token': token,
         'message_id': 3,
     }
-    response = requests.post(url + 'message/pin', json = data_in)
+    response = requests.post(url + 'message/unpin', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
     
@@ -397,20 +438,14 @@ def test_invalid_token(url):
     payload = response.json()
     message_id = payload['message_id']
     data_in = {
-        'token': 4,
+        'token': token,
         'message_id': message_id,
     }
     response = requests.post(url + 'message/pin', json = data_in)
+    data_in = {
+        'token': 4,
+        'message_id': message_id,
+    }
+    response = requests.post(url + 'message/unpin', json = data_in)
     assert (response.status_code == 400)
     requests.delete(url + 'clear')
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
-    
