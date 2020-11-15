@@ -102,8 +102,9 @@ def auth_passwordreset_requests():
 
 @APP.route("/auth/passwordreset/reset", methods=['POST'])
 def auth_passwordreset_resets():
-    reset_code = request.args.get('reset_code')
-    new_password = request.args.get('new_password')
+    data = request.get_json()
+    reset_code = data['reset_code']
+    new_password = data['new_password']
     auth.auth_passwordreset_reset(reset_code, new_password)
     return dumps({})
 

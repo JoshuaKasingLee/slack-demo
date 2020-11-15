@@ -122,6 +122,7 @@ def test_password_reset_success_http(url):
     response = requests.post(url + 'auth/logout', json = data_in)
     payload = response.json()
     assert(payload == {"is_success": True})
+
     # request forgotten password
     data_in = {'email' : email}
     response = requests.post(url + 'auth/passwordreset/request', json = data_in)
@@ -137,9 +138,14 @@ def test_password_reset_success_http(url):
     assert (response.status_code == 200)
     requests.delete(url + 'clear')
 
+    data_in = {
+        'email' : "cyruschow@gmail.com",
+        'password' : "password123"
+    }
+
+    requests.post(url + 'auth/login', json = data_in)
 
     # auth_passwordreset_reset(code, "password123")
-    # auth_login("cyruschow@gmail.com", "password123")
     # clear()
     
 # def test_multiple_reset_success():

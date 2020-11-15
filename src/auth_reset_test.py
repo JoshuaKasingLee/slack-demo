@@ -51,9 +51,9 @@ def test_password_reset_success():
     auth_logout(user['token'])
     code = database.auth_passwordreset_return(profile['user']['email'])
     auth_passwordreset_reset(code, "password123")
-    auth_login("cyruschow@gmail.com", "password123")
-    #profile = user_profile(user['token'], user['u_id'])
-    #assert(profile['user']['password'] == 'password123')
+    response = auth_login("cyruschow@gmail.com", "password123")
+    print(response)
+    assert (response['u_id'] == 0)
     clear()
     
 def test_multiple_reset_success():
