@@ -9,8 +9,8 @@ import channel
 import channels
 import message
 import other
-import message
 import user
+import standup
 from error import InputError
 
 
@@ -36,7 +36,7 @@ APP.register_error_handler(Exception, defaultHandler)
 def echo():
     data = request.args.get('data')
     if data == 'echo':
-   	    raise InputError(description='Cannot echo "echo"')
+        raise InputError(description='Cannot echo "echo"')
     return dumps({
         'data': data
     })
@@ -240,9 +240,9 @@ def sendlater_message():
     token = data['token']
     channel_id = int(data['channel_id'])
     message_to_send = data['message']
-    time_sent = data['time_sent']
+    time_sent = int(data['time_sent'])
     message_id = message.message_sendlater(token, channel_id, message_to_send, time_sent)
-    return dumps(message_id)
+    return message_id
 
 @APP.route("/message/react", methods=['POST'])
 def react_message():
@@ -278,6 +278,31 @@ def unpin_message():
     unpinned = message.message_unpin(token, message_id)
     return unpinned
 
+@APP.route("/standup/active", methods=['GET'])
+def active_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    active = standup.standup_active(token, channel_id)
+    return active
+
+@APP.route("/standup/send", methods=['POST'])
+def send_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    message_send = data['message']
+    send = standup.standup_send(token, channel_id, message_send)
+    return send
+
+@APP.route("/standup/start", methods=['POST'])
+def start_standup():
+    data = request.get_json()
+    token = data['token']
+    channel_id = int(data['channel_id'])
+    length = int(data['length'])
+    start = standup.standup_start(token, channel_id, length)
+    return start
 
 if __name__ == "__main__":
     APP.run(port=0) # Do not edit this port
