@@ -35,7 +35,7 @@ Rather than re-invent the wheel, UNSW has decided that it finds the functionalit
 Pineapple Pty Ltd has sub-contracted two software firms:
 
 * Catdog Pty Ltd (two software developers, Sally and Bob, who will build the initial web-based GUI)
-* YourTeam Pty Ltd (a team of talented misfits completing COMP1531 in 20T3), who will build the backend python server and possibly assist in the GUI later in the project
+* YourTeam Pty Ltd , who will build the backend python server and possibly assist in the GUI later in the project
 
 In summary, UNSW contracts Pineapple Pty Ltd, who sub contracts:
 
