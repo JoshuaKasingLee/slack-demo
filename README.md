@@ -1,4 +1,4 @@
-# COMP1531 Major Project
+# Major Project
 
 ## Changelog
 
