@@ -354,10 +354,6 @@ A user's primary permissions are their global permissions. Then the channel perm
 
 ### 6.7. Working with the frontend
 
-There is a SINGLE repository available for all students at https://gitlab.cse.unsw.edu.au/COMP1531/20T3/project-frontend. You can clone this frontend locally. The course notice said you will receive your own copy of this, however, that isn't necessary anymore since most groups will not modify the frontend repo. If you'd like to modify the frontend repo (i.e. teach yourself some frontend), please FORK the repository.
-
-If you run the frontend at the same time as your flask server is running on the backend, then you can power the frontend via your backend.
-
 #### 6.7.1.
 
 A working example of the frontend can be used at http://flockr-unsw.herokuapp.com/
